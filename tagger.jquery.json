@@ -1,0 +1,29 @@
+{
+  "name": "tagger",
+  "title": "Tagger widget",
+  "description": "jQuery plugin to turn a HTML select into an auto-suggesting, tagging widget",
+  "keywords": [
+    "autocomplete",
+    "select",
+    "widget",
+    "tagger",
+    "tag"
+  ],
+  "version": "0.0.3",
+  "author": {
+    "name": "Nick Palmer",
+    "url": "http://fivium.co.uk/",
+    "email": "nick.palmer@fivium.co.uk"
+  },
+  "licenses": [
+    {
+      "type": "BSD-3-Clause",
+      "url": "http://opensource.org/licenses/BSD-3-Clause"
+    }
+  ],
+  "dependencies": {
+    "jquery": ">=1.9",
+    "jqueryui": ">=1.10"
+  },
+  "homepage": "https://github.com/fivium/jquery-tagger/"
+}

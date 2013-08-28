@@ -1,0 +1,161 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JQuery tagger widget examples</title>
+  <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="../src/tagger.css" />
+  <script src="../src/tagger.js"></script>
+  
+  <script src="data.json"></script>
+  
+  <style>
+th {
+  vertical-align: top;
+}
+  </style>
+</head>
+<body style="position:relative;">
+  <h1>Tagger Widget Examples</h1>
+  <p>Below are some examples of the tagger widget applied to a few select elements with varying options passed in. peopleData comes from the data.json file included for this demo.</p>
+  <table width="600px">
+    <tr>
+      <th>Generic Multi-Select</th>
+      <td>
+        <select name="sel1" id="sel1" size="11" multiple="" onchange="javascript:alert('onchange-fired');">
+          <option value="item0" selected="selected">Jonah Eldredge</item>
+          <option value="item1" selected="selected">Ray Duran</item>
+          <option value="item2">Gavin Kovach</item>
+          <option value="item3">Lawrence Nesmith</item>
+          <option value="item4">Sebastian Seneca</item>
+          <option value="item5">Marshall Klemme</item>
+          <option value="item6">Grace Vashon</item>
+          <option value="item7">Magaret Farwell</item>
+          <option value="item8" selected="selected">Lenora Desrosier</item>
+          <option value="item9">Tammi Severt</item>
+          <option value="item10">Sandra Talbert</item>
+          <option value="item11" selected="selected">NOT_EXISTING</item>
+        </select>
+        <div class="tagger tagger-loading"></div>
+        <script>
+          $(function(){
+            $('#sel1').tagger({
+              availableTags: peopleData
+            , preselectedTags: ["item0", "item1", "item8", "item11"]
+            , baseURL: '..'
+            , displayHierarchy: false
+            , indentMultiplier: 2
+            });
+          });
+        </script>
+<pre>
+  &lt;script&gt;
+    $(function(){
+      $('#sel1').tagger({
+        availableTags: peopleData
+      , baseURL: '..'
+      });
+    });
+  &lt;/script&gt;
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <th>Multi-Select with options</th>
+      <td>
+        <select name="sel2" id="sel2" size="11" multiple="">
+          <option value="item0">Jonah Eldredge</item>
+          <option value="item1">Ray Duran</item>
+          <option value="item2">Gavin Kovach</item>
+          <option value="item3">Lawrence Nesmith</item>
+          <option value="item4">Sebastian Seneca</item>
+          <option value="item5">Marshall Klemme</item>
+          <option value="item6">Grace Vashon</item>
+          <option value="item7">Magaret Farwell</item>
+          <option value="item8">Lenora Desrosier</item>
+          <option value="item9">Tammi Severt</item>
+          <option value="item10">Sandra Talbert</item>
+        </select>
+        <script>
+          $(function(){
+            $('#sel2').tagger({
+              availableTags: peopleData
+            , baseURL: '..'
+            , placeholder: 'Person'
+            , caseSensitive: true
+            , displayHierarchy: true
+            , indentMultiplier: 2
+            , tabindexOffset: 100
+            , noSuggestText: 'No People Match'
+            , fieldWidth: '20em'
+            , suggestMaxWidth: '70em'
+            });
+          });
+        </script>
+<pre>
+  &lt;script&gt;
+    $(function(){
+      $('#sel2').tagger({
+        availableTags: peopleData
+      , baseURL: '..'
+      , placeholder: 'Person'
+      , caseSensitive: true
+      , displayHierarchy: true
+      , indentMultiplier: 2
+      , tabindexOffset: 100
+      , noSuggestText: 'No People Match'
+      , fieldWidth: '40em'
+      , suggestMaxWidth: '70em'
+      });
+    });
+  &lt;/script&gt;
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <th>Single Select</th>
+      <td>
+        <select name="sel3" id="sel3" size="11">
+          <option value="item0">Jonah Eldredge</item>
+          <option value="item1">Ray Duran</item>
+          <option value="item2">Gavin Kovach</item>
+          <option value="item3">Lawrence Nesmith</item>
+          <option value="item4">Sebastian Seneca</item>
+          <option value="item5">Marshall Klemme</item>
+          <option value="item6">Grace Vashon</item>
+          <option value="item7" selected="selected">Magaret Farwell</item>
+          <option value="item8">Lenora Desrosier</item>
+          <option value="item9">Tammi Severt</item>
+          <option value="item10">Sandra Talbert</item>
+        </select>
+        <script>
+          $(function(){
+            $('#sel3').tagger({
+              availableTags: peopleData
+            , baseURL: '..'
+            , placeholder: 'Email'
+            , tabindexOffset: 200
+            , suggestMaxHeight: '6em'
+            });
+          });
+        </script>
+<pre>
+  &lt;script&gt;
+    $(function(){
+      $('#sel3').tagger({
+        availableTags: peopleData
+      , baseURL: '..'
+      , placeholder: 'Email'
+      , tabindexOffset: 200
+      , suggestMaxHeight: '6em'
+      });
+    });
+  &lt;/script&gt;
+</pre>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
