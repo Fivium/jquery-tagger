@@ -1,11 +1,11 @@
 ﻿/*
 * jQuery UI Tagger
 *
-* @version v0.0.3 (08/2013)
+* @version v0.1.0 (09/2013)
 *
 * Copyright 2013, Fivium ltd.
 * Released under the BSD 3-Clause license.
-* http://github.com/fivium/jquery-tagger/blob/master/LICENSE
+* https://github.com/fivium/jquery-tagger/blob/master/LICENSE
 *
 * Homepage:
 *   https://github.com/fivium/jquery-tagger/
@@ -28,7 +28,7 @@
 /**
  * See (http://jquery.com/).
  * @name jQuery
- * @class 
+ * @class
  * See the jQuery Library  (http://jquery.com/) for full details. This just
  * documents the function and classes that are added to jQuery by this plug-in.
  */
@@ -36,7 +36,7 @@
 /**
  * See (http://jquery.com/)
  * @name widget
- * @class 
+ * @class
  * See the jQuery Library  (http://jquery.com/) for full details. This just
  * documents the function and classes that are added to jQuery by this plug-in.
  * @memberOf jQuery
@@ -45,7 +45,7 @@
 /**
  * See (http://jquery.com/)
  * @name ui
- * @class 
+ * @class
  * See the jQuery Library  (http://jquery.com/) for full details. This just
  * documents the function and classes that are added to jQuery by this plug-in.
  * @memberOf jQuery.widget
@@ -53,7 +53,7 @@
 
 (function ($) {
   /**
-   * tagger - Autocomplete and tagging widget 
+   * tagger - Autocomplete and tagging widget
    *
    * @class tagger
    * @memberOf jQuery.widget.ui
@@ -65,7 +65,7 @@
    * @author Nick Palmer
    */
   $.widget('ui.tagger', /** @lends jQuery.widget.ui.tagger */ {
-    
+
     /**
      * Default options, can be overridden by passing in an object to the constructor with these properties
      * @property {array}    availableTags       - Array of JSON tag objects
@@ -114,7 +114,7 @@
 
     /**
      * Tagger widget constructor
-     * 
+     *
      * Based on the select element it is created on it reads information from it,
      * Creates new elements for the tagger widget, adds event listeners and deals
      * with pre-selected tags.
@@ -172,10 +172,10 @@
           this.taggerSuggestionsButton = $('<div class="droparrow hittarget"><img src="' + this.options.baseURL + this.options.imgDownArrow + '" /></div>').appendTo(this.taggerWidget);
           this.taggerInput = $('<input type="text" class="intxt"/>').appendTo(this.taggerWidget);
         }
-        
+
         // Clearer div makes sure the widget div keeps its height
         $('<div class="clearer"></div>').appendTo(this.taggerWidget);
-        
+
         if (!this.readonly) {
           // If not readonly, stub out an empty suggestion list
           this.taggerSuggestions = $('<div class="suggestions"></div>').appendTo(this.taggerWidget);
@@ -234,7 +234,7 @@
 
           // Expand the input field to fit its contents
           this._inputExpand(this.taggerInput);
-          
+
           // Bind event to text input to expand input to fit contents and deal with key input
           this.taggerInput.bind({
             keydown: function (event) {
@@ -290,7 +290,7 @@
               }
               else if (event.which === 40) { // Down Arrow
                 self._showSuggestions();
-                
+
                 // Load suggestions on first hit
                 if (self.taggerSuggestionsList.children().length === 0) {
                   if ($.map(self.tagsByID, function(n, i) { return i;}).length > 300) {
@@ -311,10 +311,10 @@
                     self.loadedFiltered = false;
                   }
                 }
-                
+
                 // Focus top item in suggestion list
                 self.taggerSuggestionsList.children('[tabindex]').first().focus();
-                
+
                 event.preventDefault();
               }
             }
@@ -352,7 +352,7 @@
           // Set the tab indexes
           this._setWidgetTabIndexes();
         }
-        
+
         this.canFireActions = true;
       }
       else {
@@ -373,7 +373,7 @@
     _setTabindex: function (startingIndex) {
       this.tabIndex = startingIndex;
     },
-    
+
     /**
      * Increment the global tag index
      * @returns {integer} next tab index to use
@@ -437,7 +437,7 @@
       this._loadSuggestions(filteredResults, false);
       this.loadedFiltered = true;
     },
-    
+
     /**
      * Load tags into the suggestion list
      * @param {object} suggestableTags - Object containing members of tagID to tag object
@@ -446,7 +446,7 @@
      */
     _loadSuggestions: function (suggestableTags, allowIndent) {
       var self = this;
-      
+
       // Function to bind to suggestion list elements
       function suggestionBind(event) {
         var currentSelection = $(this);
@@ -473,7 +473,7 @@
               nextTarget.focus();
             }
           }
-          
+
           event.preventDefault();
         }
         else {
@@ -545,7 +545,7 @@
         // Add message if filtering meant no items to suggest
         $('<li class="missing">' + this.options.noSuggestText + '</li>').appendTo(this.taggerSuggestionsList);
       }
-      
+
       // Add message if nothing ended up in the list
       if (this.taggerSuggestionsList.children().length === 0) {
         $('<li class="missing">' + this.options.emptyListText + '</li>').appendTo(this.taggerSuggestionsList);
@@ -651,7 +651,7 @@
       // Hide suggestion list
       this.taggerSuggestions.hide();
     },
-    
+
     /**
      * Add a tag, given a tags ID, to the widget and mark it as selected in the
      * underlying select elements option list
@@ -736,7 +736,7 @@
 
       // Mark this tag as being displayed
       this.tagsByID[tagID].displaying = true;
-      
+
       // Fire onchange action
       if (this.canFireActions) {
         this._fireOnChangeAction();
@@ -779,7 +779,7 @@
       if (this.singleValue) {
         this.taggerInput.show();
       }
-      
+
       // Fire onchange action
       if (this.canFireActions) {
         this._fireOnChangeAction();

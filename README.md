@@ -16,6 +16,6 @@ Requirements
 * jquery : >=1.9
 * jqueryui : >=1.10
 
-If you want to build the documentation clone [JSDoc](https://github.com/jsdoc3/jsdoc)
+If you want to build the documentation, use [JSDoc](https://github.com/jsdoc3/jsdoc)
 
-Code can be hinted via [JSHint](http://www.jshint.com/)
+Code can run through [JSHint](http://www.jshint.com/)
