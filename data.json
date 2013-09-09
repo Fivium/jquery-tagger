@@ -1,0 +1,100 @@
+var peopleData = { "item0": {
+	"id": "item0",
+	"selected": "true",
+	"level": "0",
+	"hidden": ",jeldredge@example.com",
+	"suggestion": "&lt;img src=\"img\/online.png\"\/> Jonah Eldredge &lt;span class=\"extra\">jeldredge@example.com&lt;\/span>",
+	"key": "Jonah Eldredge",
+  "suggestable": "true",
+  "sort": 0
+},
+"item1": {
+	"id": "item1",
+	"level": "1",
+	"hidden": ",rd@example.com",
+	"suggestion": "&lt;img src=\"img\/online.png\"\/> Mr Ray Duran &lt;span class=\"extra\">rd@example.com&lt;\/span>",
+	"key": "Mr Ray Duran",
+  "suggestable": "true",
+  "sort": -10
+},
+"item2": {
+	"id": "item2",
+	"level": "2",
+	"hidden": ",gavin.kovach@example.com",
+	"suggestion": "&lt;img src=\"img\/online.png\"\/> Gavin Kovach &lt;span class=\"extra\">gavin.kovach@example.com&lt;\/span>",
+	"key": "Gavin Kovach",
+  "suggestable": "true",
+  "sort": 2
+},
+"item3": {
+	"id": "item3",
+	"level": "0",
+	"hidden": ",",
+	"suggestion": "&lt;img src=\"img\/online.png\"\/> Mr Lawrence Nesmith &lt;span class=\"extra\">&lt;\/span>",
+	"key": "Mr Lawrence Nesmith",
+  "suggestable": "true",
+  "sort": 3
+},
+"item4": {
+	"id": "item4",
+	"level": "0",
+	"hidden": ",sebastian.seneca@example.com",
+	"suggestion": "&lt;img src=\"img\/online.png\"\/> Mr Sebastian Seneca &lt;span class=\"extra\">sebastian.seneca@example.com&lt;\/span>",
+	"key": "Mr Sebastian Seneca",
+  "suggestable": "true",
+  "sort": 4
+},
+"item5": {
+	"id": "item5",
+	"level": "0",
+	"hidden": ",marshall.klemme@example.com",
+	"suggestion": "&lt;img src=\"img\/online.png\"\/> Marshall Klemme &lt;span class=\"extra\">marshall.klemme@example.com&lt;\/span>",
+	"key": "Marshall Klemme",
+  "suggestable": "true",
+  "sort": 5
+},
+"item6": {
+	"id": "item6",
+	"level": "1",
+	"hidden": ",Grace.Vashon@example.com",
+	"suggestion": "&lt;img src=\"img\/online.png\"\/> Mr Grace Vashon &lt;span class=\"extra\">Grace.Vashon@example.com&lt;\/span>",
+	"key": "Mr Grace Vashon",
+  "suggestable": "true",
+  "sort": 6
+},
+"item7": {
+	"id": "item7",
+	"level": "0",
+	"hidden": ",magaret@example.com",
+	"suggestion": "&lt;img src=\"img\/online.png\"\/> Magaret Farwell &lt;span class=\"extra\">magaret@example.com&lt;\/span>",
+	"key": "Magaret Farwell",
+  "suggestable": "true",
+  "sort": 7
+},
+"item8": {
+	"id": "item8",
+	"level": "1",
+	"hidden": "BUSINESS ANALYST,lenorad@example.com",
+	"suggestion": "&lt;img src=\"img\/offline.png\"\/> Mr Lenora Desrosier &lt;span class=\"extra\">lenorad@example.com&lt;\/span>",
+	"key": "Ms. Lenora Desrosier",
+  "suggestable": "true",
+  "sort": 80
+},
+"item9": {
+	"id": "item9",
+	"level": "0",
+	"hidden": ",tammi.severt@example.com",
+	"suggestion": "&lt;img src=\"img\/online.png\"\/> Mr Tammi Severt &lt;span class=\"extra\">tammi.severt@example.com&lt;\/span>",
+	"key": "Ms. Tammi Severt",
+  "suggestable": "true"
+},
+"item10": {
+	"id": "item10",
+	"selected": "true",
+	"level": "0",
+	"hidden": "BIT SHIFTER,sandra.talbert@example.com",
+	"suggestion": "&lt;img src=\"img\/offline.png\"\/> Miss. Sandra Talbert &lt;span class=\"extra\">sandra.talbert@example.com&lt;\/span>",
+	"key": "Miss. Sandra Talbert",
+  "suggestable": "true",
+  "sort": 10
+}};
