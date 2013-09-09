@@ -475,6 +475,18 @@
               nextTarget.focus();
             }
           }
+          else if (event.type === "keyup" && event.which === 36) { // Home key
+            var prevTarget = $(event.target).prevAll('li[tabindex]').last();
+            if (prevTarget.is('li')) {
+              prevTarget.focus();
+            }
+          }
+          else if (event.type === "keyup" && event.which === 35) { // End key
+            var prevTarget = $(event.target).nextAll('li[tabindex]').last();
+            if (prevTarget.is('li')) {
+              prevTarget.focus();
+            }
+          }
 
           event.preventDefault();
         }
