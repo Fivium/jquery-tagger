@@ -5,7 +5,8 @@ var peopleData = { "item0": {
 	"hidden": ",jeldredge@example.com",
 	"suggestion": "&lt;img src=\"img\/online.png\"\/> Jonah Eldredge &lt;span class=\"extra\">jeldredge@example.com&lt;\/span>",
 	"key": "Jonah Eldredge",
-  "suggestable": "true"
+  "suggestable": "true",
+  "sort": 0
 },
 "item1": {
 	"id": "item1",
@@ -13,7 +14,8 @@ var peopleData = { "item0": {
 	"hidden": ",rd@example.com",
 	"suggestion": "&lt;img src=\"img\/online.png\"\/> Mr Ray Duran &lt;span class=\"extra\">rd@example.com&lt;\/span>",
 	"key": "Mr Ray Duran",
-  "suggestable": "true"
+  "suggestable": "true",
+  "sort": -10
 },
 "item2": {
 	"id": "item2",
@@ -21,7 +23,8 @@ var peopleData = { "item0": {
 	"hidden": ",gavin.kovach@example.com",
 	"suggestion": "&lt;img src=\"img\/online.png\"\/> Gavin Kovach &lt;span class=\"extra\">gavin.kovach@example.com&lt;\/span>",
 	"key": "Gavin Kovach",
-  "suggestable": "true"
+  "suggestable": "true",
+  "sort": 2
 },
 "item3": {
 	"id": "item3",
@@ -29,7 +32,8 @@ var peopleData = { "item0": {
 	"hidden": ",",
 	"suggestion": "&lt;img src=\"img\/online.png\"\/> Mr Lawrence Nesmith &lt;span class=\"extra\">&lt;\/span>",
 	"key": "Mr Lawrence Nesmith",
-  "suggestable": "true"
+  "suggestable": "true",
+  "sort": 3
 },
 "item4": {
 	"id": "item4",
@@ -37,7 +41,8 @@ var peopleData = { "item0": {
 	"hidden": ",sebastian.seneca@example.com",
 	"suggestion": "&lt;img src=\"img\/online.png\"\/> Mr Sebastian Seneca &lt;span class=\"extra\">sebastian.seneca@example.com&lt;\/span>",
 	"key": "Mr Sebastian Seneca",
-  "suggestable": "true"
+  "suggestable": "true",
+  "sort": 4
 },
 "item5": {
 	"id": "item5",
@@ -45,7 +50,8 @@ var peopleData = { "item0": {
 	"hidden": ",marshall.klemme@example.com",
 	"suggestion": "&lt;img src=\"img\/online.png\"\/> Marshall Klemme &lt;span class=\"extra\">marshall.klemme@example.com&lt;\/span>",
 	"key": "Marshall Klemme",
-  "suggestable": "true"
+  "suggestable": "true",
+  "sort": 5
 },
 "item6": {
 	"id": "item6",
@@ -53,7 +59,8 @@ var peopleData = { "item0": {
 	"hidden": ",Grace.Vashon@example.com",
 	"suggestion": "&lt;img src=\"img\/online.png\"\/> Mr Grace Vashon &lt;span class=\"extra\">Grace.Vashon@example.com&lt;\/span>",
 	"key": "Mr Grace Vashon",
-  "suggestable": "true"
+  "suggestable": "true",
+  "sort": 6
 },
 "item7": {
 	"id": "item7",
@@ -61,7 +68,8 @@ var peopleData = { "item0": {
 	"hidden": ",magaret@example.com",
 	"suggestion": "&lt;img src=\"img\/online.png\"\/> Magaret Farwell &lt;span class=\"extra\">magaret@example.com&lt;\/span>",
 	"key": "Magaret Farwell",
-  "suggestable": "true"
+  "suggestable": "true",
+  "sort": 7
 },
 "item8": {
 	"id": "item8",
@@ -69,7 +77,8 @@ var peopleData = { "item0": {
 	"hidden": "BUSINESS ANALYST,lenorad@example.com",
 	"suggestion": "&lt;img src=\"img\/offline.png\"\/> Mr Lenora Desrosier &lt;span class=\"extra\">lenorad@example.com&lt;\/span>",
 	"key": "Ms. Lenora Desrosier",
-  "suggestable": "true"
+  "suggestable": "true",
+  "sort": 80
 },
 "item9": {
 	"id": "item9",
@@ -86,5 +95,6 @@ var peopleData = { "item0": {
 	"hidden": "BIT SHIFTER,sandra.talbert@example.com",
 	"suggestion": "&lt;img src=\"img\/offline.png\"\/> Miss. Sandra Talbert &lt;span class=\"extra\">sandra.talbert@example.com&lt;\/span>",
 	"key": "Miss. Sandra Talbert",
-  "suggestable": "true"
+  "suggestable": "true",
+  "sort": 10
 }};

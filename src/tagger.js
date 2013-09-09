@@ -76,6 +76,7 @@
      * @property {string}   baseURL             - Base URL used for images
      * @property {string}   imgDownArrow        - URL for down arrow image (after baseURL)
      * @property {string}   imgRemove           - URL for remove image (after baseURL)
+     * @property {boolean}  sortedOutput        - Sort the suggestion lists by tag.sort
      * @property {boolean}  displayHierarchy    - Indent suggestions to show hierarchy
      * @property {integer}  indentMultiplier    - When indenting suggestions, how much to multiple tag.level by
      * @property {integer}  tabindexOffset      - Then creating items it can tab to, what the tabindex should initally be
@@ -90,26 +91,27 @@
      * @property {string}   suggestMaxHeight    - Max height of the suggestion list e.g. 20em
      */
     options: {
-      availableTags       : null                        //  Array of JSON tag objects
-    , preselectedTags     : null                        //  Array of tag ID's that are selected in the element (helps performance)
-    , characterThreshold  : 1                           //  How many characters must be typed before searching
-    , caseSensitive       : false                       //  Case sensitive searching
-    , placeholder         : null                        //  Placeholder text for input area
-    , baseURL             : ''                          //  Base URL used for images
-    , imgDownArrow        : '/img/dropdown.png'  //  URL for down arrow image (after baseURL)
-    , imgRemove           : '/img/remove.png'    //  URL for remove image (after baseURL)
-    , displayHierarchy    : false                       //  Indent suggestions to show hierarchy
-    , indentMultiplier    : 1                           //  When indenting suggestions, how much to multiple tag.level by
-    , tabindexOffset      : null                        //  Then creating items it can tab to, what the tabindex should initally be
-    , noSuggestText       : 'No suggestions found'      //  Text to show when no suggestions can be found
-    , emptyListText       : 'No more suggestions'       //  Text to show when no suggestions in the list
-    , loadingClass        : '.tagger-loading'           //  Class on an sibling to the select used to fill while the js loads the tagger
-    , inputExpandExtra    : 14                          //  How many extra pixels to add on to the end of an input when expanding
-    , fieldWidth          : '30em'                      //  Override width
-    , fieldHeight         : null                        //  Override height
-    , suggestWidth        : null                        //  Set a hard width for the suggestion list (overrides maxwidth) e.g. 50em
-    , suggestMaxWidth     : null                        //  Max width of the suggestion list (so it can be wider than the field) e.g. 50em
-    , suggestMaxHeight    : null                        //  Max height of the suggestion list e.g. 20em
+      availableTags       : null
+    , preselectedTags     : null
+    , characterThreshold  : 1
+    , caseSensitive       : false
+    , placeholder         : null
+    , baseURL             : ''
+    , imgDownArrow        : '/img/dropdown.png'
+    , imgRemove           : '/img/remove.png'
+    , sortedOutput        : false
+    , displayHierarchy    : false
+    , indentMultiplier    : 1
+    , tabindexOffset      : null
+    , noSuggestText       : 'No suggestions found'
+    , emptyListText       : 'No more suggestions'
+    , loadingClass        : '.tagger-loading'
+    , inputExpandExtra    : 14
+    , fieldWidth          : '30em'
+    , fieldHeight         : null
+    , suggestWidth        : null
+    , suggestMaxWidth     : null
+    , suggestMaxHeight    : null
     },
 
     /**
@@ -206,7 +208,7 @@
               if (self.taggerSuggestionsList.children().length === 0) {
                 if ($.map(self.tagsByID, function(n, i) { return i;}).length > 300) {
                   // If there are more than 300 items, show a loading item first as it could take a while
-                  var loadingSuggestion = $('<li class="missing">Loading...</li>').appendTo(self.taggerSuggestionsList);
+                  $('<li class="missing">Loading...</li>').appendTo(self.taggerSuggestionsList);
                   setTimeout(function(){
                       // Load all suggestions into the suggestions list
                       self._loadSuggestions(self.tagsByID, true);
@@ -295,7 +297,7 @@
                 if (self.taggerSuggestionsList.children().length === 0) {
                   if ($.map(self.tagsByID, function(n, i) { return i;}).length > 300) {
                     // If there are more than 300 items, show a loading item first as it could take a while
-                    var loadingSuggestion = $('<li class="missing">Loading...</li>').appendTo(self.taggerSuggestionsList);
+                    $('<li class="missing">Loading...</li>').appendTo(self.taggerSuggestionsList);
                     setTimeout(function(){
                         // Load all suggestions into the suggestions list
                         self._loadSuggestions(self.tagsByID, true);
@@ -499,46 +501,60 @@
       this.taggerSuggestionsList.children().remove();
 
       // Load suggestions if there are some, or a message if not
-      if ($.map(suggestableTags, function(n, i) { return i;}).length > 0) {
+      var suggestableTagArray = $.map(suggestableTags, function(n, i) { return [[i, n.sort]];});
+      if (suggestableTagArray.length > 0) {
+        if (this.options.sortedOutput) {
+          // Sort based on the sort member of the tag objects passed in, serialised to [1] above
+          suggestableTagArray.sort(
+            function(a, b) {
+              if (a[1] === undefined) {
+                return b[1];
+              }
+              else if (b[1] === undefined) {
+                return a[1];
+              }
+              return a[1] - b[1];
+            }
+          );
+        }
+      
         // Load in all suggestable tags
         var idx = this._getNextWidgetTabIndex();
-        for (var tagID in suggestableTags) {
-          if (suggestableTags.hasOwnProperty(tagID)) {
-            var tag = suggestableTags[tagID];
-            if ((!this.options.displayHierarchy && !tag.suggestable) || tag.historical) {
-              continue;
-            }
-            // Create and add the suggestion to the suggestion list
-            var suggestion = $('<li></li>').attr("tabindex", idx).appendTo(this.taggerSuggestionsList);
-            if (tag.suggestion && tag.suggestion !== null && tag.suggestion !== '') {
-              suggestion.html($('<div/>').html(tag.suggestion).text());
-            }
-            else {
-              suggestion.text(tag.key);
-            }
-
-            // Bind actions to the suggestion
-            suggestion.bind('mouseup keyup keydown mouseleave mouseenter blur focus', suggestionBind);
-
-            // Attach data to it so when it's selected we can reference what it's for
-            suggestion.data("tagid", tag.id);
-
-            // Deal with hierarchy view
-            if (this.options.displayHierarchy && allowIndent) {
-              if (tag.level > 0) {
-                // Indent suggestions
-                suggestion.css('padding-left', (tag.level * this.options.indentMultiplier) + 'em');
-              }
-              if (!tag.suggestable) {
-                // If it's not suggestable (already selected) then just grey it out, remove it from tabindex and unbind events
-                suggestion.addClass('disabled');
-                suggestion.unbind();
-                suggestion.removeAttr('tabindex');
-              }
-            }
-
-            idx++;
+        for (var i = 0; i < suggestableTagArray.length; i++) {
+          var tag = suggestableTags[suggestableTagArray[i][0]];
+          if ((!this.options.displayHierarchy && !tag.suggestable) || tag.historical) {
+            continue;
           }
+          // Create and add the suggestion to the suggestion list
+          var suggestion = $('<li></li>').attr("tabindex", idx).appendTo(this.taggerSuggestionsList);
+          if (tag.suggestion && tag.suggestion !== null && tag.suggestion !== '') {
+            suggestion.html($('<div/>').html(tag.suggestion).text());
+          }
+          else {
+            suggestion.text(tag.key);
+          }
+
+          // Bind actions to the suggestion
+          suggestion.bind('mouseup keyup keydown mouseleave mouseenter blur focus', suggestionBind);
+
+          // Attach data to it so when it's selected we can reference what it's for
+          suggestion.data("tagid", tag.id);
+
+          // Deal with hierarchy view
+          if (this.options.displayHierarchy && allowIndent) {
+            if (tag.level > 0) {
+              // Indent suggestions
+              suggestion.css('padding-left', (tag.level * this.options.indentMultiplier) + 'em');
+            }
+            if (!tag.suggestable) {
+              // If it's not suggestable (already selected) then just grey it out, remove it from tabindex and unbind events
+              suggestion.addClass('disabled');
+              suggestion.unbind();
+              suggestion.removeAttr('tabindex');
+            }
+          }
+
+          idx++;
         }
       }
       else {
