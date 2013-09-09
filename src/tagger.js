@@ -458,9 +458,9 @@
             self._addTagFromID(currentSelection.data('tagid'));
             self._selectionReset();
           }
-          else if (event.type === "keyup" && (event.which === 38 || (event.which === 9 && event.shiftKey))) { // Up arrow / shift+tab (Move selection up and up into the input)
+          else if (event.type === "keydown" && (event.which === 38 || (event.which === 9 && event.shiftKey))) { // Up arrow / shift+tab (Move selection up and up into the input)
             // Override default browser tab control and allow arrow keys too
-            var prevTarget = $(event.target).prevAll('[tabindex]').first();
+            var prevTarget = $(event.target).prevAll('li[tabindex]').first();
             if (prevTarget.is('li')) {
               prevTarget.focus();
             }
@@ -468,9 +468,9 @@
               self.taggerInput.focus();
             }
           }
-          else if (event.type === "keyup" && (event.which === 40 || (event.which === 9 && !event.shiftKey))) { // Down arrow / tab (Move selection down, stop at the end)
+          else if (event.type === "keydown" && (event.which === 40 || (event.which === 9 && !event.shiftKey))) { // Down arrow / tab (Move selection down, stop at the end)
             // Override default browser tab control and allow arrow keys too
-            var nextTarget = $(event.target).nextAll('[tabindex]').first();
+            var nextTarget = $(event.target).nextAll('li[tabindex]').first();
             if (nextTarget.is('li')) {
               nextTarget.focus();
             }
