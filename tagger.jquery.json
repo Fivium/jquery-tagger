@@ -9,7 +9,7 @@
     "tagger",
     "tag"
   ],
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "Nick Palmer",
     "url": "http://fivium.co.uk/",
@@ -25,5 +25,7 @@
     "jquery": ">=1.9",
     "jqueryui": ">=1.10"
   },
-  "homepage": "https://github.com/fivium/jquery-tagger/"
+  "homepage": "http://fivium.github.io/jquery-tagger/",
+  "demo": "http://fivium.github.io/jquery-tagger/examples.htm",
+  "docs": "http://fivium.github.io/jquery-tagger/doc/index.html"
 }
