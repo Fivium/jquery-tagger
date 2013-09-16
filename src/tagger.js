@@ -797,6 +797,10 @@
       tagElem.remove();
       // Deselect from hidden select
       $('option[value="'+tagID+'"]', this.element).removeAttr("selected");
+      // In single select mode, make sure no options are selected 
+      if (this.singleValue) {
+        $(this.element).val([]);
+      }
       // Add back into the selectable list
       this.tagsByID[tagID].suggestable = true;
       // Mark this tag as no longer being displayed
