@@ -726,7 +726,7 @@
             tagRemover.remove();
           }
         });
-        // Bind event to the whole tag to deal with backspaces
+        // Bind event to the whole tag to deal with backspaces, arrow keys
         tag.bind('keydown', function (event) {
           if (event.which === 8) { // Backspace
             self._removeTagByElem($(event.target));
@@ -734,6 +734,23 @@
               tagRemover.remove();
             }
             event.preventDefault();
+          }
+          if (event.which === 37 ) { // Left arrow
+            // Shift focus to previous tab if there is one
+            var prevTag = $(event.target).prev('.tag').get(0);
+            if (prevTag) {
+              prevTag.focus();
+            }
+          }
+          if (event.which === 39 ) { // Right arrow
+            // Shift focus to next tab if there is one, otherwise the input field
+            var nextTag = $(event.target).next('.tag').get(0);
+            if (nextTag) {
+              nextTag.focus();
+            }
+            else {
+              self.taggerInput.focus();
+            }
           }
         });
 
