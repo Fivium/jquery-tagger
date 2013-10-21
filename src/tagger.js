@@ -1,7 +1,7 @@
 ﻿/*
 * jQuery UI Tagger
 *
-* @version v0.2.0 (09/2013)
+* @version v0.3.0 (10/2013)
 *
 * Copyright 2013, Fivium ltd.
 * Released under the BSD 3-Clause license.
@@ -12,6 +12,7 @@
 *
 * Authors:
 *   Nick Palmer
+*   Ben Basson
 *
 * Maintainer:
 *   Nick Palmer - nick.palmer@fivium.co.uk
