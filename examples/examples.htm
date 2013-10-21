@@ -158,6 +158,45 @@ th {
 </pre>
       </td>
     </tr>
+    <tr>
+      <th>Single Select Mandatory</th>
+      <td>
+        <select name="sel4" id="sel4" size="11">
+          <option value="item0">Jonah Eldredge</option>
+          <option value="item1">Ray Duran</option>
+          <option value="item2">Gavin Kovach</option>
+          <option value="item3">Lawrence Nesmith</option>
+          <option value="item4">Sebastian Seneca</option>
+          <option value="item5">Marshall Klemme</option>
+          <option value="item6">Grace Vashon</option>
+          <option value="item7">Magaret Farwell</option>
+          <option value="item8">Lenora Desrosier</option>
+          <option value="item9">Tammi Severt</option>
+          <option value="item10">Sandra Talbert</option>
+        </select>
+        <script>
+          $(function(){
+            $('#sel4').tagger({
+              availableTags: peopleData
+            , baseURL: '..'
+            , tabindexOffset: 200
+            , mandatorySelection: true
+            });
+          });
+        </script>
+<pre>  &lt;script&gt;
+    $(function(){
+      $('#sel4').tagger({
+      , availableTags: peopleData
+      , baseURL: '..'
+      , tabindexOffset: 200
+      , mandatorySelection: true
+      });
+    });
+  &lt;/script&gt;
+</pre>
+      </td>
+    </tr>
   </table>
 </body>
 </html>

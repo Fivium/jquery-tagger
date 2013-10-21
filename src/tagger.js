@@ -71,7 +71,7 @@
      * @property {array}    availableTags       - Array of JSON tag objects
      * @property {array}    preselectedTags     - Array of tag ID's that are selected in the element (helps performance)
      * @property {integer}  characterThreshold  - How many characters must be typed before searching
-     * @property {boolean}  caseSensitive       - Case sensitive searching
+     * @property {boolean}  caseSensitive       - Case sensitive searching - defaults to false
      * @property {string}   placeholder         - Placeholder text for input area
      * @property {string}   baseURL             - Base URL used for images
      * @property {string}   imgDownArrow        - URL for down arrow image (after baseURL)
@@ -89,6 +89,7 @@
      * @property {string}   suggestWidth        - Set a hard width for the suggestion list (overrides maxwidth) e.g. 50em
      * @property {string}   suggestMaxWidth     - Max width of the suggestion list (so it can be wider than the field) e.g. 50em
      * @property {string}   suggestMaxHeight    - Max height of the suggestion list e.g. 20em
+     * @property {boolean}  mandatorySelection  - Make it mandatory that a value is chosen - defaults to false, no effect in multiselect mode
      */
     options: {
       availableTags       : null
@@ -112,6 +113,7 @@
     , suggestWidth        : null
     , suggestMaxWidth     : null
     , suggestMaxHeight    : null
+    , mandatorySelection  : false
     },
 
     /**
@@ -325,9 +327,14 @@
 
         // Let the available tags be accessed through a nicer name
         this.tagsByID = this.options.availableTags;
-
+        
+        var preselectedTags = this.options.preselectedTags;
+        if (this.singleValue && this.options.mandatorySelection && preselectedTags === null) {
+          preselectedTags = [this.element.children()[0].value];
+        }
+        
         // Deal with already selected options
-        if (this.options.preselectedTags === null) {
+        if (preselectedTags === null) {
           this.element.children("option:selected").each(function () {
             // Set any selected options that aren't in the availableTags as historical entries so they can be displayed and removed but not added
             if (!self.tagsByID[$(this).val()]) {
@@ -339,8 +346,8 @@
         }
         else {
           var preselectedTag = null;
-          for (var i = 0; i < this.options.preselectedTags.length; i++) {
-            preselectedTag = this.options.preselectedTags[i];
+          for (var i = 0; i < preselectedTags.length; i++) {
+            preselectedTag = preselectedTags[i];
             // Set any selected options that aren't in the availableTags as historical entries so they can be displayed and removed but not added
             if (!self.tagsByID[preselectedTag]) {
               self.tagsByID[preselectedTag] = {id: preselectedTag, key: $($('option[value="'+preselectedTag+'"]', this.element)[0]).text(), suggestion: '', hidden: '', level: 0, suggestable: false, historical: true};
@@ -758,8 +765,12 @@
         if (this.singleValue) {
           this.taggerInput.hide();
           tag.addClass('tag-single');
-          tagRemover.addClass('removetag-single');
-          tagRemover.insertAfter(tag);
+          
+          // Remove ability to clear the selection if operating in mandatory mode
+          if (!this.singleValue || !this.options.mandatorySelection) {
+            tagRemover.addClass('removetag-single');
+            tagRemover.insertAfter(tag);
+          }
         }
         else {
           tagRemover.appendTo(tag);
