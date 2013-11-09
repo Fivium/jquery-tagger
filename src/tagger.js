@@ -326,7 +326,16 @@
         }
 
         // Let the available tags be accessed through a nicer name
-        this.tagsByID = this.options.availableTags;
+        if (this.options.availableTags) {
+          this.tagsByID = this.options.availableTags;
+        }
+        // Convert options to JS objects if no JSON is supplied
+        else {
+          this.tagsByID = {};
+          this.element.children("option").each(function () {
+            self.tagsByID[$(this).val()] = {id: $(this).val(), key: $(this).text(), suggestion: $(this).text(), hidden: '', level: 0, suggestable: true, historical: false};
+          });
+        }
         
         var preselectedTags = this.options.preselectedTags;
         if (this.singleValue && this.options.mandatorySelection && preselectedTags === null) {
