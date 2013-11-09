@@ -1,7 +1,7 @@
 ﻿/*
 * jQuery UI Tagger
 *
-* @version v0.2.0 (09/2013)
+* @version v0.3.0 (10/2013)
 *
 * Copyright 2013, Fivium ltd.
 * Released under the BSD 3-Clause license.
@@ -12,6 +12,7 @@
 *
 * Authors:
 *   Nick Palmer
+*   Ben Basson
 *
 * Maintainer:
 *   Nick Palmer - nick.palmer@fivium.co.uk
@@ -834,6 +835,10 @@
       tagElem.remove();
       // Deselect from hidden select
       $('option[value="'+tagID+'"]', this.element).removeAttr("selected");
+      // In single select mode, make sure no options are selected 
+      if (this.singleValue) {
+        $(this.element).val([]);
+      }
       // Add back into the selectable list
       this.tagsByID[tagID].suggestable = true;
       // Mark this tag as no longer being displayed
