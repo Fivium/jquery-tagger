@@ -98,9 +98,9 @@
     , characterThreshold  : 1
     , caseSensitive       : false
     , placeholder         : null
-    , baseURL             : ''
-    , imgDownArrow        : '/img/dropdown.png'
-    , imgRemove           : '/img/remove.png'
+    , baseURL             : '/img/'
+    , imgDownArrow        : 'dropdown.png'
+    , imgRemove           : 'remove.png'
     , sortedOutput        : false
     , displayHierarchy    : false
     , indentMultiplier    : 1
