@@ -3,7 +3,7 @@
 *
 * @version v0.3.0 (10/2013)
 *
-* Copyright 2013, Fivium ltd.
+* Copyright 2013, Fivium Ltd.
 * Released under the BSD 3-Clause license.
 * https://github.com/fivium/jquery-tagger/blob/master/LICENSE
 *
@@ -98,9 +98,9 @@
     , characterThreshold  : 1
     , caseSensitive       : false
     , placeholder         : null
-    , baseURL             : ''
-    , imgDownArrow        : '/img/dropdown.png'
-    , imgRemove           : '/img/remove.png'
+    , baseURL             : '/img/'
+    , imgDownArrow        : 'dropdown.png'
+    , imgRemove           : 'remove.png'
     , sortedOutput        : false
     , displayHierarchy    : false
     , indentMultiplier    : 1
@@ -138,15 +138,18 @@
             this._setTabindex(parseInt(this.element.attr('tabindex'), 10));
           }
           else {
-            this._setTabindex(1);
+            this._setTabIndex(1);
           }
         }
         else {
-          this._setTabindex(this.options.tabindexOffset);
+          this._setTabIndex(this.options.tabindexOffset);
         }
 
         // Check cardinality mode
         this.singleValue = !this.element.attr('multiple');
+        
+        // Initialise the tag counter
+        this.tagCount = 0;
 
         // Hide select
         this.element.hide();
@@ -176,6 +179,11 @@
           // Add the suggestion drop arrow and and text input if not readonly
           this.taggerSuggestionsButton = $('<div class="droparrow hittarget"><img src="' + this.options.baseURL + this.options.imgDownArrow + '" /></div>').appendTo(this.taggerWidget);
           this.taggerInput = $('<input type="text" class="intxt"/>').appendTo(this.taggerWidget);
+          
+          // Add placeholder text to text input field
+          if (this.options.placeholder !== null) {
+            this.taggerInput.attr("placeholder", this.options.placeholder);
+          }
         }
 
         // Clearer div makes sure the widget div keeps its height
@@ -184,6 +192,17 @@
         if (!this.readonly) {
           // If not readonly, stub out an empty suggestion list
           this.taggerSuggestions = $('<div class="suggestions"></div>').appendTo(this.taggerWidget);
+          
+          // Put a filter at the top of the suggestion list in single-select mode
+          if (this.singleValue) {
+            this.taggerFilterInput = $('<input type="text" class="filtertxt"/>').appendTo(this.taggerSuggestions);
+            // Add placeholder text to text input field
+            if (this.options.placeholder !== null) {
+              this.taggerFilterInput.attr("placeholder", this.options.placeholder);
+            }
+            this.taggerFilterInput.hide();
+          }
+                   
           this.taggerSuggestionsList = $('<ul></ul>').appendTo(this.taggerSuggestions);
 
           // Event listener to hide suggestions list if clicking outside this tagger widget
@@ -203,10 +222,14 @@
                 || (event.type === "keyup" && (event.which === 13 || event.which === 32 || event.which === 40))) { // enter || space || down arrow
               self._setSuggestionListDimensions();
               self.taggerSuggestions.toggle();
-              if (self.taggerSuggestions.is(":visible")) {
-                self.taggerSuggestionsList.children('[tabindex]').first().focus();
-              }
 
+              if (self.taggerSuggestions.is(":visible")) {
+                if (self.singleValue && self.taggerFilterInput && self.tagCount === 1) {
+                  self.taggerFilterInput.show();
+                }
+                self.taggerSuggestions.find('[tabindex]').first().focus();
+              }
+              
               // Load suggestions on first hit
               if (self.taggerSuggestionsList.children().length === 0) {
                 if ($.map(self.tagsByID, function(n, i) { return i;}).length > 300) {
@@ -231,11 +254,6 @@
               event.preventDefault();
             }
           });
-
-          // Add placeholder text to text input field
-          if (this.options.placeholder !== null) {
-            this.taggerInput.attr("placeholder", this.options.placeholder);
-          }
 
           // Expand the input field to fit its contents
           this._inputExpand(this.taggerInput);
@@ -278,9 +296,9 @@
             keyup: function (event) {
               self._inputExpand(self.taggerInput);
               if (event.which !== 13 && event.which !== 40) { // key up not enter or down arrow
-                if (self.taggerInput.val().length > (self.options.characterThreshold - 1)) {
+                if ($(this).val().length > (self.options.characterThreshold - 1)) {
                   // If text is longer than the threshold start filtering and showing the filtered results
-                  self.filterTags();
+                  self.filterTags($(this).val());
                   self._showSuggestions();
                 }
                 else if (self.loadedFiltered) {
@@ -324,6 +342,61 @@
               }
             }
           });
+          
+          // If we have a list filter then bind events to it
+          if (this.taggerFilterInput) {
+            this.taggerFilterInput.bind({
+              keyup: function (event) {
+                if (event.target) {
+                  if (event.which !== 13 && event.which !== 40) { // key up not enter or down arrow
+                    if ($(this).val().length > (self.options.characterThreshold - 1)) {
+                      // If text is longer than the threshold start filtering and showing the filtered results
+                      self.filterTags($(this).val());
+                      self._showSuggestions();
+                    }
+                    else if (self.loadedFiltered) {
+                      // Reload in all suggestions
+                      self._loadSuggestions(self.tagsByID, true);
+                      // Clear the flag
+                      this.loadedFiltered = false;
+                    }
+                  }
+                  else if (event.which === 40) {
+                    // Focus top item in suggestion list
+                    self.taggerSuggestionsList.children('[tabindex]').first().focus();
+                    event.preventDefault();
+                  }
+                }
+              },
+              keydown: function (event) {
+                if (event.target) {
+                  switch (event.which) {
+                    case 8: // Backspace
+                      if ($(this).val().length === 0 && self.loadedFiltered) {
+                        // Hide it
+                        self.taggerSuggestions.hide();
+                        // Focus the drop arrow
+                        self.taggerSuggestionsButton.focus();
+                      }
+                      break;
+                    case 13: // Enter key
+                      // If they hit enter with just one item in the suggestion list, add it, otherwise focus the top item
+                      if (self.taggerSuggestionsList.children('[tabindex]').length === 1) {
+                        self._addTagFromID(self.taggerSuggestionsList.children('[tabindex]').first().data('tagid'));
+                        self._selectionReset();
+                      }
+                      else {
+                        self.taggerSuggestionsList.children('[tabindex]').first().focus();
+                      }
+                      event.preventDefault();
+                      break;
+                    default:
+                      break;
+                  }
+                }
+              }
+            });
+          }
         }
 
         // Let the available tags be accessed through a nicer name
@@ -389,8 +462,15 @@
      * @param {integer} startingIndex - The starting offset for the widgets tab indexes
      * @protected
      */
-    _setTabindex: function (startingIndex) {
+    _setTabIndex: function (startingIndex) {
       this.tabIndex = startingIndex;
+    },
+    
+    /**
+     * Reset the tab index offset to the starting value specified in the parameters.
+     */
+    _resetTabIndexCounter: function () {
+      this._setTabIndex(this.options.tabindexOffset);
     },
 
     /**
@@ -410,17 +490,18 @@
       // Set tabindexes of input and droparrow after adding tags
       this.taggerInput.attr('tabindex', this._getNextWidgetTabIndex());
       this.taggerSuggestionsButton.attr('tabindex', this._getNextWidgetTabIndex());
-      // Reset tab index variable
-      this._setTabindex(this.options.tabindexOffset);
+      if (this.taggerFilterInput) {
+        this.taggerFilterInput.attr('tabindex', this._getNextWidgetTabIndex());
+      }
     },
 
     /**
      * Filter the available tags by the input text and load suggestions into suggestion list
      * @protected
      */
-    filterTags: function () {
-      var searchString = this.taggerInput.val();
-      var searchStringLowerCase = this.taggerInput.val().toLowerCase();
+    filterTags: function (value) {
+      var searchString = value;
+      var searchStringLowerCase = value.toLowerCase();
       var filteredResults = {};
 
       // Go through each tag
@@ -480,6 +561,9 @@
             var prevTarget = $(event.target).prevAll('li[tabindex]').first();
             if (prevTarget.is('li')) {
               prevTarget.focus();
+            }
+            else if (self.taggerFilterInput && self.taggerFilterInput.is(":visible")) {
+              self.taggerFilterInput.focus();
             }
             else {
               self.taggerInput.focus();
@@ -685,6 +769,9 @@
     _selectionReset: function () {
       // Clear input
       this.taggerInput.val('');
+      if (this.taggerFilterInput) {
+        this.taggerFilterInput.val('');
+      }
       // Expand properly
       this._inputExpand(this.taggerInput);
       // Clear filtered suggestions
@@ -729,6 +816,8 @@
       }
 
       if (!this.readonly) {
+        // Reset the tab index counter, as we'll need to resequence to account for new tag elements
+        this._resetTabIndexCounter();
         // Select the option in the underlying select element
         $('option[value="'+tagID+'"]', this.element).attr("selected","selected");
         // Add the HTML to show the tag
@@ -796,6 +885,8 @@
           tag.addClass('tag-single');
         }
       }
+      
+      this.tagCount++;
 
       // Remove tag from tags object
       this.tagsByID[tagID].suggestable = false;
@@ -833,6 +924,7 @@
       var tagID = tagElem.data('tagid');
       // Remove tag div
       tagElem.remove();
+      this.tagCount--;
       // Deselect from hidden select
       $('option[value="'+tagID+'"]', this.element).removeAttr("selected");
       // In single select mode, make sure no options are selected 

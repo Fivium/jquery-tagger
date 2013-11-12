@@ -44,7 +44,7 @@ th {
             $('#sel1').tagger({
               availableTags: peopleData
             , preselectedTags: ["item0", "item1", "item8", "item11"]
-            , baseURL: '..'
+            , baseURL: '../img/'
             , displayHierarchy: false
             , indentMultiplier: 2
             });
@@ -55,7 +55,7 @@ th {
     $(function(){
       $('#sel1').tagger({
         availableTags: peopleData
-      , baseURL: '..'
+      , baseURL: '../img/'
       });
     });
   &lt;/script&gt;
@@ -82,7 +82,7 @@ th {
           $(function(){
             $('#sel2').tagger({
               availableTags: peopleData
-            , baseURL: '..'
+            , baseURL: '../img/'
             , placeholder: 'Person'
             , caseSensitive: true
             , displayHierarchy: true
@@ -100,7 +100,7 @@ th {
     $(function(){
       $('#sel2').tagger({
         availableTags: peopleData
-      , baseURL: '..'
+      , baseURL: '../img/'
       , placeholder: 'Person'
       , caseSensitive: true
       , displayHierarchy: true
@@ -136,7 +136,7 @@ th {
           $(function(){
             $('#sel3').tagger({
               availableTags: peopleData
-            , baseURL: '..'
+            , baseURL: '../img/'
             , placeholder: 'Email'
             , tabindexOffset: 200
             , suggestMaxHeight: '6em'
@@ -148,7 +148,7 @@ th {
     $(function(){
       $('#sel3').tagger({
         availableTags: peopleData
-      , baseURL: '..'
+      , baseURL: '../img/'
       , placeholder: 'Email'
       , tabindexOffset: 200
       , suggestMaxHeight: '6em'
@@ -178,8 +178,8 @@ th {
           $(function(){
             $('#sel4').tagger({
               availableTags: peopleData
-            , baseURL: '..'
-            , tabindexOffset: 200
+            , baseURL: '../img/'
+            , tabindexOffset: 300
             , mandatorySelection: true
             });
           });
@@ -188,8 +188,8 @@ th {
     $(function(){
       $('#sel4').tagger({
         availableTags: peopleData
-      , baseURL: '..'
-      , tabindexOffset: 200
+      , baseURL: '../img/'
+      , tabindexOffset: 300
       , mandatorySelection: true
       });
     });
@@ -216,14 +216,16 @@ th {
         <script>
           $(function(){
             $('#sel5').tagger({
-              baseURL: '..'
+              baseURL: '../img/'
+            , tabindexOffset: 400
             });
           });
         </script>
 <pre>  &lt;script&gt;
     $(function(){
       $('#sel5').tagger({
-        baseURL: '..'
+        baseURL: '../img/'
+      , tabindexOffset: 400
       });
     });
   &lt;/script&gt;
