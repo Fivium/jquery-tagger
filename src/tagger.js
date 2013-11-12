@@ -334,7 +334,7 @@
         else {
           this.tagsByID = {};
           this.element.children("option").each(function () {
-            self.tagsByID[$(this).val()] = {id: $(this).val(), key: $(this).text(), suggestion: $(this).text(), hidden: '', level: 0, suggestable: true, historical: false};
+            self.tagsByID[$(this).val()] = {id: $(this).val(), key: $(this).text(), hidden: '', level: 0, suggestable: true, historical: false};
           });
         }
         
