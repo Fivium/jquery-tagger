@@ -87,6 +87,14 @@
   margin: 0 0 1px 4px;
 }
 
+.tagger .filtertxt {
+  display: inline-block;
+  font: inherit;
+  cursor: text;
+  margin: 2px 0 2px 2px;
+  width: 99%;
+}
+
 .tagger .hiddenInputSpan {
   position: absolute;
   top: -9999;
