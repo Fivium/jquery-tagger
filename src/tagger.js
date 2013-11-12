@@ -138,11 +138,11 @@
             this._setTabindex(parseInt(this.element.attr('tabindex'), 10));
           }
           else {
-            this._setTabindex(1);
+            this._setTabIndex(1);
           }
         }
         else {
-          this._setTabindex(this.options.tabindexOffset);
+          this._setTabIndex(this.options.tabindexOffset);
         }
 
         // Check cardinality mode
@@ -389,8 +389,15 @@
      * @param {integer} startingIndex - The starting offset for the widgets tab indexes
      * @protected
      */
-    _setTabindex: function (startingIndex) {
+    _setTabIndex: function (startingIndex) {
       this.tabIndex = startingIndex;
+    },
+    
+    /**
+     * Reset the tab index offset to the starting value specified in the parameters.
+     */
+    _resetTabIndexCounter: function () {
+      this._setTabIndex(this.options.tabindexOffset);
     },
 
     /**
@@ -410,8 +417,6 @@
       // Set tabindexes of input and droparrow after adding tags
       this.taggerInput.attr('tabindex', this._getNextWidgetTabIndex());
       this.taggerSuggestionsButton.attr('tabindex', this._getNextWidgetTabIndex());
-      // Reset tab index variable
-      this._setTabindex(this.options.tabindexOffset);
     },
 
     /**
@@ -729,6 +734,8 @@
       }
 
       if (!this.readonly) {
+        // Reset the tab index counter, as we'll need to resequence to account for new tag elements
+        this._resetTabIndexCounter();
         // Select the option in the underlying select element
         $('option[value="'+tagID+'"]', this.element).attr("selected","selected");
         // Add the HTML to show the tag
