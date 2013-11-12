@@ -1,4 +1,4 @@
-﻿/*
+/*
 * jQuery UI Tagger
 *
 * @version v0.3.0 (10/2013)
