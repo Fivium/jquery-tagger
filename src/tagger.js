@@ -178,7 +178,7 @@
         if (!this.readonly) {
           // Add the suggestion drop arrow and and text input if not readonly
           this.taggerSuggestionsButton = $('<div class="droparrow hittarget"><img src="' + this.options.baseURL + this.options.imgDownArrow + '" /></div>').appendTo(this.taggerWidget);
-          this.taggerInput = $('<input type="text" class="intxt"/>').appendTo(this.taggerWidget);
+          this.taggerInput = $('<input type="text" class="intxt" autocomplete="off"/>').appendTo(this.taggerWidget);
           
           // Add placeholder text to text input field
           if (this.options.placeholder !== null) {
@@ -195,7 +195,7 @@
           
           // Put a filter at the top of the suggestion list in single-select mode
           if (this.singleValue) {
-            this.taggerFilterInput = $('<input type="text" class="filtertxt"/>').appendTo(this.taggerSuggestions);
+            this.taggerFilterInput = $('<input type="text" class="filtertxt" autocomplete="off"/>').appendTo(this.taggerSuggestions);
             // Add placeholder text to text input field
             if (this.options.placeholder !== null) {
               this.taggerFilterInput.attr("placeholder", this.options.placeholder);
