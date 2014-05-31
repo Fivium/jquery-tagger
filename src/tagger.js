@@ -135,14 +135,14 @@
         // Set tabindexOffset
         if (this.options.tabindexOffset === null) {
           if (this.element.attr('tabindex')) {
-            this._setTabindex(parseInt(this.element.attr('tabindex'), 10));
+            this.tabIndex = this.element.attr('tabindex')
           }
           else {
-            this._setTabIndex(1);
+            this.tabIndex = '0';
           }
         }
         else {
-          this._setTabIndex(this.options.tabindexOffset);
+          this.tabIndex = this.options.tabindexOffset;
         }
 
         // Check cardinality mode
@@ -177,13 +177,16 @@
 
         if (!this.readonly) {
           // Add the suggestion drop arrow and and text input if not readonly
-          this.taggerSuggestionsButton = $('<div class="droparrow hittarget"><img src="' + this.options.baseURL + this.options.imgDownArrow + '" /></div>').appendTo(this.taggerWidget);
           this.taggerInput = $('<input type="text" class="intxt"/>').appendTo(this.taggerWidget);
+          this.taggerSuggestionsButton = $('<div class="droparrow hittarget"><img src="' + this.options.baseURL + this.options.imgDownArrow + '" /></div>').appendTo(this.taggerWidget);
+          this.taggerSuggestionsButton.attr("tabindex", this.tabIndex);
           
           // Add placeholder text to text input field
           if (this.options.placeholder !== null) {
             this.taggerInput.attr("placeholder", this.options.placeholder);
           }
+          
+          this.taggerInput.attr("tabindex", this.tabIndex);
         }
 
         // Clearer div makes sure the widget div keeps its height
@@ -439,12 +442,6 @@
             self._addTagFromID(preselectedTag);
           }
         }
-
-        if (!this.readonly) {
-          // Set the tab indexes
-          this._setWidgetTabIndexes();
-        }
-
         this.canFireActions = true;
       }
       else {
@@ -454,44 +451,6 @@
             console.log('Tagger widget only works on select elements');
           }
         }
-      }
-    },
-
-    /**
-     * Set the tab index offset for the widget
-     * @param {integer} startingIndex - The starting offset for the widgets tab indexes
-     * @protected
-     */
-    _setTabIndex: function (startingIndex) {
-      this.tabIndex = startingIndex;
-    },
-    
-    /**
-     * Reset the tab index offset to the starting value specified in the parameters.
-     */
-    _resetTabIndexCounter: function () {
-      this._setTabIndex(this.options.tabindexOffset);
-    },
-
-    /**
-     * Increment the global tag index
-     * @returns {integer} next tab index to use
-     * @protected
-     */
-    _getNextWidgetTabIndex: function () {
-      return ++this.tabIndex;
-    },
-
-    /**
-     * Set tab index of input and droparrow after adding tags
-     * @protected
-     */
-    _setWidgetTabIndexes: function () {
-      // Set tabindexes of input and droparrow after adding tags
-      this.taggerInput.attr('tabindex', this._getNextWidgetTabIndex());
-      this.taggerSuggestionsButton.attr('tabindex', this._getNextWidgetTabIndex());
-      if (this.taggerFilterInput) {
-        this.taggerFilterInput.attr('tabindex', this._getNextWidgetTabIndex());
       }
     },
 
@@ -632,14 +591,13 @@
         }
       
         // Load in all suggestable tags
-        var idx = this._getNextWidgetTabIndex();
         for (var i = 0; i < suggestableTagArray.length; i++) {
           var tag = suggestableTags[suggestableTagArray[i][0]];
           if ((!this.options.displayHierarchy && !tag.suggestable) || tag.historical) {
             continue;
           }
           // Create and add the suggestion to the suggestion list
-          var suggestion = $('<li></li>').attr("tabindex", idx).appendTo(this.taggerSuggestionsList);
+          var suggestion = $('<li></li>').attr("tabindex", "0").appendTo(this.taggerSuggestionsList);
           if (tag.suggestion && tag.suggestion !== null && tag.suggestion !== '') {
             suggestion.html($('<div/>').html(tag.suggestion).text());
           }
@@ -666,8 +624,6 @@
               suggestion.removeAttr('tabindex');
             }
           }
-
-          idx++;
         }
       }
       else {
@@ -816,12 +772,11 @@
       }
 
       if (!this.readonly) {
-        // Reset the tab index counter, as we'll need to resequence to account for new tag elements
-        this._resetTabIndexCounter();
         // Select the option in the underlying select element
         $('option[value="'+tagID+'"]', this.element).attr("selected","selected");
         // Add the HTML to show the tag
-        tag = $('<div class="tag" tabindex="' + this._getNextWidgetTabIndex() + '"></div>').insertBefore(this.taggerInput);
+        tag = $('<div class="tag"></div>').insertBefore(this.taggerInput);
+        tag.attr("tabindex", this.tabIndex);
         tag.text($('<div/>').html(tagData.key).text());
         tag.data("tagid", tagID);
         var tagRemover = $('<span class="removetag hittarget"><img src="' + this.options.baseURL + this.options.imgRemove + '" /></span>');
@@ -874,9 +829,6 @@
         else {
           tagRemover.appendTo(tag);
         }
-
-        // Update tab indexes
-        this._setWidgetTabIndexes();
       }
       else {
         tag = $('<div class="tag tag-readonly"></div>').prependTo(this.taggerWidget);
