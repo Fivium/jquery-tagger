@@ -232,6 +232,66 @@ th {
 </pre>
       </td>
     </tr>
+    <tr>
+      <th>HTML Character Encoding (Embedded)</th>
+      <td>
+        <select name="sel6" id="sel6" size="11" multiple="">
+          <option value="item0">Test [&amp;] Ampersand</option>
+          <option value="item1">Test [&lt;] Less Than</option>
+          <option value="item2">Test [&gt;] Greater Than</option>
+          <option value="item3">Test [&nbsp;] Non-breaking Space</option>
+          <option value="item4">Test [&#8482;] Unicode Trademark</option>
+        </select>
+        <script>
+          $(function(){
+            $('#sel6').tagger({
+              baseURL: '../img/'
+            , tabindexOffset: 500
+            });
+          });
+        </script>
+<pre>  &lt;script&gt;
+    $(function(){
+      $('#sel6').tagger({
+        baseURL: '../img/'
+      , tabindexOffset: 500
+      });
+    });
+  &lt;/script&gt;
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <th>HTML Character Encoding (JSON)</th>
+      <td>
+        <select name="sel7" id="sel7" size="11" multiple="">
+          <option value="item0">Test [&amp;] Ampersand</option>
+          <option value="item1">Test [&lt;] Less Than</option>
+          <option value="item2">Test [&gt;] Greater Than</option>
+          <option value="item3">Test [&nbsp;] Non-breaking Space</option>
+          <option value="item4">Test [&#8482;] Unicode Trademark</option>
+        </select>
+        <script>
+          $(function(){
+            $('#sel7').tagger({
+              baseURL: '../img/'
+            , availableTags: charEncoding
+            , tabindexOffset: 600
+            });
+          });
+        </script>
+<pre>  &lt;script&gt;
+    $(function(){
+      $('#sel7').tagger({
+        baseURL: '../img/'
+      , availableTags: charEncoding
+      , tabindexOffset: 600
+      });
+    });
+  &lt;/script&gt;
+</pre>
+      </td>
+    </tr>
   </table>
 </body>
 </html>

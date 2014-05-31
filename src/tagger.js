@@ -822,7 +822,7 @@
         $('option[value="'+tagID+'"]', this.element).attr("selected","selected");
         // Add the HTML to show the tag
         tag = $('<div class="tag" tabindex="' + this._getNextWidgetTabIndex() + '"></div>').insertBefore(this.taggerInput);
-        tag.text(tagData.key);
+        tag.text($('<div/>').html(tagData.key).text());
         tag.data("tagid", tagID);
         var tagRemover = $('<span class="removetag hittarget"><img src="' + this.options.baseURL + this.options.imgRemove + '" /></span>');
         // Bind event to the tag remover to deal with mouse click
@@ -880,7 +880,7 @@
       }
       else {
         tag = $('<div class="tag tag-readonly"></div>').prependTo(this.taggerWidget);
-        tag.text(tagData.key);
+        tag.text($('<div/>').html(tagData.key).text());
         if (this.singleValue) {
           tag.addClass('tag-single');
         }
