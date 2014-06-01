@@ -783,10 +783,20 @@
         tag.data("tagid", tagID);
         var tagRemover = $('<span class="removetag hittarget"><img src="' + this.options.baseURL + this.options.imgRemove + '" /></span>');
         // Bind event to the tag remover to deal with mouse click
-        tagRemover.bind('mouseup', function (event) {
-          if (event.which === 1) { // Left Mouse Click
-            self._removeTagByElem(tag);
-            tagRemover.remove();
+        tagRemover.bind({
+          'mouseup': function (event) {
+            if (event.which === 1) { // Left Mouse Click
+              self._removeTagByElem(tag);
+              tagRemover.remove();
+              self.taggerInput.focus();
+            }
+          },
+          'keyup': function (event) {
+            if (event.which === 13) { // Enter key
+              self._removeTagByElem(tag);
+              tagRemover.remove();
+              self.taggerInput.focus();
+            }
           }
         });
         // Bind event to the whole tag to deal with backspaces, arrow keys
@@ -825,6 +835,7 @@
           // Remove ability to clear the selection if operating in mandatory mode
           if (!this.singleValue || !this.options.mandatorySelection) {
             tagRemover.addClass('removetag-single');
+            tagRemover.attr("tabindex", this.tabIndex);
             tagRemover.insertBefore(this.taggerSuggestionsButton);
           }
         }
