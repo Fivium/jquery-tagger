@@ -199,6 +199,7 @@
           // Put a filter at the top of the suggestion list in single-select mode
           if (this.singleValue) {
             this.taggerFilterInput = $('<input type="text" class="filtertxt" autocomplete="off"/>').appendTo(this.taggerSuggestions);
+            this.taggerFilterInput.attr("tabindex", this.tabIndex);
             // Add placeholder text to text input field
             if (this.options.placeholder !== null) {
               this.taggerFilterInput.attr("placeholder", this.options.placeholder);
@@ -229,6 +230,9 @@
               if (self.taggerSuggestions.is(":visible")) {
                 if (self.singleValue && self.taggerFilterInput && self.tagCount === 1) {
                   self.taggerFilterInput.show();
+                }
+                else if (self.taggerFilterInput) {
+                  self.taggerFilterInput.hide();
                 }
                 self.taggerSuggestions.find('[tabindex]').first().focus();
               }
@@ -685,6 +689,9 @@
       // Set width
       this._setSuggestionListDimensions();
       // Show list
+      if (this.taggerInput.is(":visible")) {
+        this.taggerFilterInput.hide();
+      }
       this.taggerSuggestions.show();
     },
 
