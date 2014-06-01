@@ -802,6 +802,7 @@
               tagRemover.remove();
             }
             event.preventDefault();
+            self.taggerInput.focus();
           }
           if (event.which === 37 ) { // Left arrow
             // Shift focus to previous tab if there is one
