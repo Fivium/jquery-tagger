@@ -98,3 +98,35 @@ var peopleData = { "item0": {
   "suggestable": "true",
   "sort": 10
 }};
+
+var charEncoding = {
+"item0": {
+  "id": "item0",
+  "suggestion": "Test [&amp;] Ampersand",
+  "key": "Test [&amp;] Ampersand",
+  "suggestable": "true"
+},
+"item1": {
+  "id": "item1",
+  "suggestion": "Test [&lt;] Less Than",
+  "key": "Test [&lt;] Less Than",
+  "suggestable": "true"
+},
+"item2": {
+  "id": "item2",
+  "suggestion": "Test [&gt;] Greater Than",
+  "key": "Test [&gt;] Greater Than",
+  "suggestable": "true"
+},
+"item3": {
+  "id": "item3",
+  "suggestion": "Test [&nbsp;] Non-breaking Space",
+  "key": "Test [&nbsp;] Non-breaking Space",
+  "suggestable": "true"
+},
+"item4": {
+  "id": "item4",
+  "suggestion": "Test [&#8482;] Unicode Trademark",
+  "key": "Test [&#8482;] Unicode Trademark",
+  "suggestable": "true"
+}};
