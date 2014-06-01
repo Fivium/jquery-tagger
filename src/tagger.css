@@ -25,16 +25,18 @@
   font-size: 0pt;
 }
 
-.tagger .droparrow {
+.tagger .tagger-buttons {
   display: block;
   float: right;
+}
+
+.tagger .droparrow {
+  display: block;
+  float: left;
   cursor: pointer;
   padding: 7px 4px 9px 4px;
 }
-.tagger .droparrow.hittarget:focus {
-/*  outline: none;
-  background-color: #cee4f2;*/
-}
+
 .tagger .droparrow img {
   display: block;
 }
@@ -66,7 +68,7 @@
 
 .tagger .removetag-single {
   display: block;
-  float: right;
+  float: left;
   padding: 6px 3px 5px 3px;
   border-right: 1px solid #aaa;
   line-height: 0px;

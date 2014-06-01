@@ -178,9 +178,11 @@
         if (!this.readonly) {
           // Add the suggestion drop arrow and and text input if not readonly
           this.taggerInput = $('<input type="text" class="intxt" autocomplete="off"/>').appendTo(this.taggerWidget);
-          this.taggerSuggestionsButton = $('<div class="droparrow hittarget"><img src="' + this.options.baseURL + this.options.imgDownArrow + '" /></div>').appendTo(this.taggerWidget);
+          this.taggerButtonsPanel = $('<div class="tagger-buttons"></div>');
+          this.taggerButtonsPanel.appendTo(this.taggerWidget);
+          this.taggerSuggestionsButton = $('<div class="droparrow hittarget"><img src="' + this.options.baseURL + this.options.imgDownArrow + '" /></div>').appendTo(this.taggerButtonsPanel);
           this.taggerSuggestionsButton.attr("tabindex", this.tabIndex);
-          
+                    
           // Add placeholder text to text input field
           if (this.options.placeholder !== null) {
             this.taggerInput.attr("placeholder", this.options.placeholder);
@@ -823,7 +825,7 @@
           // Remove ability to clear the selection if operating in mandatory mode
           if (!this.singleValue || !this.options.mandatorySelection) {
             tagRemover.addClass('removetag-single');
-            tagRemover.insertAfter(tag);
+            tagRemover.insertBefore(this.taggerSuggestionsButton);
           }
         }
         else {
