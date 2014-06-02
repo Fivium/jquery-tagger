@@ -475,7 +475,7 @@
           // Add tag to filteredResults object if it contains the search string in the key, hidden or suggestion fields
           if (this.options.caseSensitive) {
             if (tag.key.indexOf(searchString) >= 0
-               || tag.hidden.indexOf(searchString) >= 0
+               || (tag.hidden && tag.hidden.indexOf(searchString) >= 0)
                || $('<div/>').html(tag.suggestion).text().replace(/<.*?[^>]>/g,'').indexOf(searchString) >= 0) {
               filteredResults[tagID] = $.extend(true, {}, tag);
               filteredResults[tagID].suggestable = true;
@@ -483,7 +483,7 @@
           }
           else {
             if (tag.key.toLowerCase().indexOf(searchStringLowerCase) >= 0
-               || tag.hidden.toLowerCase().indexOf(searchStringLowerCase) >= 0
+               || (tag.hidden && tag.hidden.toLowerCase().indexOf(searchStringLowerCase) >= 0)
                || $('<div/>').html(tag.suggestion).text().replace(/<.*?[^>]>/g,'').toLowerCase().indexOf(searchStringLowerCase) >= 0) {
               filteredResults[tagID] = $.extend(true, {}, tag);
               filteredResults[tagID].suggestable = true;
