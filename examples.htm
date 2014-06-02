@@ -5,15 +5,16 @@
   <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-
   <link rel="stylesheet" type="text/css" href="tagger.css" />
   <script src="tagger.js"></script>
-
   <script src="data.json"></script>
-
   <style>
 th {
   vertical-align: top;
+}
+label {
+  font-family: sans-serif;
+  white-space: nowrap;
 }
   </style>
 </head>
@@ -25,18 +26,18 @@ th {
       <th>Generic Multi-Select</th>
       <td>
         <select name="sel1" id="sel1" size="11" multiple="" onchange="javascript:alert('onchange-fired');">
-          <option value="item0" selected="selected">Jonah Eldredge</item>
-          <option value="item1" selected="selected">Ray Duran</item>
-          <option value="item2">Gavin Kovach</item>
-          <option value="item3">Lawrence Nesmith</item>
-          <option value="item4">Sebastian Seneca</item>
-          <option value="item5">Marshall Klemme</item>
-          <option value="item6">Grace Vashon</item>
-          <option value="item7">Magaret Farwell</item>
-          <option value="item8" selected="selected">Lenora Desrosier</item>
-          <option value="item9">Tammi Severt</item>
-          <option value="item10">Sandra Talbert</item>
-          <option value="item11" selected="selected">NOT_EXISTING</item>
+          <option value="item0" selected="selected">Jonah Eldredge</option>
+          <option value="item1" selected="selected">Ray Duran</option>
+          <option value="item2">Gavin Kovach</option>
+          <option value="item3">Lawrence Nesmith</option>
+          <option value="item4">Sebastian Seneca</option>
+          <option value="item5">Marshall Klemme</option>
+          <option value="item6">Grace Vashon</option>
+          <option value="item7">Magaret Farwell</option>
+          <option value="item8" selected="selected">Lenora Desrosier</option>
+          <option value="item9">Tammi Severt</option>
+          <option value="item10">Sandra Talbert</option>
+          <option value="item11" selected="selected">NOT_EXISTING</option>
         </select>
         <div class="tagger tagger-loading"></div>
         <script>
@@ -45,6 +46,7 @@ th {
               availableTags: peopleData
             , imgDownArrow: 'img/dropdown.png'
             , imgRemove: 'img/remove.png'
+            , baseURL: ''
             , preselectedTags: ["item0", "item1", "item8", "item11"]
             , displayHierarchy: false
             , indentMultiplier: 2
@@ -58,6 +60,10 @@ th {
         availableTags: peopleData
       , imgDownArrow: 'img/dropdown.png'
       , imgRemove: 'img/remove.png'
+      , baseURL: ''
+      , preselectedTags: [&quot;item0&quot;, &quot;item1&quot;, &quot;item8&quot;, &quot;item11&quot;]
+      , displayHierarchy: false
+      , indentMultiplier: 2
       });
     });
   &lt;/script&gt;
@@ -68,17 +74,17 @@ th {
       <th>Multi-Select with options</th>
       <td>
         <select name="sel2" id="sel2" size="11" multiple="">
-          <option value="item0">Jonah Eldredge</item>
-          <option value="item1">Ray Duran</item>
-          <option value="item2">Gavin Kovach</item>
-          <option value="item3">Lawrence Nesmith</item>
-          <option value="item4">Sebastian Seneca</item>
-          <option value="item5">Marshall Klemme</item>
-          <option value="item6">Grace Vashon</item>
-          <option value="item7">Magaret Farwell</item>
-          <option value="item8">Lenora Desrosier</item>
-          <option value="item9">Tammi Severt</item>
-          <option value="item10">Sandra Talbert</item>
+          <option value="item0">Jonah Eldredge</option>
+          <option value="item1">Ray Duran</option>
+          <option value="item2">Gavin Kovach</option>
+          <option value="item3">Lawrence Nesmith</option>
+          <option value="item4">Sebastian Seneca</option>
+          <option value="item5">Marshall Klemme</option>
+          <option value="item6">Grace Vashon</option>
+          <option value="item7">Magaret Farwell</option>
+          <option value="item8">Lenora Desrosier</option>
+          <option value="item9">Tammi Severt</option>
+          <option value="item10">Sandra Talbert</option>
         </select>
         <script>
           $(function(){
@@ -86,6 +92,7 @@ th {
               availableTags: peopleData
             , imgDownArrow: 'img/dropdown.png'
             , imgRemove: 'img/remove.png'
+            , baseURL: ''
             , placeholder: 'Person'
             , caseSensitive: true
             , displayHierarchy: true
@@ -105,13 +112,14 @@ th {
         availableTags: peopleData
       , imgDownArrow: 'img/dropdown.png'
       , imgRemove: 'img/remove.png'
+      , baseURL: ''
       , placeholder: 'Person'
       , caseSensitive: true
       , displayHierarchy: true
       , indentMultiplier: 2
       , tabindexOffset: 100
       , noSuggestText: 'No People Match'
-      , fieldWidth: '40em'
+      , fieldWidth: '20em'
       , suggestMaxWidth: '70em'
       , sortedOutput: true
       });
@@ -124,17 +132,17 @@ th {
       <th>Single Select</th>
       <td>
         <select name="sel3" id="sel3" size="11">
-          <option value="item0">Jonah Eldredge</item>
-          <option value="item1">Ray Duran</item>
-          <option value="item2">Gavin Kovach</item>
-          <option value="item3">Lawrence Nesmith</item>
-          <option value="item4">Sebastian Seneca</item>
-          <option value="item5">Marshall Klemme</item>
-          <option value="item6">Grace Vashon</item>
-          <option value="item7" selected="selected">Magaret Farwell</item>
-          <option value="item8">Lenora Desrosier</item>
-          <option value="item9">Tammi Severt</item>
-          <option value="item10">Sandra Talbert</item>
+          <option value="item0">Jonah Eldredge</option>
+          <option value="item1">Ray Duran</option>
+          <option value="item2">Gavin Kovach</option>
+          <option value="item3">Lawrence Nesmith</option>
+          <option value="item4">Sebastian Seneca</option>
+          <option value="item5">Marshall Klemme</option>
+          <option value="item6">Grace Vashon</option>
+          <option value="item7" selected="selected">Magaret Farwell</option>
+          <option value="item8">Lenora Desrosier</option>
+          <option value="item9">Tammi Severt</option>
+          <option value="item10">Sandra Talbert</option>
         </select>
         <script>
           $(function(){
@@ -142,6 +150,7 @@ th {
               availableTags: peopleData
             , imgDownArrow: 'img/dropdown.png'
             , imgRemove: 'img/remove.png'
+            , baseURL: ''
             , placeholder: 'Email'
             , tabindexOffset: 200
             , suggestMaxHeight: '6em'
@@ -155,6 +164,7 @@ th {
         availableTags: peopleData
       , imgDownArrow: 'img/dropdown.png'
       , imgRemove: 'img/remove.png'
+      , baseURL: ''
       , placeholder: 'Email'
       , tabindexOffset: 200
       , suggestMaxHeight: '6em'
@@ -164,6 +174,221 @@ th {
 </pre>
       </td>
     </tr>
+    <tr>
+      <th>Single Select Mandatory</th>
+      <td>
+        <select name="sel4" id="sel4" size="11">
+          <option value="item0">Jonah Eldredge</option>
+          <option value="item1">Ray Duran</option>
+          <option value="item2">Gavin Kovach</option>
+          <option value="item3">Lawrence Nesmith</option>
+          <option value="item4">Sebastian Seneca</option>
+          <option value="item5">Marshall Klemme</option>
+          <option value="item6">Grace Vashon</option>
+          <option value="item7">Magaret Farwell</option>
+          <option value="item8">Lenora Desrosier</option>
+          <option value="item9">Tammi Severt</option>
+          <option value="item10">Sandra Talbert</option>
+        </select>
+        <script>
+          $(function(){
+            $('#sel4').tagger({
+              availableTags: peopleData
+            , imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
+            , tabindexOffset: 300
+            , mandatorySelection: true
+            });
+          });
+        </script>
+<pre>  &lt;script&gt;
+    $(function(){
+      $('#sel4').tagger({
+        availableTags: peopleData
+      , imgDownArrow: 'img/dropdown.png'
+      , imgRemove: 'img/remove.png'
+      , baseURL: ''
+      , tabindexOffset: 300
+      , mandatorySelection: true
+      });
+    });
+  &lt;/script&gt;
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <th>Single Select Without JSON</th>
+      <td>
+        <select name="sel5" id="sel5" size="11">
+          <option value="item0">Jonah Eldredge</option>
+          <option value="item1">Ray Duran</option>
+          <option value="item2">Gavin Kovach</option>
+          <option value="item3">Lawrence Nesmith</option>
+          <option value="item4">Sebastian Seneca</option>
+          <option value="item5">Marshall Klemme</option>
+          <option value="item6">Grace Vashon</option>
+          <option value="item7">Magaret Farwell</option>
+          <option value="item8">Lenora Desrosier</option>
+          <option value="item9">Tammi Severt</option>
+          <option value="item10">Sandra Talbert</option>
+        </select>
+        <script>
+          $(function(){
+            $('#sel5').tagger({
+              imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
+            , tabindexOffset: 400
+            });
+          });
+        </script>
+<pre>  &lt;script&gt;
+    $(function(){
+      $('#sel5').tagger({
+        imgDownArrow: 'img/dropdown.png'
+      , imgRemove: 'img/remove.png'
+      , baseURL: ''
+      , tabindexOffset: 400
+      });
+    });
+  &lt;/script&gt;
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <th>HTML Character Encoding (Embedded)</th>
+      <td>
+        <select name="sel6" id="sel6" size="11" multiple="">
+          <option value="item0">Test [&amp;] Ampersand</option>
+          <option value="item1">Test [&lt;] Less Than</option>
+          <option value="item2">Test [&gt;] Greater Than</option>
+          <option value="item3">Test [&nbsp;] Non-breaking Space</option>
+          <option value="item4">Test [&#8482;] Unicode Trademark</option>
+        </select>
+        <script>
+          $(function(){
+            $('#sel6').tagger({
+              imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
+            , tabindexOffset: 500
+            });
+          });
+        </script>
+<pre>  &lt;script&gt;
+    $(function(){
+      $('#sel6').tagger({
+        imgDownArrow: 'img/dropdown.png'
+      , imgRemove: 'img/remove.png'
+      , baseURL: ''
+      , tabindexOffset: 500
+      });
+    });
+  &lt;/script&gt;
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <th>HTML Character Encoding (JSON)</th>
+      <td>
+        <select name="sel7" id="sel7" size="11" multiple="">
+          <option value="item0">Test [&amp;] Ampersand</option>
+          <option value="item1">Test [&lt;] Less Than</option>
+          <option value="item2">Test [&gt;] Greater Than</option>
+          <option value="item3">Test [&nbsp;] Non-breaking Space</option>
+          <option value="item4">Test [&#8482;] Unicode Trademark</option>
+        </select>
+        <script>
+          $(function(){
+            $('#sel7').tagger({
+              imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
+            , availableTags: charEncoding
+            , tabindexOffset: 600
+            });
+          });
+        </script>
+<pre>  &lt;script&gt;
+    $(function(){
+      $('#sel7').tagger({
+        imgDownArrow: 'img/dropdown.png'
+      , imgRemove: 'img/remove.png'
+      , baseURL: ''
+      , availableTags: charEncoding
+      , tabindexOffset: 600
+      });
+    });
+  &lt;/script&gt;
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <th>Tab Ordering (None Set)</th>
+      <td>
+        <table>
+          <tr>
+            <td>
+              <label>Input 1</label>
+            </td>
+            <td>
+              <input name="an_input" type="text" size="64"></input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label>Tagger 1</label>
+            </td>
+            <td>
+              <select name="sel8" id="sel8" size="11" multiple="">
+                <option value="item0">Jonah Eldredge</option>
+                <option value="item1" selected="">Ray Duran</option>
+                <option value="item2">Gavin Kovach</option>
+                <option value="item3">Lawrence Nesmith</option>
+                <option value="item4">Sebastian Seneca</option>
+                <option value="item5">Marshall Klemme</option>
+                <option value="item6" selected="">Grace Vashon</option>
+                <option value="item7">Magaret Farwell</option>
+                <option value="item8">Lenora Desrosier</option>
+                <option value="item9">Tammi Severt</option>
+                <option value="item10">Sandra Talbert</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label>Input 2</label>
+            </td>
+            <td>
+              <input name="another_input" type="text" size="64"></input>
+            </td>
+          </tr>
+        </table>
+        <script>
+          $(function(){
+            $('#sel8').tagger({
+              imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
+            });
+          });
+        </script>
+<pre>  &lt;script&gt;
+    $(function(){
+      $('#sel8').tagger({
+        imgDownArrow: 'img/dropdown.png'
+      , imgRemove: 'img/remove.png'
+      , baseURL: ''
+      });
+    });
+  &lt;/script&gt;
+</pre>
+      </td>
+    </tr>
   </table>
+  <!-- Pad out the page a bit -->
+  <div style="min-height: 200px;">
+  </div>
 </body>
 </html>
