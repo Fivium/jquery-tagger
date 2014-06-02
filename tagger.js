@@ -700,7 +700,7 @@
       // Set width
       this._setSuggestionListDimensions();
       // Show list
-      if (this.taggerInput.is(":visible")) {
+      if (this.taggerFilterInput && this.taggerInput.is(":visible")) {
         this.taggerFilterInput.hide();
       }
       this.taggerSuggestions.show();
