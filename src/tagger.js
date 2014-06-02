@@ -189,6 +189,11 @@
           }
           
           this.taggerInput.attr("tabindex", this.tabIndex);
+          this.taggerWidget.bind('keydown', function (event) {
+            if (event.target && event.which === 27) {
+              self.taggerSuggestions.hide();
+            }
+          });
         }
 
         // Clearer div makes sure the widget div keeps its height
@@ -297,6 +302,10 @@
                       event.preventDefault();
                     }
                     break;
+                  case 27: // Esc
+                    self.taggerSuggestions.hide();
+                    event.preventDefault();
+                    break;
                   default:
                     break;
                 }
@@ -304,7 +313,7 @@
             },
             keyup: function (event) {
               self._inputExpand(self.taggerInput);
-              if (event.which !== 13 && event.which !== 40) { // key up not enter or down arrow
+              if (event.which !== 13 && event.which !== 40 && event.which !== 27) { // key up not enter or down arrow or esc key
                 if ($(this).val().length > (self.options.characterThreshold - 1)) {
                   // If text is longer than the threshold start filtering and showing the filtered results
                   self.filterTags($(this).val());
