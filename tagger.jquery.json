@@ -9,12 +9,20 @@
     "tagger",
     "tag"
   ],
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "Nick Palmer",
     "url": "http://fivium.co.uk/",
     "email": "nick.palmer@fivium.co.uk"
   },
+  "maintainers": [
+    {
+      "name": "Ben Basson"
+    },
+    {
+      "name": "Mike Leonard"
+    }
+  ],
   "licenses": [
     {
       "type": "BSD-3-Clause",
