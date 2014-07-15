@@ -326,7 +326,7 @@
                   // Reload in all suggestions
                   self._loadSuggestions(self.tagsByID, true);
                   // Clear the flag
-                  this.loadedFiltered = false;
+                  self.loadedFiltered = false;
                 }
               }
               else if (event.which === 40) { // Down Arrow
@@ -376,7 +376,7 @@
                       // Reload in all suggestions
                       self._loadSuggestions(self.tagsByID, true);
                       // Clear the flag
-                      this.loadedFiltered = false;
+                      self.loadedFiltered = false;
                     }
                   }
                   else if (event.which === 40) {
