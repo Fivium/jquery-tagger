@@ -188,10 +188,22 @@
             this.taggerInput.attr("placeholder", this.options.placeholder);
           }
           
+          // Set the tab index on the input field
           this.taggerInput.attr("tabindex", this.tabIndex);
+          
+          // Esc should hide the tagger suggestions globally
           this.taggerWidget.bind('keydown', function (event) {
             if (event.target && event.which === 27) { // Esc
               self.taggerSuggestions.hide();
+            }
+          });
+          
+          // Capture the keypress event for any child elements - redirect any chars to the current input field
+          this.taggerWidget.bind('keypress', function (event) {
+            if (event.which !== 0 && event.charCode !== 0 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+              self._showSuggestions(true);
+              self._appendCharAndFilter(event);
+              event.preventDefault();
             }
           });
         }
@@ -222,8 +234,10 @@
                 && $(event.target).get(0) !== self.taggerWidget.get(0)) {
               self.taggerSuggestions.hide();
             }
+            // if clicking through to the parent div
             else if (event.target === self.taggerWidget.get(0)) {
-              self.taggerInput.focus();
+              // focus the first focusable item
+              self.taggerWidget.find("[tabindex]").first().focus();
             }
           });
 
@@ -438,6 +452,79 @@
     },
 
     /**
+     * Returns the tagger input or the tagger filter input depending on which is visible.
+     * @return jQuery wrapped InputElement
+     * @protected
+     */
+    _getVisibleInput: function () {
+      if (this.taggerFilterInput && this.taggerFilterInput.is(":visible")) {
+        return this.taggerFilterInput;
+      }
+      else {
+        return this.taggerInput;
+      }
+    },
+    
+    /**
+     * Updates the input or filter input and filtes results. Also places focus in the input
+     * after updating the value.
+     * 
+     * @param {jQuery} targetInput the jQuery wrapped input element to manipulate and focus
+     * @param {string} newValue the new value to set
+     * @protected
+     */ 
+    _updateInputAndFilter: function (targetInput, newValue) {
+      // Set the new value and focus
+      targetInput.val(newValue);
+      targetInput.focus();
+      
+      // The non-filter input needs to grow with its text content
+      if (targetInput === this.taggerInput) {
+        this._inputExpand(targetInput);
+      }
+      
+      this._filterSuggestions(newValue, false);
+    },
+    
+    /**
+     * Diverts the key press event passed to this function to whichever input is currently 
+     * visible. Should be registered as an event handler for keypress events on elements
+     * that may be focussed but are not the input being used; i.e. the drop-down arrow, 
+     * suggestion items, tags, etc.
+     * 
+     * @param {event} event the keypress event to handle
+     * @protected
+     */
+    _appendCharAndFilter: function (event) {
+      // Belt and braces
+      if (event.type !== 'keypress') {
+        throw "Wrong event type passed to _appendCharAndFilter(), expected keypress)"; 
+      }
+      
+      // Decode char to concat onto existing filter string
+      var newChar = String.fromCharCode(event.charCode);
+      
+      var targetInput = this._getVisibleInput();
+      
+      // Update the UI and filter
+      var newVal = targetInput.val() + newChar;
+      this._updateInputAndFilter(targetInput, newVal);
+    },
+
+    /**
+     * Removes the last character 
+     * @param {event} event the keypress event to handle
+     * @protected
+     */
+    _removeLastCharAndFilter: function (event) {
+      var targetInput = this._getVisibleInput();
+      
+      // Update the UI and filter
+      var newVal = targetInput.val().substring(0, targetInput.val().length-1);
+      this._updateInputAndFilter(targetInput, newVal);
+    },
+     
+    /**
      * Load tags into the suggestion list
      * @param {object} suggestableTags - Object containing members of tagID to tag object
      * @param {boolean} allowIndent - Allow indenting of suggestion lists if true
@@ -454,6 +541,7 @@
             // Handle suggestion adding
             self._addTagFromID(currentSelection.data('tagid'));
             self._selectionReset();
+            event.preventDefault();
           }
           else if (event.type === "keydown" && (event.which === 38 || (event.which === 9 && event.shiftKey))) { // Up arrow / shift+tab (Move selection up and up into the input)
             // Override default browser tab control and allow arrow keys too
@@ -467,27 +555,38 @@
             else {
               self.taggerInput.focus();
             }
+            event.preventDefault();
           }
           else if (event.type === "keydown" && (event.which === 40 || (event.which === 9 && !event.shiftKey))) { // Down arrow / tab (Move selection down, stop at the end)
             // Override default browser tab control and allow arrow keys too
             var nextTarget = $(event.target).nextAll('li[tabindex]').first();
             if (nextTarget.is('li')) {
               nextTarget.focus();
+              event.preventDefault();
             }
           }
           else if (event.type === "keyup" && event.which === 36) { // Home key
             var prevTarget = $(event.target).prevAll('li[tabindex]').last();
             if (prevTarget.is('li')) {
               prevTarget.focus();
+              event.preventDefault();
             }
           }
           else if (event.type === "keyup" && event.which === 35) { // End key
             var prevTarget = $(event.target).nextAll('li[tabindex]').last();
             if (prevTarget.is('li')) {
               prevTarget.focus();
+              event.preventDefault();
             }
           }
-
+          else if (event.type === "keyup" && event.which === 8) { // Backspace
+            self._removeLastCharAndFilter(event);
+            event.preventDefault();
+          }
+        }
+        // If the user is typing, then divert that typing to the input field
+        else if (event.type === "keypress" && event.which !== 0 && event.charCode !== 0 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+          self._appendCharAndFilter(event);
           event.preventDefault();
         }
         else {
