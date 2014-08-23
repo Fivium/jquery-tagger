@@ -231,44 +231,18 @@
           this.taggerSuggestionsButton.bind('mouseup keyup', function (event) {
             if ((event.type === "mouseup" && event.which === 1) // left click
                 || (event.type === "keyup" && (event.which === 13 || event.which === 32 || event.which === 40))) { // enter || space || down arrow
-              self._setSuggestionListDimensions();
-              self.taggerSuggestions.toggle();
-
+              // If the suggestion list is visible aleady, then toggle it off
               if (self.taggerSuggestions.is(":visible")) {
-                if (self.singleValue && self.taggerFilterInput && self.tagCount === 1) {
-                  self.taggerFilterInput.show();
-                }
-                else if (self.taggerFilterInput) {
-                  self.taggerFilterInput.hide();
-                }
-                self.taggerSuggestions.find('[tabindex]').first().focus();
+                self.taggerSuggestions.hide();
               }
-              
-              // Load suggestions on first hit
-              if (self.taggerSuggestionsList.children().length === 0) {
-                if ($.map(self.tagsByID, function(n, i) { return i;}).length > 300) {
-                  // If there are more than 300 items, show a loading item first as it could take a while
-                  $('<li class="missing">Loading...</li>').appendTo(self.taggerSuggestionsList);
-                  setTimeout(function(){
-                      // Load all suggestions into the suggestions list
-                      self._loadSuggestions(self.tagsByID, true);
-                      // Set the flag to show it's not loaded filtered results
-                      self.loadedFiltered = false;
-                    }
-                  , 300); // Fixed timeout of 300ms for now
-                }
-                else {
-                  // If less than 300 items just load all suggestions into the suggestions list
-                  self._loadSuggestions(self.tagsByID, true);
-                  // Set the flag to show it's not loaded filtered results
-                  self.loadedFiltered = false;
-                }
+              // otherwise show it
+              else {
+                self._showSuggestions(true);
               }
-
               event.preventDefault();
             }
           });
-
+          
           // Expand the input field to fit its contents
           this._inputExpand(this.taggerInput);
 
@@ -314,49 +288,10 @@
             keyup: function (event) {
               self._inputExpand(self.taggerInput);
               if (event.which !== 13 && event.which !== 40 && event.which !== 27) { // key up not enter or down arrow or esc key
-                if ($(this).val().length > (self.options.characterThreshold - 1)) {
-                  // If text is longer than the threshold start filtering and showing the filtered results
-                  self.filterTags($(this).val());
-                  self._showSuggestions();
-                }
-                else if (self.loadedFiltered) {
-                  // If under the threshold and was previously filtered, reset the list
-                  // Hide it
-                  self.taggerSuggestions.hide();
-                  // Reload in all suggestions
-                  self._loadSuggestions(self.tagsByID, true);
-                  // Clear the flag
-                  self.loadedFiltered = false;
-                }
+                self._filterSuggestions($(this).val(), false);
               }
               else if (event.which === 40) { // Down Arrow
-                self._showSuggestions();
-
-                // Load suggestions on first hit
-                if (self.taggerSuggestionsList.children().length === 0) {
-                  if ($.map(self.tagsByID, function(n, i) { return i;}).length > 300) {
-                    // If there are more than 300 items, show a loading item first as it could take a while
-                    $('<li class="missing">Loading...</li>').appendTo(self.taggerSuggestionsList);
-                    setTimeout(function(){
-                        // Load all suggestions into the suggestions list
-                        self._loadSuggestions(self.tagsByID, true);
-                        // Set the flag to show it's not loaded filtered results
-                        self.loadedFiltered = false;
-                      }
-                    , 300); // Fixed timeout of 300ms for now
-                  }
-                  else {
-                  // If less than 300 items just load all suggestions into the suggestions list
-                    self._loadSuggestions(self.tagsByID, true);
-                    // Set the flag to show it's not loaded filtered results
-                    self.loadedFiltered = false;
-                  }
-                }
-
-                // Focus top item in suggestion list
-                self.taggerSuggestionsList.children('[tabindex]').first().focus();
-
-                event.preventDefault();
+                self._showSuggestions(true);
               }
             }
           });
@@ -367,17 +302,7 @@
               keyup: function (event) {
                 if (event.target) {
                   if (event.which !== 13 && event.which !== 40) { // key up not enter or down arrow
-                    if ($(this).val().length > (self.options.characterThreshold - 1)) {
-                      // If text is longer than the threshold start filtering and showing the filtered results
-                      self.filterTags($(this).val());
-                      self._showSuggestions();
-                    }
-                    else if (self.loadedFiltered) {
-                      // Reload in all suggestions
-                      self._loadSuggestions(self.tagsByID, true);
-                      // Clear the flag
-                      self.loadedFiltered = false;
-                    }
+                    self._filterSuggestions($(this).val(), true);
                   }
                   else if (event.which === 40) {
                     // Focus top item in suggestion list
@@ -691,19 +616,83 @@
         }
       }
     },
-
+    
     /**
-     * Show the suggestions list, making sure it's the correct size
+     * Filters the suggestions, using a provided value. 
+     * @param {string} value the text string to filter by
+     * @param {boolean} hideSuggestions boolean - should the suggestions be hidden 
+     *   if the value is less than the required character threshold?
      * @protected
      */
-    _showSuggestions: function () {
+    _filterSuggestions: function (value, hideSuggestions) {
+      if (value.length > (this.options.characterThreshold - 1)) {
+        // If text is longer than the threshold start filtering and showing the filtered results
+        this.filterTags(value);
+        this._showSuggestions(false);
+      }
+      // If under the threshold and was previously filtered, reset the list
+      else if (this.loadedFiltered) {
+        if (hideSuggestions) {
+          // Hide it
+          this.taggerSuggestions.hide();
+        }
+        // Reload in all suggestions
+        this._loadSuggestions(this.tagsByID, true);
+        // Clear the flag
+        this.loadedFiltered = false;
+      }
+    },
+
+    /**
+     * Show the suggestions list, making sure it's the correct size. Will initialise contents
+     * if necessary. Will focus first list item if requested to do so.
+     * @param {boolean} focusFirstItem whether the first item in the suggestion list received focus
+     * @protected
+     */
+    _showSuggestions: function (focusFirstItem) {
       // Set width
       this._setSuggestionListDimensions();
-      // Show list
-      if (this.taggerFilterInput && this.taggerInput.is(":visible")) {
+
+      // Show the container
+      this.taggerSuggestions.show();      
+
+      // Show the filter if necessary
+      if (this.singleValue && this.taggerFilterInput && this.tagCount === 1) {
+        this.taggerFilterInput.show();
+      }
+      else if (this.taggerFilterInput) {
         this.taggerFilterInput.hide();
       }
-      this.taggerSuggestions.show();
+      
+      var self = this;
+      var loadSuggestionsInternal = function () {
+        self._loadSuggestions(self.tagsByID, true);
+        // Set the flag to show it's not loaded filtered results
+        self.loadedFiltered = false;
+        // Focus the first item in the list, which may be the filter, or may be an option
+        if (focusFirstItem) {
+          self.taggerSuggestions.find('[tabindex]:visible').first().focus();
+        }
+      }
+      
+      // Load suggestions on first hit
+      if (this.taggerSuggestionsList.children().length === 0) {
+        // If there are more than 300 items, show a loading item first as it could take a while
+        if ($.map(this.tagsByID, function(n, i) { return i;}).length > 300) {
+          $('<li class="missing">Loading...</li>').appendTo(this.taggerSuggestionsList);
+          setTimeout(loadSuggestionsInternal, 300); // Fixed timeout of 300ms for now
+        }
+        // If less than 300 items just load all suggestions into the suggestions list
+        else {
+          loadSuggestionsInternal();
+        }
+      }
+      else {
+        // Focus the first item in the list, which may be the filter, or may be an option
+        if (focusFirstItem) {
+          this.taggerSuggestions.find('[tabindex]:visible').first().focus();
+        }
+      }
     },
 
     /**
