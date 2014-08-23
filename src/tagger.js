@@ -190,7 +190,7 @@
           
           this.taggerInput.attr("tabindex", this.tabIndex);
           this.taggerWidget.bind('keydown', function (event) {
-            if (event.target && event.which === 27) {
+            if (event.target && event.which === 27) { // Esc
               self.taggerSuggestions.hide();
             }
           });
@@ -471,7 +471,7 @@
 
     /**
      * Filter the available tags by the input text and load suggestions into suggestion list
-     * @protected
+     * @param {string} value the string value to filter by
      */
     filterTags: function (value) {
       var searchString = value;
@@ -798,7 +798,7 @@
         tag.text($('<div/>').html(tagData.key).text());
         tag.data("tagid", tagID);
         var tagRemover = $('<span class="removetag hittarget"><img src="' + this.options.baseURL + this.options.imgRemove + '" /></span>');
-        // Bind event to the tag remover to deal with mouse click
+        // Bind event to the tag remover (x) to deal with mouse click and enter key
         tagRemover.bind({
           'mouseup': function (event) {
             if (event.which === 1) { // Left Mouse Click
