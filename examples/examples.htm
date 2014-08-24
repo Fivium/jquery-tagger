@@ -351,6 +351,48 @@ label {
 </pre>
       </td>
     </tr>
+    <tr>
+      <th>
+        Programmatic Focus
+      </th>
+      <td>
+        <select name="sel9" id="sel9" size="11">
+          <option value="item0">Jonah Eldredge</option>
+          <option value="item1">Ray Duran</option>
+          <option value="item2">Gavin Kovach</option>
+          <option value="item3">Lawrence Nesmith</option>
+          <option value="item4">Sebastian Seneca</option>
+          <option value="item5">Marshall Klemme</option>
+          <option value="item6">Grace Vashon</option>
+          <option value="item7">Magaret Farwell</option>
+          <option value="item8">Lenora Desrosier</option>
+          <option value="item9">Tammi Severt</option>
+          <option value="item10">Sandra Talbert</option>
+        </select>
+        <button onclick="document.getElementById('sel9').focus();">Focus</button>
+        <script>
+          $(function(){
+            $('#sel9').tagger({
+              availableTags: peopleData
+            , baseURL: '../img/'
+            , suggestMaxHeight: '6em'
+            });
+          });
+        </script>
+<pre>
+  &lt;script&gt;
+    $(function(){
+      $('#sel9').tagger({
+        availableTags: peopleData
+      , baseURL: '../img/'
+      , suggestMaxHeight: '6em'
+      });
+    });
+  &lt;/script&gt;
+  &lt;button onclick="document.getElementById('sel9').focus();"&gt;Focus&lt;/button&gt;
+</pre>
+      </td>
+    </tr>
   </table>
   <!-- Pad out the page a bit -->
   <div style="min-height: 200px;">
