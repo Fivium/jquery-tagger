@@ -236,14 +236,20 @@
 
           // Event listener to hide suggestions list if clicking outside this tagger widget
           $(document).mouseup(function (event) {
-            if ($(event.target).parents(".tagger").get(0) !== self.taggerWidget.get(0)
-                && $(event.target).get(0) !== self.taggerWidget.get(0)) {
+            var selfTaggerWidget = self.taggerWidget.get(0);
+            if ($(event.target).parents(".tagger").get(0) !== selfTaggerWidget && event.target !== selfTaggerWidget) {
               self.taggerSuggestions.hide();
             }
             // if clicking through to the parent div
-            else if (event.target === self.taggerWidget.get(0)) {
+            else if (event.target === selfTaggerWidget) {
               // focus the first focusable item
-              self.taggerWidget.find("[tabindex]").first().focus();
+              if (!self.singleValue || self.tagCount === 0) {
+                self.taggerWidget.find("input[tabindex]:visible").first().focus();
+              }
+              // In single select mode, with a single tag selected already
+              // we should focus the first item in the suggstion list (which
+              // will be the filter input)
+              self._showSuggestions(self.singleValue && self.tagCount === 1);
             }
           });
 
@@ -278,7 +284,7 @@
                     // If they hit enter with just one item in the suggestion list, add it, otherwise focus the top item
                     if (self.taggerSuggestionsList.children('[tabindex]').length === 1) {
                       self._addTagFromID(self.taggerSuggestionsList.children('[tabindex]').first().data('tagid'));
-                      self._selectionReset();
+                      self._selectionReset(true, true);
                     }
                     else {
                       self.taggerSuggestionsList.children('[tabindex]').first().focus();
@@ -313,6 +319,12 @@
               else if (event.which === 40) { // Down Arrow
                 self._showSuggestions(true);
               }
+            }, 
+            mouseup: function (event) {
+              // In single select mode, with a single tag selected already
+              // we should focus the first item in the suggstion list (which
+              // will be the filter input)
+              self._showSuggestions(self.singleValue && self.tagCount === 1);
             }
           });
           
@@ -346,7 +358,7 @@
                       // If they hit enter with just one item in the suggestion list, add it, otherwise focus the top item
                       if (self.taggerSuggestionsList.children('[tabindex]').length === 1) {
                         self._addTagFromID(self.taggerSuggestionsList.children('[tabindex]').first().data('tagid'));
-                        self._selectionReset();
+                        self._selectionReset(true, true);
                       }
                       else {
                         self.taggerSuggestionsList.children('[tabindex]').first().focus();
@@ -485,9 +497,10 @@
      * @protected
      */ 
     _updateInputAndFilter: function (targetInput, newValue) {
-      // Set the new value and focus
-      targetInput.val(newValue);
+      // Set focus and new value - order is important otherwise the cursor can
+      // sometimes end up before the text was inserted
       targetInput.focus();
+      targetInput.val(newValue);
       
       // The non-filter input needs to grow with its text content
       if (targetInput === this.taggerInput) {
@@ -551,7 +564,7 @@
           if ((event.type === "mouseup" && event.which === 1) || (event.type === "keyup" && event.which === 13)) { // Click or enter
             // Handle suggestion adding
             self._addTagFromID(currentSelection.data('tagid'));
-            self._selectionReset();
+            self._selectionReset(true, true);
             event.preventDefault();
           }
           else if (event.type === "keydown" && (event.which === 38 || (event.which === 9 && event.shiftKey))) { // Up arrow / shift+tab (Move selection up and up into the input)
@@ -836,13 +849,17 @@
 
     /**
      * After selecting a tag from the suggestions, reset the tagger widget
+     * @param {boolean} shouldHideMenu should the menu be hidden?
+     * @param {boolean} shouldClearInputs should the input fields be cleared?
      * @protected
      */
-    _selectionReset: function () {
+    _selectionReset: function (shouldHideMenu, shouldClearInputs) {
       // Clear input
-      this.taggerInput.val('');
-      if (this.taggerFilterInput) {
-        this.taggerFilterInput.val('');
+      if (shouldClearInputs) {
+        this.taggerInput.val('');
+        if (this.taggerFilterInput) {
+          this.taggerFilterInput.val('');
+        }
       }
       // Expand properly
       this._inputExpand(this.taggerInput);
@@ -853,7 +870,9 @@
       // Focus input
       this.taggerInput.focus();
       // Hide suggestion list
-      this.taggerSuggestions.hide();
+      if (shouldHideMenu) {
+        this.taggerSuggestions.hide();
+      }
     },
 
     /**
@@ -879,7 +898,7 @@
         var tmpActionFireStatus = this.canFireActions;
         this.canFireActions = false;
         $('.tag', this.taggerWidget).each(function () {
-          self._removeTagByElem($(this));
+          self._removeTagByElem($(this), true, true);
         });
         $('.removetag', this.taggerWidget).each(function () {
           $(this).remove();
@@ -896,27 +915,58 @@
         tag.text($('<div/>').html(tagData.key).text());
         tag.data("tagid", tagID);
         var tagRemover = $('<span class="removetag hittarget"><img src="' + this.options.baseURL + this.options.imgRemove + '" /></span>');
+        
+        // Reusable tag removal closure
+        var tagRemoveProcessing = function () {
+          // If the menu is open, keep it open...
+          if (self.taggerSuggestions.is(':visible')) {
+            // Check to see if the filter has any value
+            var shouldUseFilterValue = self.taggerFilterInput && self.taggerFilterInput.val().length > 0;
+            // If the filter has a value, we can keep it, so don't clear the inputs just yet - we'll do that 
+            // manually here instead in the setTimeout() instead of immediately as part of removing the tag
+            self._removeTagByElem(tag, false, !shouldUseFilterValue);            
+            self._showSuggestions(false);
+            // Remove the tag (x) with a timeout, otherwise the suggestions will be hidden. This happens
+            // because the mouseup event propagates to the document, and if the element has
+            // been removed already, the event.target won't have the tagger div as its ancestor
+            // and therefore it is assumed that the user has clicked outside of the tagger
+            setTimeout(function(){
+              tagRemover.remove();
+              self.taggerInput.focus();
+              // If the filter has a value we can use, move that value to the main 
+              // input and filter the suggestions
+              if (shouldUseFilterValue) {
+                self._updateInputAndFilter(self.taggerInput, self.taggerFilterInput.val());
+              }
+            }, 0);
+          }
+          else {
+            // Remove the tag
+            self._removeTagByElem(tag, false, true);            
+            tagRemover.remove();
+            self.taggerInput.focus();
+          }
+        };
+        
         // Bind event to the tag remover (x) to deal with mouse click and enter key
         tagRemover.bind({
           'mouseup': function (event) {
             if (event.which === 1) { // Left Mouse Click
-              self._removeTagByElem(tag);
-              tagRemover.remove();
-              self.taggerInput.focus();
+              tagRemoveProcessing();
             }
+            event.preventDefault();
           },
           'keyup': function (event) {
             if (event.which === 13) { // Enter key
-              self._removeTagByElem(tag);
-              tagRemover.remove();
-              self.taggerInput.focus();
+              tagRemoveProcessing();
             }
           }
         });
+        
         // Bind event to the whole tag to deal with backspaces, arrow keys
         tag.bind('keydown', function (event) {
           if (event.which === 8) { // Backspace
-            self._removeTagByElem($(event.target));
+            self._removeTagByElem($(event.target), false, true);
             if (tagRemover) {
               tagRemover.remove();
             }
@@ -941,9 +991,16 @@
             }
           }
         });
-
-        // Change the way it is displayed in single-value mode
+        
         if (this.singleValue) {
+          // In single select mode, with a single tag selected already
+          // we should focus the first item in the suggstion list (which
+          // will be the filter input)          
+          tag.bind('click', function (event) {
+            self._showSuggestions(self.singleValue && self.tagCount === 1);
+          });
+        
+          // Change the way it is displayed in single-value mode
           this.taggerInput.hide();
           tag.addClass('tag-single');
           
@@ -997,9 +1054,11 @@
      * Remove a tag, given a tags ID, to the widget and mark it as non-selected
      * in the underlying select elements option list
      * @param {HTMLFragment} tagElem - Div element of the tag clicked in the widget
+     * @param {boolean} shouldHideMenu - should the menu be hidden?
+     * @param {boolean} shouldClearInputs should the input fields be cleared?
      * @protected
      */
-    _removeTagByElem: function (tagElem) {
+    _removeTagByElem: function (tagElem, shouldHideMenu, shouldClearInputs) {
       // Get ID of tag about to be removed
       var tagID = tagElem.data('tagid');
       // Remove tag div
@@ -1016,7 +1075,7 @@
       // Mark this tag as no longer being displayed
       this.tagsByID[tagID].displaying = false;
       // Reset input
-      this._selectionReset();
+      this._selectionReset(shouldHideMenu, shouldClearInputs);
       // Show the input if it's in single-select mode
       if (this.singleValue) {
         this.taggerInput.show();
