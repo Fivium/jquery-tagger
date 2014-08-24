@@ -612,7 +612,7 @@
             continue;
           }
           // Create and add the suggestion to the suggestion list
-          var suggestion = $('<li></li>').attr("tabindex", "0").appendTo(this.taggerSuggestionsList);
+          var suggestion = $('<li></li>').attr("tabindex", this.tabIndex).appendTo(this.taggerSuggestionsList);
           if (tag.suggestion && tag.suggestion !== null && tag.suggestion !== '') {
             suggestion.html($('<div/>').html(tag.suggestion).text());
           }
