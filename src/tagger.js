@@ -188,10 +188,22 @@
             this.taggerInput.attr("placeholder", this.options.placeholder);
           }
           
+          // Set the tab index on the input field
           this.taggerInput.attr("tabindex", this.tabIndex);
+          
+          // Esc should hide the tagger suggestions globally
           this.taggerWidget.bind('keydown', function (event) {
-            if (event.target && event.which === 27) {
+            if (event.target && event.which === 27) { // Esc
               self.taggerSuggestions.hide();
+            }
+          });
+          
+          // Capture the keypress event for any child elements - redirect any chars to the current input field
+          this.taggerWidget.bind('keypress', function (event) {
+            if (event.which !== 0 && event.charCode !== 0 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+              self._showSuggestions(true);
+              self._appendCharAndFilter(event);
+              event.preventDefault();
             }
           });
         }
@@ -222,8 +234,10 @@
                 && $(event.target).get(0) !== self.taggerWidget.get(0)) {
               self.taggerSuggestions.hide();
             }
+            // if clicking through to the parent div
             else if (event.target === self.taggerWidget.get(0)) {
-              self.taggerInput.focus();
+              // focus the first focusable item
+              self.taggerWidget.find("[tabindex]").first().focus();
             }
           });
 
@@ -231,44 +245,18 @@
           this.taggerSuggestionsButton.bind('mouseup keyup', function (event) {
             if ((event.type === "mouseup" && event.which === 1) // left click
                 || (event.type === "keyup" && (event.which === 13 || event.which === 32 || event.which === 40))) { // enter || space || down arrow
-              self._setSuggestionListDimensions();
-              self.taggerSuggestions.toggle();
-
+              // If the suggestion list is visible aleady, then toggle it off
               if (self.taggerSuggestions.is(":visible")) {
-                if (self.singleValue && self.taggerFilterInput && self.tagCount === 1) {
-                  self.taggerFilterInput.show();
-                }
-                else if (self.taggerFilterInput) {
-                  self.taggerFilterInput.hide();
-                }
-                self.taggerSuggestions.find('[tabindex]').first().focus();
+                self.taggerSuggestions.hide();
               }
-              
-              // Load suggestions on first hit
-              if (self.taggerSuggestionsList.children().length === 0) {
-                if ($.map(self.tagsByID, function(n, i) { return i;}).length > 300) {
-                  // If there are more than 300 items, show a loading item first as it could take a while
-                  $('<li class="missing">Loading...</li>').appendTo(self.taggerSuggestionsList);
-                  setTimeout(function(){
-                      // Load all suggestions into the suggestions list
-                      self._loadSuggestions(self.tagsByID, true);
-                      // Set the flag to show it's not loaded filtered results
-                      self.loadedFiltered = false;
-                    }
-                  , 300); // Fixed timeout of 300ms for now
-                }
-                else {
-                  // If less than 300 items just load all suggestions into the suggestions list
-                  self._loadSuggestions(self.tagsByID, true);
-                  // Set the flag to show it's not loaded filtered results
-                  self.loadedFiltered = false;
-                }
+              // otherwise show it
+              else {
+                self._showSuggestions(true);
               }
-
               event.preventDefault();
             }
           });
-
+          
           // Expand the input field to fit its contents
           this._inputExpand(this.taggerInput);
 
@@ -314,49 +302,10 @@
             keyup: function (event) {
               self._inputExpand(self.taggerInput);
               if (event.which !== 13 && event.which !== 40 && event.which !== 27) { // key up not enter or down arrow or esc key
-                if ($(this).val().length > (self.options.characterThreshold - 1)) {
-                  // If text is longer than the threshold start filtering and showing the filtered results
-                  self.filterTags($(this).val());
-                  self._showSuggestions();
-                }
-                else if (self.loadedFiltered) {
-                  // If under the threshold and was previously filtered, reset the list
-                  // Hide it
-                  self.taggerSuggestions.hide();
-                  // Reload in all suggestions
-                  self._loadSuggestions(self.tagsByID, true);
-                  // Clear the flag
-                  this.loadedFiltered = false;
-                }
+                self._filterSuggestions($(this).val(), false);
               }
               else if (event.which === 40) { // Down Arrow
-                self._showSuggestions();
-
-                // Load suggestions on first hit
-                if (self.taggerSuggestionsList.children().length === 0) {
-                  if ($.map(self.tagsByID, function(n, i) { return i;}).length > 300) {
-                    // If there are more than 300 items, show a loading item first as it could take a while
-                    $('<li class="missing">Loading...</li>').appendTo(self.taggerSuggestionsList);
-                    setTimeout(function(){
-                        // Load all suggestions into the suggestions list
-                        self._loadSuggestions(self.tagsByID, true);
-                        // Set the flag to show it's not loaded filtered results
-                        self.loadedFiltered = false;
-                      }
-                    , 300); // Fixed timeout of 300ms for now
-                  }
-                  else {
-                  // If less than 300 items just load all suggestions into the suggestions list
-                    self._loadSuggestions(self.tagsByID, true);
-                    // Set the flag to show it's not loaded filtered results
-                    self.loadedFiltered = false;
-                  }
-                }
-
-                // Focus top item in suggestion list
-                self.taggerSuggestionsList.children('[tabindex]').first().focus();
-
-                event.preventDefault();
+                self._showSuggestions(true);
               }
             }
           });
@@ -367,17 +316,7 @@
               keyup: function (event) {
                 if (event.target) {
                   if (event.which !== 13 && event.which !== 40) { // key up not enter or down arrow
-                    if ($(this).val().length > (self.options.characterThreshold - 1)) {
-                      // If text is longer than the threshold start filtering and showing the filtered results
-                      self.filterTags($(this).val());
-                      self._showSuggestions();
-                    }
-                    else if (self.loadedFiltered) {
-                      // Reload in all suggestions
-                      self._loadSuggestions(self.tagsByID, true);
-                      // Clear the flag
-                      this.loadedFiltered = false;
-                    }
+                    self._filterSuggestions($(this).val(), true);
                   }
                   else if (event.which === 40) {
                     // Focus top item in suggestion list
@@ -471,7 +410,7 @@
 
     /**
      * Filter the available tags by the input text and load suggestions into suggestion list
-     * @protected
+     * @param {string} value the string value to filter by
      */
     filterTags: function (value) {
       var searchString = value;
@@ -513,6 +452,79 @@
     },
 
     /**
+     * Returns the tagger input or the tagger filter input depending on which is visible.
+     * @return jQuery wrapped InputElement
+     * @protected
+     */
+    _getVisibleInput: function () {
+      if (this.taggerFilterInput && this.taggerFilterInput.is(":visible")) {
+        return this.taggerFilterInput;
+      }
+      else {
+        return this.taggerInput;
+      }
+    },
+    
+    /**
+     * Updates the input or filter input and filtes results. Also places focus in the input
+     * after updating the value.
+     * 
+     * @param {jQuery} targetInput the jQuery wrapped input element to manipulate and focus
+     * @param {string} newValue the new value to set
+     * @protected
+     */ 
+    _updateInputAndFilter: function (targetInput, newValue) {
+      // Set the new value and focus
+      targetInput.val(newValue);
+      targetInput.focus();
+      
+      // The non-filter input needs to grow with its text content
+      if (targetInput === this.taggerInput) {
+        this._inputExpand(targetInput);
+      }
+      
+      this._filterSuggestions(newValue, false);
+    },
+    
+    /**
+     * Diverts the key press event passed to this function to whichever input is currently 
+     * visible. Should be registered as an event handler for keypress events on elements
+     * that may be focussed but are not the input being used; i.e. the drop-down arrow, 
+     * suggestion items, tags, etc.
+     * 
+     * @param {event} event the keypress event to handle
+     * @protected
+     */
+    _appendCharAndFilter: function (event) {
+      // Belt and braces
+      if (event.type !== 'keypress') {
+        throw "Wrong event type passed to _appendCharAndFilter(), expected keypress)"; 
+      }
+      
+      // Decode char to concat onto existing filter string
+      var newChar = String.fromCharCode(event.charCode);
+      
+      var targetInput = this._getVisibleInput();
+      
+      // Update the UI and filter
+      var newVal = targetInput.val() + newChar;
+      this._updateInputAndFilter(targetInput, newVal);
+    },
+
+    /**
+     * Removes the last character 
+     * @param {event} event the keypress event to handle
+     * @protected
+     */
+    _removeLastCharAndFilter: function (event) {
+      var targetInput = this._getVisibleInput();
+      
+      // Update the UI and filter
+      var newVal = targetInput.val().substring(0, targetInput.val().length-1);
+      this._updateInputAndFilter(targetInput, newVal);
+    },
+     
+    /**
      * Load tags into the suggestion list
      * @param {object} suggestableTags - Object containing members of tagID to tag object
      * @param {boolean} allowIndent - Allow indenting of suggestion lists if true
@@ -529,6 +541,7 @@
             // Handle suggestion adding
             self._addTagFromID(currentSelection.data('tagid'));
             self._selectionReset();
+            event.preventDefault();
           }
           else if (event.type === "keydown" && (event.which === 38 || (event.which === 9 && event.shiftKey))) { // Up arrow / shift+tab (Move selection up and up into the input)
             // Override default browser tab control and allow arrow keys too
@@ -542,27 +555,38 @@
             else {
               self.taggerInput.focus();
             }
+            event.preventDefault();
           }
           else if (event.type === "keydown" && (event.which === 40 || (event.which === 9 && !event.shiftKey))) { // Down arrow / tab (Move selection down, stop at the end)
             // Override default browser tab control and allow arrow keys too
             var nextTarget = $(event.target).nextAll('li[tabindex]').first();
             if (nextTarget.is('li')) {
               nextTarget.focus();
+              event.preventDefault();
             }
           }
           else if (event.type === "keyup" && event.which === 36) { // Home key
             var prevTarget = $(event.target).prevAll('li[tabindex]').last();
             if (prevTarget.is('li')) {
               prevTarget.focus();
+              event.preventDefault();
             }
           }
           else if (event.type === "keyup" && event.which === 35) { // End key
             var prevTarget = $(event.target).nextAll('li[tabindex]').last();
             if (prevTarget.is('li')) {
               prevTarget.focus();
+              event.preventDefault();
             }
           }
-
+          else if (event.type === "keyup" && event.which === 8) { // Backspace
+            self._removeLastCharAndFilter(event);
+            event.preventDefault();
+          }
+        }
+        // If the user is typing, then divert that typing to the input field
+        else if (event.type === "keypress" && event.which !== 0 && event.charCode !== 0 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+          self._appendCharAndFilter(event);
           event.preventDefault();
         }
         else {
@@ -691,19 +715,83 @@
         }
       }
     },
-
+    
     /**
-     * Show the suggestions list, making sure it's the correct size
+     * Filters the suggestions, using a provided value. 
+     * @param {string} value the text string to filter by
+     * @param {boolean} hideSuggestions boolean - should the suggestions be hidden 
+     *   if the value is less than the required character threshold?
      * @protected
      */
-    _showSuggestions: function () {
+    _filterSuggestions: function (value, hideSuggestions) {
+      if (value.length > (this.options.characterThreshold - 1)) {
+        // If text is longer than the threshold start filtering and showing the filtered results
+        this.filterTags(value);
+        this._showSuggestions(false);
+      }
+      // If under the threshold and was previously filtered, reset the list
+      else if (this.loadedFiltered) {
+        if (hideSuggestions) {
+          // Hide it
+          this.taggerSuggestions.hide();
+        }
+        // Reload in all suggestions
+        this._loadSuggestions(this.tagsByID, true);
+        // Clear the flag
+        this.loadedFiltered = false;
+      }
+    },
+
+    /**
+     * Show the suggestions list, making sure it's the correct size. Will initialise contents
+     * if necessary. Will focus first list item if requested to do so.
+     * @param {boolean} focusFirstItem whether the first item in the suggestion list received focus
+     * @protected
+     */
+    _showSuggestions: function (focusFirstItem) {
       // Set width
       this._setSuggestionListDimensions();
-      // Show list
-      if (this.taggerFilterInput && this.taggerInput.is(":visible")) {
+
+      // Show the container
+      this.taggerSuggestions.show();      
+
+      // Show the filter if necessary
+      if (this.singleValue && this.taggerFilterInput && this.tagCount === 1) {
+        this.taggerFilterInput.show();
+      }
+      else if (this.taggerFilterInput) {
         this.taggerFilterInput.hide();
       }
-      this.taggerSuggestions.show();
+      
+      var self = this;
+      var loadSuggestionsInternal = function () {
+        self._loadSuggestions(self.tagsByID, true);
+        // Set the flag to show it's not loaded filtered results
+        self.loadedFiltered = false;
+        // Focus the first item in the list, which may be the filter, or may be an option
+        if (focusFirstItem) {
+          self.taggerSuggestions.find('[tabindex]:visible').first().focus();
+        }
+      }
+      
+      // Load suggestions on first hit
+      if (this.taggerSuggestionsList.children().length === 0) {
+        // If there are more than 300 items, show a loading item first as it could take a while
+        if ($.map(this.tagsByID, function(n, i) { return i;}).length > 300) {
+          $('<li class="missing">Loading...</li>').appendTo(this.taggerSuggestionsList);
+          setTimeout(loadSuggestionsInternal, 300); // Fixed timeout of 300ms for now
+        }
+        // If less than 300 items just load all suggestions into the suggestions list
+        else {
+          loadSuggestionsInternal();
+        }
+      }
+      else {
+        // Focus the first item in the list, which may be the filter, or may be an option
+        if (focusFirstItem) {
+          this.taggerSuggestions.find('[tabindex]:visible').first().focus();
+        }
+      }
     },
 
     /**
@@ -798,7 +886,7 @@
         tag.text($('<div/>').html(tagData.key).text());
         tag.data("tagid", tagID);
         var tagRemover = $('<span class="removetag hittarget"><img src="' + this.options.baseURL + this.options.imgRemove + '" /></span>');
-        // Bind event to the tag remover to deal with mouse click
+        // Bind event to the tag remover (x) to deal with mouse click and enter key
         tagRemover.bind({
           'mouseup': function (event) {
             if (event.which === 1) { // Left Mouse Click
