@@ -201,6 +201,12 @@
           // Capture the keypress event for any child elements - redirect any chars to the current input field
           this.taggerWidget.bind('keypress', function (event) {
             if (event.which !== 0 && event.charCode !== 0 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+              // If the keypress came from the main input or the filter, ignore this event or we'll potentially
+              // just get in the way of the character being inserted and it'll be put at the end, instead of wherever
+              // typed
+              if (event.target === self.taggerInput.get(0) || (self.taggerFilterInput && event.target === self.taggerFilterInput.get(0))) {
+                return;
+              }
               self._showSuggestions(true);
               self._appendCharAndFilter(event);
               event.preventDefault();
@@ -592,7 +598,6 @@
         // If the user is typing, then divert that typing to the input field
         else if (event.type === "keypress" && event.which !== 0 && event.charCode !== 0 && !event.ctrlKey && !event.metaKey && !event.altKey) {
           self._appendCharAndFilter(event);
-          event.preventDefault();
         }
         else {
           // Deal with setting focus properly and displaying the focus for IE6
