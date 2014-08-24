@@ -6,6 +6,7 @@
   font-size: 10pt;
   padding: 1px 1px 0 1px;
   min-height: 19px;
+  display: inline-block;
 }
 .tagger-readonly {
   background-color: #ebebeb;
