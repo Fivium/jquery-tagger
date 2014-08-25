@@ -246,10 +246,16 @@
               if (!self.singleValue || self.tagCount === 0) {
                 self.taggerWidget.find("input[tabindex]:visible").first().focus();
               }
-              // In single select mode, with a single tag selected already
-              // we should focus the first item in the suggstion list (which
-              // will be the filter input)
-              self._showSuggestions(self.singleValue && self.tagCount === 1);
+              // For now, only show the list automatically on click if we have a single value selected
+              // When performance of the suggestion list building is improved, we can enable this functionality
+              // for multi selectors and empty taggers - note redundant boolean logic preserved so that the following
+              // suggestion parameter is still valid if this check is removed
+              if (self.singleValue && self.tagCount === 1) {
+                // In single select mode, with a single tag selected already
+                // we should focus the first item in the suggstion list (which
+                // will be the filter input)
+                self._showSuggestions(self.singleValue && self.tagCount === 1);
+              }
             }
           });
 
@@ -321,10 +327,17 @@
               }
             }, 
             mouseup: function (event) {
-              // In single select mode, with a single tag selected already
-              // we should focus the first item in the suggstion list (which
-              // will be the filter input)
-              self._showSuggestions(self.singleValue && self.tagCount === 1);
+            
+              // For now, only show the list automatically on click if we have a single value selected
+              // When performance of the suggestion list building is improved, we can enable this functionality
+              // for multi selectors and empty taggers - note redundant boolean logic preserved so that the following
+              // suggestion parameter is still valid if this check is removed
+              if (self.singleValue && self.tagCount === 1) {
+                // In single select mode, with a single tag selected already
+                // we should focus the first item in the suggstion list (which
+                // will be the filter input)
+                self._showSuggestions(self.singleValue && self.tagCount === 1);
+              }
             }
           });
           
