@@ -88,6 +88,7 @@
   outline: none;
   cursor: text;
   margin: 0 0 1px 4px;
+  padding: 0px;
 }
 
 .tagger .filtertxt {
@@ -117,6 +118,7 @@
   overflow: auto;
   overflow-x: hidden;
   border: 1px solid #aaa;
+  z-index: 9999;
 }
 
 .tagger .suggestions ul {
