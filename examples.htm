@@ -7,8 +7,8 @@
   <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-  <link rel="stylesheet" type="text/css" href="../src/tagger.css" />
-  <script src="../src/tagger.js"></script>
+  <link rel="stylesheet" type="text/css" href="tagger.css" />
+  <script src="tagger.js"></script>
   <script src="data.json"></script>
 </head>
 <body>
@@ -52,7 +52,9 @@
             $('#sel1').tagger({
               availableTags: peopleData
             , preselectedTags: ["item0", "item1", "item8", "item11"]
-            , baseURL: '../img/'
+            , imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
             , displayHierarchy: false
             , indentMultiplier: 2
             , fieldWidth: null
@@ -65,7 +67,9 @@
       $(<span style='color:#2a00ff; '>'#sel1'</span>).tagger({
         availableTags: peopleData
       , preselectedTags: [<span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>item0</span><span style='color:#2a00ff; '>"</span>, <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>item1</span><span style='color:#2a00ff; '>"</span>, <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>item8</span><span style='color:#2a00ff; '>"</span>, <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>item11</span><span style='color:#2a00ff; '>"</span>]
-      , baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+      , imgDownArrow: <span style='color:#2a00ff; '>'img/dropdown.png'</span>
+      , imgRemove: <span style='color:#2a00ff; '>'img/remove.png'</span>
+      , baseURL: <span style='color:#2a00ff; '>''</span>
       , displayHierarchy: <span style='color:#7f0055; font-weight:bold; '>false</span>
       , indentMultiplier: 2
       , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
@@ -98,7 +102,9 @@
           $(function(){
             $('#sel2').tagger({
               availableTags: peopleData
-            , baseURL: '../img/'
+            , imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
             , placeholder: 'Person'
             , caseSensitive: true
             , displayHierarchy: true
@@ -116,7 +122,9 @@
     $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
       $(<span style='color:#2a00ff; '>'#sel2'</span>).tagger({
         availableTags: peopleData
-      , baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+      , imgDownArrow: <span style='color:#2a00ff; '>'img/dropdown.png'</span>
+      , imgRemove: <span style='color:#2a00ff; '>'img/remove.png'</span>
+      , baseURL: <span style='color:#2a00ff; '>''</span>
       , placeholder: <span style='color:#2a00ff; '>'Person'</span>
       , caseSensitive: <span style='color:#7f0055; font-weight:bold; '>true</span>
       , displayHierarchy: <span style='color:#7f0055; font-weight:bold; '>true</span>
@@ -155,7 +163,9 @@
           $(function(){
             $('#sel3').tagger({
               availableTags: peopleData
-            , baseURL: '../img/'
+            , imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
             , placeholder: 'Email'
             , tabindexOffset: 200
             , suggestMaxHeight: '6em'
@@ -168,7 +178,9 @@
     $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
       $(<span style='color:#2a00ff; '>'#sel3'</span>).tagger({
         availableTags: peopleData
-      , baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+      , imgDownArrow: <span style='color:#2a00ff; '>'img/dropdown.png'</span>
+      , imgRemove: <span style='color:#2a00ff; '>'img/remove.png'</span>
+      , baseURL: <span style='color:#2a00ff; '>''</span>
       , placeholder: <span style='color:#2a00ff; '>'Email'</span>
       , tabindexOffset: 200
       , suggestMaxHeight: <span style='color:#2a00ff; '>'6em'</span>
@@ -202,7 +214,9 @@
           $(function(){
             $('#sel4').tagger({
               availableTags: peopleData
-            , baseURL: '../img/'
+            , imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
             , tabindexOffset: 300
             , mandatorySelection: true
             , fieldWidth: null
@@ -214,7 +228,9 @@
     $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
       $(<span style='color:#2a00ff; '>'#sel4'</span>).tagger({
         availableTags: peopleData
-      , baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+      , imgDownArrow: <span style='color:#2a00ff; '>'img/dropdown.png'</span>
+      , imgRemove: <span style='color:#2a00ff; '>'img/remove.png'</span>
+      , baseURL: <span style='color:#2a00ff; '>''</span>
       , tabindexOffset: 300
       , mandatorySelection: <span style='color:#7f0055; font-weight:bold; '>true</span>
       , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
@@ -246,7 +262,9 @@
         <script>
           $(function(){
             $('#sel5').tagger({
-              baseURL: '../img/'
+              imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
             , tabindexOffset: 400
             , fieldWidth: null
             });
@@ -256,7 +274,9 @@
   &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
     $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
       $(<span style='color:#2a00ff; '>'#sel5'</span>).tagger({
-        baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+        imgDownArrow: <span style='color:#2a00ff; '>'img/dropdown.png'</span>
+      , imgRemove: <span style='color:#2a00ff; '>'img/remove.png'</span>
+      , baseURL: <span style='color:#2a00ff; '>''</span>
       , tabindexOffset: 400
       , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
       });
@@ -281,7 +301,9 @@
         <script>
           $(function(){
             $('#sel6').tagger({
-              baseURL: '../img/'
+              imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
             , tabindexOffset: 500
             , fieldWidth: null
             });
@@ -291,7 +313,9 @@
   &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
     $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
       $(<span style='color:#2a00ff; '>'#sel6'</span>).tagger({
-        baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+        imgDownArrow: <span style='color:#2a00ff; '>'img/dropdown.png'</span>
+      , imgRemove: <span style='color:#2a00ff; '>'img/remove.png'</span>
+      , baseURL: <span style='color:#2a00ff; '>''</span>
       , tabindexOffset: 500
       , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
       });
@@ -316,7 +340,9 @@
         <script>
           $(function(){
             $('#sel7').tagger({
-              baseURL: '../img/'
+              imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
             , availableTags: charEncoding
             , tabindexOffset: 600
             , fieldWidth: null
@@ -327,7 +353,9 @@
   &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
     $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
       $(<span style='color:#2a00ff; '>'#sel7'</span>).tagger({
-        baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+        imgDownArrow: <span style='color:#2a00ff; '>'img/dropdown.png'</span>
+      , imgRemove: <span style='color:#2a00ff; '>'img/remove.png'</span>
+      , baseURL: <span style='color:#2a00ff; '>''</span>
       , availableTags: charEncoding
       , tabindexOffset: 600
       , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
@@ -384,7 +412,9 @@
         <script>
           $(function(){
             $('#sel8').tagger({
-              baseURL: '../img/'
+              imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
             , fieldWidth: null
             });
           });
@@ -393,7 +423,9 @@
   &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
     $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
       $(<span style='color:#2a00ff; '>'#sel8'</span>).tagger({
-        baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+        imgDownArrow: <span style='color:#2a00ff; '>'img/dropdown.png'</span>
+      , imgRemove: <span style='color:#2a00ff; '>'img/remove.png'</span>
+      , baseURL: <span style='color:#2a00ff; '>''</span>
       , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
       });
     });
@@ -425,7 +457,9 @@
           $(function(){
             $('#sel9').tagger({
               availableTags: peopleData
-            , baseURL: '../img/'
+            , imgDownArrow: 'img/dropdown.png'
+            , imgRemove: 'img/remove.png'
+            , baseURL: ''
             , suggestMaxHeight: '6em'
             , fieldWidth: null
             });
@@ -437,7 +471,9 @@
     $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
       $(<span style='color:#2a00ff; '>'#sel9'</span>).tagger({
         availableTags: peopleData
-      , baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+      , imgDownArrow: <span style='color:#2a00ff; '>'img/dropdown.png'</span>
+      , imgRemove: <span style='color:#2a00ff; '>'img/remove.png'</span>
+      , baseURL: <span style='color:#2a00ff; '>''</span>
       , suggestMaxHeight: <span style='color:#2a00ff; '>'6em'</span>
       , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
       });
