@@ -1,30 +1,37 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>JQuery tagger widget examples</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
   <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-  <link rel="stylesheet" type="text/css" href="tagger.css" />
-  <script src="tagger.js"></script>
+  <link rel="stylesheet" type="text/css" href="../src/tagger.css" />
+  <script src="../src/tagger.js"></script>
   <script src="data.json"></script>
-  <style>
-th {
-  vertical-align: top;
-}
-label {
-  font-family: sans-serif;
-  white-space: nowrap;
-}
-  </style>
 </head>
-<body style="position:relative;">
-  <h1>Tagger Widget Examples</h1>
-  <p>Below are some examples of the tagger widget applied to a few select elements with varying options passed in. peopleData comes from the data.json file included for this demo.</p>
-  <table width="600px">
-    <tr>
-      <th>Generic Multi-Select</th>
-      <td>
+<body>
+  <div class="container">
+  
+    <div class="row">
+      <div class="twelve columns">
+        <h1>Tagger Widget</h1>
+        <h2>Examples</h2>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="twelve columns">
+        <p>Below are some examples of the tagger widget applied to a few select elements with varying options passed in. peopleData comes from the data.json file included for this demo.</p>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="four columns">
+        <h3>Generic Multi-Select</h3>
+      </div>
+      <div class="eight columns">
         <select name="sel1" id="sel1" size="11" multiple="" onchange="javascript:alert('onchange-fired');">
           <option value="item0" selected="selected">Jonah Eldredge</option>
           <option value="item1" selected="selected">Ray Duran</option>
@@ -44,35 +51,36 @@ label {
           $(function(){
             $('#sel1').tagger({
               availableTags: peopleData
-            , imgDownArrow: 'img/dropdown.png'
-            , imgRemove: 'img/remove.png'
-            , baseURL: ''
             , preselectedTags: ["item0", "item1", "item8", "item11"]
+            , baseURL: '../img/'
             , displayHierarchy: false
             , indentMultiplier: 2
+            , fieldWidth: null
             });
           });
         </script>
 <pre>
-  &lt;script&gt;
-    $(function(){
-      $('#sel1').tagger({
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+    $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
+      $(<span style='color:#2a00ff; '>'#sel1'</span>).tagger({
         availableTags: peopleData
-      , imgDownArrow: 'img/dropdown.png'
-      , imgRemove: 'img/remove.png'
-      , baseURL: ''
-      , preselectedTags: [&quot;item0&quot;, &quot;item1&quot;, &quot;item8&quot;, &quot;item11&quot;]
-      , displayHierarchy: false
+      , preselectedTags: [<span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>item0</span><span style='color:#2a00ff; '>"</span>, <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>item1</span><span style='color:#2a00ff; '>"</span>, <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>item8</span><span style='color:#2a00ff; '>"</span>, <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>item11</span><span style='color:#2a00ff; '>"</span>]
+      , baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+      , displayHierarchy: <span style='color:#7f0055; font-weight:bold; '>false</span>
       , indentMultiplier: 2
+      , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
       });
     });
-  &lt;/script&gt;
+  &lt;/<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
 </pre>
-      </td>
-    </tr>
-    <tr>
-      <th>Multi-Select with options</th>
-      <td>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="four columns">
+        <h3>Multi-Select with options</h3>
+      </div>
+      <div class="eight columns">
         <select name="sel2" id="sel2" size="11" multiple="">
           <option value="item0">Jonah Eldredge</option>
           <option value="item1">Ray Duran</option>
@@ -90,9 +98,7 @@ label {
           $(function(){
             $('#sel2').tagger({
               availableTags: peopleData
-            , imgDownArrow: 'img/dropdown.png'
-            , imgRemove: 'img/remove.png'
-            , baseURL: ''
+            , baseURL: '../img/'
             , placeholder: 'Person'
             , caseSensitive: true
             , displayHierarchy: true
@@ -106,31 +112,32 @@ label {
           });
         </script>
 <pre>
-  &lt;script&gt;
-    $(function(){
-      $('#sel2').tagger({
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+    $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
+      $(<span style='color:#2a00ff; '>'#sel2'</span>).tagger({
         availableTags: peopleData
-      , imgDownArrow: 'img/dropdown.png'
-      , imgRemove: 'img/remove.png'
-      , baseURL: ''
-      , placeholder: 'Person'
-      , caseSensitive: true
-      , displayHierarchy: true
+      , baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+      , placeholder: <span style='color:#2a00ff; '>'Person'</span>
+      , caseSensitive: <span style='color:#7f0055; font-weight:bold; '>true</span>
+      , displayHierarchy: <span style='color:#7f0055; font-weight:bold; '>true</span>
       , indentMultiplier: 2
       , tabindexOffset: 100
-      , noSuggestText: 'No People Match'
-      , fieldWidth: '20em'
-      , suggestMaxWidth: '70em'
-      , sortedOutput: true
+      , noSuggestText: <span style='color:#2a00ff; '>'No People Match'</span>
+      , fieldWidth: <span style='color:#2a00ff; '>'20em'</span>
+      , suggestMaxWidth: <span style='color:#2a00ff; '>'70em'</span>
+      , sortedOutput: <span style='color:#7f0055; font-weight:bold; '>true</span>
       });
     });
-  &lt;/script&gt;
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
 </pre>
-      </td>
-    </tr>
-    <tr>
-      <th>Single Select</th>
-      <td>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="four columns">
+        <h3>Single Select</h3>
+      </div>
+      <div class="eight columns">
         <select name="sel3" id="sel3" size="11">
           <option value="item0">Jonah Eldredge</option>
           <option value="item1">Ray Duran</option>
@@ -148,35 +155,36 @@ label {
           $(function(){
             $('#sel3').tagger({
               availableTags: peopleData
-            , imgDownArrow: 'img/dropdown.png'
-            , imgRemove: 'img/remove.png'
-            , baseURL: ''
+            , baseURL: '../img/'
             , placeholder: 'Email'
             , tabindexOffset: 200
             , suggestMaxHeight: '6em'
+            , fieldWidth: null
             });
           });
         </script>
 <pre>
-  &lt;script&gt;
-    $(function(){
-      $('#sel3').tagger({
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+    $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
+      $(<span style='color:#2a00ff; '>'#sel3'</span>).tagger({
         availableTags: peopleData
-      , imgDownArrow: 'img/dropdown.png'
-      , imgRemove: 'img/remove.png'
-      , baseURL: ''
-      , placeholder: 'Email'
+      , baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+      , placeholder: <span style='color:#2a00ff; '>'Email'</span>
       , tabindexOffset: 200
-      , suggestMaxHeight: '6em'
+      , suggestMaxHeight: <span style='color:#2a00ff; '>'6em'</span>
+      , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
       });
     });
-  &lt;/script&gt;
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
 </pre>
-      </td>
-    </tr>
-    <tr>
-      <th>Single Select Mandatory</th>
-      <td>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="four columns">
+        <h3>Single Select Mandatory</h3>
+      </div>
+      <div class="eight columns">
         <select name="sel4" id="sel4" size="11">
           <option value="item0">Jonah Eldredge</option>
           <option value="item1">Ray Duran</option>
@@ -194,32 +202,34 @@ label {
           $(function(){
             $('#sel4').tagger({
               availableTags: peopleData
-            , imgDownArrow: 'img/dropdown.png'
-            , imgRemove: 'img/remove.png'
-            , baseURL: ''
+            , baseURL: '../img/'
             , tabindexOffset: 300
             , mandatorySelection: true
+            , fieldWidth: null
             });
           });
         </script>
-<pre>  &lt;script&gt;
-    $(function(){
-      $('#sel4').tagger({
+<pre>
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+    $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
+      $(<span style='color:#2a00ff; '>'#sel4'</span>).tagger({
         availableTags: peopleData
-      , imgDownArrow: 'img/dropdown.png'
-      , imgRemove: 'img/remove.png'
-      , baseURL: ''
+      , baseURL: <span style='color:#2a00ff; '>'../img/'</span>
       , tabindexOffset: 300
-      , mandatorySelection: true
+      , mandatorySelection: <span style='color:#7f0055; font-weight:bold; '>true</span>
+      , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
       });
     });
-  &lt;/script&gt;
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
 </pre>
-      </td>
-    </tr>
-    <tr>
-      <th>Single Select Without JSON</th>
-      <td>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="four columns">
+        <h3>Single Select Without JSON</h3>
+      </div>
+      <div class="eight columns">
         <select name="sel5" id="sel5" size="11">
           <option value="item0">Jonah Eldredge</option>
           <option value="item1">Ray Duran</option>
@@ -236,29 +246,31 @@ label {
         <script>
           $(function(){
             $('#sel5').tagger({
-              imgDownArrow: 'img/dropdown.png'
-            , imgRemove: 'img/remove.png'
-            , baseURL: ''
+              baseURL: '../img/'
             , tabindexOffset: 400
+            , fieldWidth: null
             });
           });
         </script>
-<pre>  &lt;script&gt;
-    $(function(){
-      $('#sel5').tagger({
-        imgDownArrow: 'img/dropdown.png'
-      , imgRemove: 'img/remove.png'
-      , baseURL: ''
+<pre>
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+    $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
+      $(<span style='color:#2a00ff; '>'#sel5'</span>).tagger({
+        baseURL: <span style='color:#2a00ff; '>'../img/'</span>
       , tabindexOffset: 400
+      , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
       });
     });
-  &lt;/script&gt;
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
 </pre>
-      </td>
-    </tr>
-    <tr>
-      <th>HTML Character Encoding (Embedded)</th>
-      <td>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="four columns">
+        <h3>HTML Character Encoding (Embedded)</h3>
+      </div>
+      <div class="eight columns">
         <select name="sel6" id="sel6" size="11" multiple="">
           <option value="item0">Test [&amp;] Ampersand</option>
           <option value="item1">Test [&lt;] Less Than</option>
@@ -269,29 +281,31 @@ label {
         <script>
           $(function(){
             $('#sel6').tagger({
-              imgDownArrow: 'img/dropdown.png'
-            , imgRemove: 'img/remove.png'
-            , baseURL: ''
+              baseURL: '../img/'
             , tabindexOffset: 500
+            , fieldWidth: null
             });
           });
         </script>
-<pre>  &lt;script&gt;
-    $(function(){
-      $('#sel6').tagger({
-        imgDownArrow: 'img/dropdown.png'
-      , imgRemove: 'img/remove.png'
-      , baseURL: ''
+<pre>
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+    $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
+      $(<span style='color:#2a00ff; '>'#sel6'</span>).tagger({
+        baseURL: <span style='color:#2a00ff; '>'../img/'</span>
       , tabindexOffset: 500
+      , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
       });
     });
-  &lt;/script&gt;
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
 </pre>
-      </td>
-    </tr>
-    <tr>
-      <th>HTML Character Encoding (JSON)</th>
-      <td>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="four columns">
+        <h3>HTML Character Encoding (JSON)</h3>
+      </div>
+      <div class="eight columns">
         <select name="sel7" id="sel7" size="11" multiple="">
           <option value="item0">Test [&amp;] Ampersand</option>
           <option value="item1">Test [&lt;] Less Than</option>
@@ -302,45 +316,47 @@ label {
         <script>
           $(function(){
             $('#sel7').tagger({
-              imgDownArrow: 'img/dropdown.png'
-            , imgRemove: 'img/remove.png'
-            , baseURL: ''
+              baseURL: '../img/'
             , availableTags: charEncoding
             , tabindexOffset: 600
+            , fieldWidth: null
             });
           });
         </script>
-<pre>  &lt;script&gt;
-    $(function(){
-      $('#sel7').tagger({
-        imgDownArrow: 'img/dropdown.png'
-      , imgRemove: 'img/remove.png'
-      , baseURL: ''
+<pre>
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+    $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
+      $(<span style='color:#2a00ff; '>'#sel7'</span>).tagger({
+        baseURL: <span style='color:#2a00ff; '>'../img/'</span>
       , availableTags: charEncoding
       , tabindexOffset: 600
+      , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
       });
     });
-  &lt;/script&gt;
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
 </pre>
-      </td>
-    </tr>
-    <tr>
-      <th>Tab Ordering (None Set)</th>
-      <td>
-        <table>
-          <tr>
-            <td>
-              <label>Input 1</label>
-            </td>
-            <td>
-              <input name="an_input" type="text" size="64"></input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label>Tagger 1</label>
-            </td>
-            <td>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="four columns">
+        <h3>Tab Ordering (None Set)</h3>
+      </div>
+      <div class="eight columns">
+        <div class="container">
+          <div class="row">
+            <div class="two columns">
+              <label for="an_input">Input 1</label>
+            </div>
+            <div class="ten columns">
+              <input id="an_input" name="an_input" type="text" size="64" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="two columns">
+              <label for="sel8">Tagger 1</label>
+            </div>
+            <div class="ten columns">
               <select name="sel8" id="sel8" size="11" multiple="">
                 <option value="item0">Jonah Eldredge</option>
                 <option value="item1" selected="">Ray Duran</option>
@@ -354,41 +370,84 @@ label {
                 <option value="item9">Tammi Severt</option>
                 <option value="item10">Sandra Talbert</option>
               </select>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label>Input 2</label>
-            </td>
-            <td>
-              <input name="another_input" type="text" size="64"></input>
-            </td>
-          </tr>
-        </table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="two columns">
+              <label for="another_input">Input 2</label>
+            </div>
+            <div class="ten columns">
+              <input id="another_input" name="another_input" type="text" size="64" />
+            </div>
+          </div>
+        </div>
         <script>
           $(function(){
             $('#sel8').tagger({
-              imgDownArrow: 'img/dropdown.png'
-            , imgRemove: 'img/remove.png'
-            , baseURL: ''
+              baseURL: '../img/'
+            , fieldWidth: null
             });
           });
         </script>
-<pre>  &lt;script&gt;
-    $(function(){
-      $('#sel8').tagger({
-        imgDownArrow: 'img/dropdown.png'
-      , imgRemove: 'img/remove.png'
-      , baseURL: ''
+<pre>
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+    $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
+      $(<span style='color:#2a00ff; '>'#sel8'</span>).tagger({
+        baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+      , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
       });
     });
-  &lt;/script&gt;
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
 </pre>
-      </td>
-    </tr>
-  </table>
-  <!-- Pad out the page a bit -->
-  <div style="min-height: 200px;">
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="four columns">
+        <h3>Programmatic Focus</h3>
+      </div>
+      <div class="eight columns">
+        <select name="sel9" id="sel9" size="11">
+          <option value="item0">Jonah Eldredge</option>
+          <option value="item1">Ray Duran</option>
+          <option value="item2">Gavin Kovach</option>
+          <option value="item3">Lawrence Nesmith</option>
+          <option value="item4">Sebastian Seneca</option>
+          <option value="item5">Marshall Klemme</option>
+          <option value="item6">Grace Vashon</option>
+          <option value="item7">Magaret Farwell</option>
+          <option value="item8">Lenora Desrosier</option>
+          <option value="item9">Tammi Severt</option>
+          <option value="item10">Sandra Talbert</option>
+        </select>
+        <br />
+        <script>
+          $(function(){
+            $('#sel9').tagger({
+              availableTags: peopleData
+            , baseURL: '../img/'
+            , suggestMaxHeight: '6em'
+            , fieldWidth: null
+            });
+          });
+        </script>
+        <button onclick="document.getElementById('sel9').focus();" class="button">Focus</button>
+<pre>
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+    $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
+      $(<span style='color:#2a00ff; '>'#sel9'</span>).tagger({
+        availableTags: peopleData
+      , baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+      , suggestMaxHeight: <span style='color:#2a00ff; '>'6em'</span>
+      , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
+      });
+    });
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+  
+  <span style='color:#7f0055; '>&lt;</span><span style='color:#7f0055; font-weight:bold; '>button</span> onclick=<span style='color:#2a00ff; '>"document.getElementById('sel9').focus();"</span> class=<span style='color:#2a00ff; '>"button"</span><span style='color:#7f0055; '>></span>Focus<span style='color:#7f0055; '>&lt;/</span><span style='color:#7f0055; font-weight:bold; '>button</span><span style='color:#7f0055; '>></span>
+</pre>
+      </div>
+    </div>
   </div>
 </body>
 </html>
