@@ -1,0 +1,487 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700);
+
+/* 
+html5doctor.com Reset Stylesheet
+v1.6.1
+Last Updated: 2010-09-17
+Author: Richard Clark - http://richclarkdesign.com 
+Twitter: @rich_clark
+*/
+
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+  margin:0;
+  padding:0;
+  border:0;
+  font-size:100%;
+  vertical-align:baseline;
+  background:transparent;
+}
+
+body {
+  line-height:1;
+}
+
+table {
+  border-collapse:collapse;
+  border-spacing:0;
+}
+
+input, select {
+  vertical-align:middle;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  color: #333;
+  line-height: 1.4;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0.7em 0 0.3em 0;
+  font-weight: 300;
+}
+
+h1 {
+  font-size: 3em;
+}
+
+h2 {
+  font-size: 2.5em;
+}
+
+h3 {
+  font-size: 2em;
+  font-weight: 400;  
+}
+
+h4 {
+  font-size: 1.5em;
+  font-weight: 700;  
+}
+
+h5 {
+  font-size: 1.17em;
+  font-weight: 700;
+}
+
+h6 {
+  font-size: 1em;
+  font-weight: 700;  
+}
+
+/* Artfully Masterminded by ZURB */
+
+/* --------------------------------------------------
+:: Grid
+
+This is the mobile-friendly, responsive grid that
+lets Foundation work much of its magic.
+
+-------------------------------------------------- */
+
+.container { padding: 0; width: 100%; }
+
+.row { width: 100%; margin: 0 auto; max-width: 1190px; }
+/* To fix the grid into a certain size, set max-width to width */
+.row .row { min-width: 0; }
+
+.column, .columns { margin-left: 2%; float: left; min-height: 1px; position: relative; box-sizing: border-box;  }
+.column:first-child, .columns:first-child { margin-left: 0; }
+[class*="column"] + [class*="column"]:last-child { float: right; }
+[class*="column"] + [class*="column"].end { float: left; }
+
+.row .one { width: 6.475%; }
+.row .two { width: 14.975%; }
+.row .three { width: 23.475%; }
+.row .four { width: 31.975%; }
+.row .five { width: 40.475%; }
+.row .six { width: 48.975%; }
+.row .seven { width: 57.475%; }
+.row .eight { width: 65.975%; }
+.row .nine { width: 74.475%; }
+.row .ten { width: 82.975%; }
+.row .eleven { width: 91.475%; }
+.row .twelve { width: 100%; }
+
+
+img, object, embed { max-width: 100%; height: auto; }
+img { -ms-interpolation-mode: bicubic; }
+
+/* Nicolas Gallagher's micro clearfix */
+.row:before, .row:after, .clearfix:before, .clearfix:after { content:""; display:table; }
+.row:after, .clearfix:after { clear: both; }
+.row, .clearfix { zoom: 1; }
+.prompt {
+  font-weight: 600;
+  padding: 0.3em;
+  display: block;
+  text-align: right;
+  float: right;
+}
+
+label {
+  font-weight: 600;
+  display: block;
+  padding: 0.3em;
+  text-align: right;
+}
+
+.radio-label {
+  font-weight: inherit;
+  display: inline;
+  font-size: 0.8em;
+}
+
+input,
+select,
+textarea {
+  border: 1px solid #ccc;
+  padding: 0.3em;
+  font-family: 'Open Sans';
+  font-size: 0.8em;
+  margin-top: 0;
+}
+
+select {
+  padding: 0.2em;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline-color: #69CAE8
+}
+
+input[type='text'],
+input[type='password'],
+input[type='date'],
+select,
+textarea {
+  width: 100%;
+  box-sizing: border-box; 
+  border-radius: 3px;
+}
+
+input[type='text'].tight-field,
+input[type='password'].tight-field,
+input[type='date'].tight-field,
+select.tight-field,
+textarea.tight-field {
+  width: auto;
+}
+
+input[type='radio'],
+input[type='checkbox'] {
+  margin-top: 0.8em;
+}
+
+/********************************************************************************************
+ * 
+ * Buttons
+ *
+ ********************************************************************************************/
+input[type='button'],
+a.button,
+.button {
+  background: #ffffff;
+  background: -webkit-linear-gradient(bottom,#f7f7f7 0%,#ffffff 100%);
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.07);
+  border: 1px solid #d9d9d9;
+  border-radius: 3px;
+  color: #666;
+  padding: 0.3em 1.3em 0.4em 1.3em;
+  font-size: 0.9em;
+  font-weight: 500;
+  margin: 0.2em 0;
+  text-decoration: none;
+  cursor: pointer;
+  color: #0979C6;
+}
+
+input[type='button']:hover,
+.button:hover {
+  background: #f2f2f2;
+  background: -webkit-linear-gradient(bottom,#e8e8e8 0%,#f2f2f2 100%);
+  outline: none;
+}
+
+input[type='button']:active,
+.button:active {  
+  background: #f7f7f7;
+  box-shadow: inset 0 2px 0 rgba(0,0,0,0.03);
+  outline: none;
+}
+
+input[type='button'][disabled],
+.button[disabled] {  
+  box-shadow: none;
+  background: #e8e8e8;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* Button sizes */
+input[type='button'].big-button,
+.big-button {
+  font-size: 1.2em;
+}
+
+input[type='button'].small-button,
+.small-button {
+  font-size: 0.8em;
+  padding: 0.2em 1em 0.3em 1em;
+  border-radius: 3px;
+}
+
+/* Primary action buttons */
+/* Use these for primary actions that do not affect the state of the data (eg search) */
+input[type='button'].primary-button,
+a.primary-button,
+.primary-button {
+  background: #0979C6;
+  background: -webkit-linear-gradient(bottom,#096FA8 0%,#0979C6 100%);
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
+  color: #fff;
+  border-color: #0C6084;
+}
+
+input[type='button'].primary-button:hover,
+.primary-button:hover {
+  background: #0769AB;
+  background: -webkit-linear-gradient(bottom,#076090 0%,#0769AB 100%);
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.25);
+}
+
+input[type='button'].primary-button:active,
+.primary-button:active {
+  background: #096FA8;
+  box-shadow: inset 0 2px 0 rgba(0,0,0,0.07);
+}
+
+input[type='button'][disabled].primary-button,
+.button[disabled].primary-button {  
+  box-shadow: none;
+  background: #8AAFC4;
+  color: #eee;
+  border-color: #7FA8B2;
+}
+
+/* Positive action buttons */
+/* Use these for actions that positively affect the state of the data (eg save) */
+input[type='button'].positive-button,
+a.positive-button,
+.positive-button {
+  background: #0B8433;
+  background: -webkit-linear-gradient(bottom,#096A27 0%,#0B8433 100%);
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
+  color: #fff;
+  border-color: #0E722A;
+}
+
+input[type='button'].positive-button:hover,
+.positive-button:hover {
+  background: #0A762E;
+  background: -webkit-linear-gradient(bottom,#085D22 0%,#0A762E 100%);  
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
+  border-color: #106623;
+}
+
+input[type='button'].positive-button:active,
+.positive-button:active {
+  background: #096A27;
+  box-shadow: inset 0 2px 0 rgba(0,0,0,0.05);
+}
+
+input[type='button'][disabled].positive-button,
+.button[disabled].positive-button {  
+  box-shadow: none;
+  background: #7FB28E;
+  color: #eee;
+  border-color: #6D9976;
+}
+
+/* Dangerous action buttons */
+/* Use these for actions that may be dangerous (eg delete) */
+input[type='button'].danger-button,
+a.danger-button,
+.danger-button {
+  background: #b70f0f;
+  background: -webkit-linear-gradient(bottom, #9d1010 0%,#b70f0f 100%);
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
+  color: #fff;
+  border-color: #9D1010;
+}
+
+input[type='button'].danger-button:hover,
+.danger-button:hover {
+  background: #aa0e0e;
+  background: -webkit-linear-gradient(bottom, #900d0d 0%,#aa0e0e 100%);
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);  
+  border-color: #751212;
+}
+
+input[type='button'].danger-button:active,
+.danger-button:active {
+  background: #9d1010;
+  box-shadow: inset 0 2px 0 rgba(0,0,0,0.15);
+}
+
+input[type='button'][disabled].danger-button,
+.button[disabled].danger-button {  
+  box-shadow: none;
+  background: #D89A9A;
+  color: #eee;
+  border-color: #BF8888;
+}
+
+input[type='image'], .image-button {
+  border: none;
+}
+
+/* menu out */
+.menu-out {
+  padding-left: 0;
+  list-style: none;
+}
+ul.flow-across {
+  display: table;
+}
+ul.flow-across li {
+  display: table-cell;
+  padding: 0 0.1em;
+}
+
+/* menu out - nav */
+nav.menu-out a {
+  text-decoration: none;
+  padding: 0.4em 1em;
+  display: block;  
+}
+
+nav.menu-out a.current-nav-item {
+  color: #fff;
+  background-color: #0979C6;
+  border-radius: 3px;
+}
+
+/* Button groups */
+ul.grouped {
+  _overflow: hidden;
+  display: inline-table;
+}
+
+ul.grouped li {
+  _float: left;
+  display: table-cell;
+  padding: 0;
+}
+
+ul.grouped input[type='button'],
+ul.grouped .button {
+  border-radius: 0;
+  border-right-width: 0;
+  margin-right: -1px;
+}
+
+ul.grouped li:first-of-type input[type='button'],
+ul.grouped li:first-of-type .button {
+  border-radius: 4px 0 0 4px;
+}
+
+ul.grouped li:last-of-type input[type='button'],
+ul.grouped li:last-of-type .button {
+  border-radius: 0 4px 4px 0;
+  border-right-width: 1px;
+}
+
+span.grouped-button-label {
+  font-weight: bold;
+  padding: 0.3em 1em 0.4em 1em;  
+}
+
+span.small-grouped-button-label {
+  font-size: 0.8em;
+  padding: 0.2em 0.8em 0.3em 0.8em;
+}
+
+span.big-grouped-button-label {
+  font-size: 1.2em;
+}
+
+.table {
+  width: 100%;
+}
+
+.table th,
+.table td {
+  padding: 1em;
+}
+
+.table th {
+  font-weight: 600;
+  text-align: left;
+  vertical-align: bottom;
+  border-bottom: 2px solid #ccc;  
+}
+
+.table td {
+  font-size: 0.9em;
+  border-bottom: 1px solid #ccc;
+}
+
+.table th.headerSortDown::after {
+  content:"\2193";
+  display: block;
+  float: right;
+  font-weight: bold;
+}
+
+.table th.headerSortUp::after {
+  content:"\2191";
+  display: block;
+  float: right;
+  font-weight: bold;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Nested forms */
+.table input[type='button'],
+.table .button {
+  margin: 0.1em 0.2em;
+}
+
+/* un-reset list item style */
+ul, ol {
+  padding-left: 40px;
+}
+
+/* misc */
+.hidden {
+  display: none;
+}
+
+label {
+  margin: 2em 0 0.3em 0;
+}
+input, .tagger, pre {
+  margin: 2.5em 0 0.3em 0;
+}
