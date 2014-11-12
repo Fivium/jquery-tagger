@@ -85,7 +85,7 @@
      * @property {integer}  tabindexOffset      - Then creating items it can tab to, what the tabindex should initally be
      * @property {string}   noSuggestText       - Text to show when no suggestions can be found
      * @property {string}   emptyListText       - Text to show when no suggestions in the list
-     * @property {string}   searchTooltipText   - Text to show as tooltip for the ajasx search icon
+     * @property {string}   searchTooltipText   - Text to show as tooltip for the ajax search icon
      * @property {string}   loadingClass        - Class on an sibling to the select used to fill while the js loads the tagger
      * @property {integer}  inputExpandExtra    - How many extra pixels to add on to the end of an input when expanding
      * @property {string}   fieldWidth          - Override width e.g. 20em
