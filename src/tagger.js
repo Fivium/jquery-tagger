@@ -334,8 +334,9 @@
                 self._filterSuggestions($(this).val(), false);
               }
               else if (event.which === 40) { // Down Arrow
-                if ( !self.options.ajaxURL || self.taggerSuggestions.is(":visible"))
+                if ( !self.options.ajaxURL || self.taggerSuggestions.is(":visible")) {
                   self._showSuggestions(true);
+                }
               }
             }, 
             mouseup: function (event) {
@@ -465,61 +466,68 @@
       var searchStringLowerCase = value.toLowerCase();
       var filteredResults = {};
 
-      if (!this.options.ajaxURL) {
-        // Go through each tag
-        for (var tagID in this.tagsByID) {
-          if (this.tagsByID.hasOwnProperty(tagID)) {
-            var tag = this.tagsByID[tagID];
-            if (!tag.suggestable || tag.historical) {
-              // Skip non-suggestable tags
-              continue;
+      // Go through each tag
+      for (var tagID in this.tagsByID) {
+        if (this.tagsByID.hasOwnProperty(tagID)) {
+          var tag = this.tagsByID[tagID];
+          if (!tag.suggestable || tag.historical) {
+            // Skip non-suggestable tags
+            continue;
+          }
+
+          // Add tag to filteredResults object if it contains the search string in the key, hidden or suggestion fields
+          if (this.options.caseSensitive) {
+            if (tag.key.indexOf(searchString) >= 0
+               || (tag.hidden && tag.hidden.indexOf(searchString) >= 0)
+               || $('<div/>').html(tag.suggestion).text().replace(/<.*?[^>]>/g,'').indexOf(searchString) >= 0) {
+              filteredResults[tagID] = $.extend(true, {}, tag);
+              filteredResults[tagID].suggestable = true;
             }
-  
-            // Add tag to filteredResults object if it contains the search string in the key, hidden or suggestion fields
-            if (this.options.caseSensitive) {
-              if (tag.key.indexOf(searchString) >= 0
-                 || (tag.hidden && tag.hidden.indexOf(searchString) >= 0)
-                 || $('<div/>').html(tag.suggestion).text().replace(/<.*?[^>]>/g,'').indexOf(searchString) >= 0) {
-                filteredResults[tagID] = $.extend(true, {}, tag);
-                filteredResults[tagID].suggestable = true;
-              }
-            }
-            else {
-              if (tag.key.toLowerCase().indexOf(searchStringLowerCase) >= 0
-                 || (tag.hidden && tag.hidden.toLowerCase().indexOf(searchStringLowerCase) >= 0)
-                 || $('<div/>').html(tag.suggestion).text().replace(/<.*?[^>]>/g,'').toLowerCase().indexOf(searchStringLowerCase) >= 0) {
-                filteredResults[tagID] = $.extend(true, {}, tag);
-                filteredResults[tagID].suggestable = true;
-              }
+          }
+          else {
+            if (tag.key.toLowerCase().indexOf(searchStringLowerCase) >= 0
+               || (tag.hidden && tag.hidden.toLowerCase().indexOf(searchStringLowerCase) >= 0)
+               || $('<div/>').html(tag.suggestion).text().replace(/<.*?[^>]>/g,'').toLowerCase().indexOf(searchStringLowerCase) >= 0) {
+              filteredResults[tagID] = $.extend(true, {}, tag);
+              filteredResults[tagID].suggestable = true;
             }
           }
         }
-        // Load filtered results into the suggestion list
-        this._loadSuggestions(filteredResults, false);
-        this.loadedFiltered = true;
-      } else {
-        var self = this;
-        $.ajax({
-            url: this.options.ajaxURL,
-            type: "GET",
-            data: {
-              elementId: this.element.attr('id')
-              ,search: searchString
-            },
-            dataType: 'json',
-            success: function (data) {
-              //Copy selected tags to new list
-              $.each(self.tagsByID, function(key, tag){
-                if(self._isAlreadyDisplayingTag(key)) data[key] = tag;
-                  //data[key] = {id: tag.id, key: tag.key, suggestion: tag.suggestion, hidden: tag.hidden, level: tag.level, suggestable: false, historical: tag.historical, displaying: tag.displaying};
-              });
-              self.tagsByID=data;
-              self._loadSuggestions(data, false);
-              self.loadedFiltered = true;
-              self._showSuggestions(false);
-          }
-        });
       }
+      // Load filtered results into the suggestion list
+      this._loadSuggestions(filteredResults, false);
+      this.loadedFiltered = true;
+    },
+
+    /**
+     * Load suggestions into suggestion list from ajaxURL
+     * @param {string} value the string value to filter by
+     */
+    ajaxLoadSuggestions: function (value) {
+      var searchString = value;
+      var self = this;
+
+      $.ajax({
+        url: this.options.ajaxURL,
+        type: "GET",
+        data: {
+          elementId: this.element.attr('id')
+          ,search: searchString
+        },
+        dataType: 'json',
+        success: function (data) {
+          //Copy selected tags to new list
+          $.each(self.tagsByID, function(key, tag){
+            if(self._isAlreadyDisplayingTag(key)) {
+              data[key] = tag;
+            }
+          });
+          self.tagsByID=data;
+          self._loadSuggestions(data, false);
+          self.loadedFiltered = true;
+          self._showSuggestions(false);
+        }
+      });
     },
 
     /**
@@ -797,8 +805,14 @@
     _filterSuggestions: function (value, hideSuggestions) {
       if (value.length > (this.options.characterThreshold - 1)) {
         // If text is longer than the threshold start filtering and showing the filtered results
-        this.filterTags(value);
-        this._showSuggestions(false);
+        if (!this.options.ajaxURL) {
+          this.filterTags(value);
+          this._showSuggestions(false);
+        }
+        // If ajaxURL is set, load the suggestions from URL instead of filtering the tag list
+        else {
+          this.ajaxLoadSuggestions(value);
+        }
       }
       // If under the threshold and was previously filtered, reset the list
       else if (this.loadedFiltered) {
