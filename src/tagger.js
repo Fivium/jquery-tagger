@@ -70,7 +70,7 @@
     /**
      * Default options, can be overridden by passing in an object to the constructor with these properties
      * @property {array}    availableTags       - Array of JSON tag objects
-     * @property {array}    ajaxURL             - URL to autocomplete webservice for updating available Tags
+     * @property {array}    ajaxURL             - URL to autocomplete webservice for updating available tags
      * @property {array}    preselectedTags     - Array of tag ID's that are selected in the element (helps performance)
      * @property {integer}  characterThreshold  - How many characters must be typed before searching
      * @property {boolean}  caseSensitive       - Case sensitive searching - defaults to false
@@ -412,8 +412,10 @@
         // Convert options to JS objects if no JSON is supplied
         else {
           this.tagsByID = {};
+          var position = 0;
           this.element.children("option").each(function () {
-            self.tagsByID[$(this).val()] = {id: $(this).val(), key: $(this).text(), hidden: '', level: 0, suggestable: true, historical: false};
+            position++;
+            self.tagsByID[$(this).val()] = {id: $(this).val(), key: $(this).text(), hidden: '', level: 0, suggestable: true, historical: false, sort: position};
           });
         }
         
@@ -449,8 +451,8 @@
       }
       else {
         // Stub out console.log if not supported in browser
-        if(typeof console === "object") {
-          if(typeof console.log === "function") {
+        if (typeof console === "object") {
+          if (typeof console.log === "function") {
             console.log('Tagger widget only works on select elements');
           }
         }
@@ -518,7 +520,7 @@
         success: function (data) {
           //Copy selected tags to new list
           $.each(self.tagsByID, function(key, tag){
-            if(self._isAlreadyDisplayingTag(key)) {
+            if (self._isAlreadyDisplayingTag(key)) {
               data[key] = tag;
             }
           });
