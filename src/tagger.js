@@ -412,10 +412,8 @@
         // Convert options to JS objects if no JSON is supplied
         else {
           this.tagsByID = {};
-          var position = 0;
-          this.element.children("option").each(function () {
-            position++;
-            self.tagsByID[$(this).val()] = {id: $(this).val(), key: $(this).text(), hidden: '', level: 0, suggestable: true, historical: false, sort: position};
+          this.element.children("option").each(function (index) {
+            self.tagsByID[$(this).val()] = {id: $(this).val(), key: $(this).text(), hidden: '', level: 0, suggestable: true, historical: false, sort: index};
           });
         }
         
