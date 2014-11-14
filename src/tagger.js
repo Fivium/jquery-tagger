@@ -210,7 +210,7 @@
           
           // Capture the keypress event for any child elements - redirect any chars to the current input field
           this.taggerWidget.bind('keypress', function (event) {
-            if (event.which !== 0 && event.which !== 13 && event.charCode !== 0  && !event.ctrlKey && !event.metaKey && !event.altKey) {
+            if (event.which !== 0 && event.charCode !== 0  && !event.ctrlKey && !event.metaKey && !event.altKey) {
               // If the keypress came from the main input or the filter, ignore this event or we'll potentially
               // just get in the way of the character being inserted and it'll be put at the end, instead of wherever
               // typed
