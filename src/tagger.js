@@ -617,7 +617,7 @@
       function suggestionBind(event) {
         var currentSelection = $(this);
         if (event.type === "mouseup" || event.type === "keyup" || event.type === "keydown") {
-          if ((event.type === "mouseup" && event.which === 1) || (event.type === "keyup" && event.which === 13)) { // Click or enter
+          if ((event.type === "mouseup" && event.which === 1) || (event.type === "keydown" && event.which === 13)) { // Click or enter
             // Handle suggestion adding
             self._addTagFromID(currentSelection.data('tagid'));
             self._selectionReset(true, true);
