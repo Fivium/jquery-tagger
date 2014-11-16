@@ -13,20 +13,20 @@
 </head>
 <body>
   <div class="container">
-  
+
     <div class="row">
       <div class="twelve columns">
         <h1>Tagger Widget</h1>
         <h2>Examples</h2>
       </div>
     </div>
-    
+
     <div class="row">
       <div class="twelve columns">
         <p>Below are some examples of the tagger widget applied to a few select elements with varying options passed in. peopleData comes from the data.json file included for this demo.</p>
       </div>
     </div>
-    
+
     <div class="row">
       <div class="four columns">
         <h3>Generic Multi-Select</h3>
@@ -75,7 +75,7 @@
 </pre>
       </div>
     </div>
-    
+
     <div class="row">
       <div class="four columns">
         <h3>Multi-Select with options</h3>
@@ -132,7 +132,7 @@
 </pre>
       </div>
     </div>
-    
+
     <div class="row">
       <div class="four columns">
         <h3>Single Select</h3>
@@ -179,7 +179,7 @@
 </pre>
       </div>
     </div>
-    
+
     <div class="row">
       <div class="four columns">
         <h3>Single Select Mandatory</h3>
@@ -224,7 +224,7 @@
 </pre>
       </div>
     </div>
-    
+
     <div class="row">
       <div class="four columns">
         <h3>Single Select Without JSON</h3>
@@ -265,7 +265,38 @@
 </pre>
       </div>
     </div>
-    
+    <div class="row">
+      <div class="four columns">
+        <h3>AJAX Autocomplete Multi-Select</h3>
+      </div>
+      <div class="eight columns">
+        <select name="ajaxselect" id="ajaxselect" size="11" multiple="">
+          <option value="1" selected="selected">Gerd Müller</option>
+        </select>
+        <script>
+          $(function(){
+            $('#ajaxselect').tagger({
+              ajaxURL: 'ajaxhandler.php'
+            , baseURL: '../img/'
+            , characterThreshold: 1
+            , fieldWidth: null
+            });
+          });
+        </script>
+<pre>
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+    $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
+      $(<span style='color:#2a00ff; '>'#ajaxselect'</span>).tagger({
+        ajaxURL: <span style='color:#2a00ff;'>'ajaxhandler.php'</span>
+      , baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+      , characterThreshold: 1
+      , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
+      });
+    });
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+</pre>
+      </div>
+    </div>
     <div class="row">
       <div class="four columns">
         <h3>HTML Character Encoding (Embedded)</h3>
@@ -300,7 +331,7 @@
 </pre>
       </div>
     </div>
-    
+
     <div class="row">
       <div class="four columns">
         <h3>HTML Character Encoding (JSON)</h3>
@@ -337,7 +368,7 @@
 </pre>
       </div>
     </div>
-    
+
     <div class="row">
       <div class="four columns">
         <h3>Tab Ordering (None Set)</h3>
@@ -401,7 +432,7 @@
 </pre>
       </div>
     </div>
-    
+
     <div class="row">
       <div class="four columns">
         <h3>Programmatic Focus</h3>
@@ -443,7 +474,7 @@
       });
     });
   &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
-  
+
   <span style='color:#7f0055; '>&lt;</span><span style='color:#7f0055; font-weight:bold; '>button</span> onclick=<span style='color:#2a00ff; '>"document.getElementById('sel9').focus();"</span> class=<span style='color:#2a00ff; '>"button"</span><span style='color:#7f0055; '>></span>Focus<span style='color:#7f0055; '>&lt;/</span><span style='color:#7f0055; font-weight:bold; '>button</span><span style='color:#7f0055; '>></span>
 </pre>
       </div>
