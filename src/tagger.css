@@ -38,6 +38,12 @@
   padding: 7px 4px 9px 4px;
 }
 
+.tagger .search {
+  display: block;
+  float: left;
+  padding: 1px 4px 1px 4px;
+}
+
 .tagger .droparrow img {
   display: block;
 }
