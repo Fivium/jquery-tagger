@@ -245,7 +245,10 @@
           this.taggerSuggestionsList = $('<ul></ul>').appendTo(this.taggerSuggestions);
 
           // Event listener to hide suggestions list if clicking outside this tagger widget
-          $(document).mouseup(function (event) {
+          // Using mousedown because IE11 reports the event.target for a mouseup as the HTML
+          // root element rather than the original click target, mousedown seems to work 
+          // cross browser
+          $(document).mousedown(function (event) {
             var selfTaggerWidget = self.taggerWidget.get(0);
             if ($(event.target).parents(".tagger").get(0) !== selfTaggerWidget && event.target !== selfTaggerWidget) {
               self.taggerSuggestions.hide();
