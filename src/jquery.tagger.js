@@ -266,8 +266,13 @@
               if (self.singleValue && self.tagCount === 1) {
                 // In single select mode, with a single tag selected already
                 // we should focus the first item in the suggstion list (which
-                // will be the filter input)
-                self._showSuggestions(self.singleValue && self.tagCount === 1);
+                // will be the filter input).
+                // NB: Using setTimeout because trying to do this immediately causes
+                // the focus to fail, presumably because the corresponding mouseup triggers
+                // focus elsewhere.
+                setTimeout(function(){
+                  self._showSuggestions(self.singleValue && self.tagCount === 1);
+                }, 0);
               }
             }
           });
