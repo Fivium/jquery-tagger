@@ -1,12 +1,12 @@
 {
-	"name": "jquery-tagger",
-	"version": "0.6.0",
-	"description": "jQuery plugin to turn a HTML select into an auto-suggesting, tagging widget",
-	"main": "src/jquery.tagger.js",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/Fivium/jquery-tagger.git"
-	},
+  "name": "jquery-tagger",
+  "version": "0.6.1",
+  "description": "jQuery plugin to turn a HTML select into an auto-suggesting, tagging widget",
+  "main": "src/jquery.tagger.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Fivium/jquery-tagger.git"
+  },
   "keywords": [
     "jquery-plugin",
     "autocomplete",
@@ -17,31 +17,23 @@
     "tag",
     "ie6 compatible"
   ],
-	"author": {
-		"name": "Nick Palmer",
-		"email": "nick.palmer@fivium.co.uk",
-		"url": "http://fivium.co.uk/"
-	},
+  "author": {
+    "name": "Nick Palmer",
+    "email": "nick.palmer@fivium.co.uk",
+    "url": "http://fivium.co.uk/"
+  },
   "maintainers": [
-    {
-      "name": "Ben Basson"
-    },
-    {
-      "name": "Mike Leonard"
-    }
+    {"name": "Ben Basson"},
+    {"name": "Mike Leonard"}
   ],
-  "licenses": [
-    {
-      "type": "BSD-3-Clause",
-      "url": "http://opensource.org/licenses/BSD-3-Clause"
-    }
-  ],
-	"bugs": {
-		"url": "https://github.com/Fivium/jquery-tagger/issues"
-	},
-	"homepage": "http://fivium.github.io/jquery-tagger/",
-	"dependencies": {
+  "licenses": [{
+    "type": "BSD-3-Clause",
+    "url": "http://opensource.org/licenses/BSD-3-Clause"
+  }],
+  "bugs": {"url": "https://github.com/Fivium/jquery-tagger/issues"},
+  "homepage": "http://fivium.github.io/jquery-tagger/",
+  "dependencies": {
     "jquery": ">=1.9",
     "jquery-ui": ">=1.10"
-	}
+  }
 }

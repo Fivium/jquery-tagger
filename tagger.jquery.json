@@ -9,26 +9,20 @@
     "tagger",
     "tag"
   ],
-  "version": "0.6.0",
+  "version": "0.6.1",
   "author": {
     "name": "Nick Palmer",
     "url": "http://fivium.co.uk/",
     "email": "nick.palmer@fivium.co.uk"
   },
   "maintainers": [
-    {
-      "name": "Ben Basson"
-    },
-    {
-      "name": "Mike Leonard"
-    }
+    {"name": "Ben Basson"},
+    {"name": "Mike Leonard"}
   ],
-  "licenses": [
-    {
-      "type": "BSD-3-Clause",
-      "url": "http://opensource.org/licenses/BSD-3-Clause"
-    }
-  ],
+  "licenses": [{
+    "type": "BSD-3-Clause",
+    "url": "http://opensource.org/licenses/BSD-3-Clause"
+  }],
   "dependencies": {
     "jquery": ">=1.9",
     "jqueryui": ">=1.10"

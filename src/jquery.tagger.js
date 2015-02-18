@@ -1,9 +1,9 @@
 /*
 * jQuery UI Tagger
 *
-* @version v0.3.0 (10/2013)
+* @version v0.6.1 (02/2015)
 *
-* Copyright 2013, Fivium Ltd.
+* Copyright 2015, Fivium Ltd.
 * Released under the BSD 3-Clause license.
 * https://github.com/fivium/jquery-tagger/blob/master/LICENSE
 *
@@ -60,7 +60,7 @@
    * @memberOf jQuery.widget.ui
    * @param {object} options - Must pass in the available tags and optionally
    *                           other information also
-   * @version 0.0.3
+   * @version 0.6.1
    * @license http://github.com/fivium/jquery-tagger/blob/master/LICENSE
    * @copyright Fivium ltd.
    * @author Nick Palmer
@@ -82,7 +82,7 @@
      * @property {boolean}  sortedOutput        - Sort the suggestion lists by tag.sort
      * @property {boolean}  displayHierarchy    - Indent suggestions to show hierarchy
      * @property {integer}  indentMultiplier    - When indenting suggestions, how much to multiple tag.level by
-     * @property {integer}  tabindexOffset      - Then creating items it can tab to, what the tabindex should initally be
+     * @property {integer}  tabindexOffset      - Then creating items it can tab to, what the tabindex should initially be
      * @property {string}   noSuggestText       - Text to show when no suggestions can be found
      * @property {string}   emptyListText       - Text to show when no suggestions in the list
      * @property {string}   searchTooltipText   - Text to show as tooltip for the ajax search icon
@@ -258,6 +258,7 @@
               // focus the first focusable item
               if (!self.singleValue || self.tagCount === 0) {
                 self.taggerWidget.find("input[tabindex]:visible").first().focus();
+                event.preventDefault();
               }
               // For now, only show the list automatically on click if we have a single value selected
               // When performance of the suggestion list building is improved, we can enable this functionality
@@ -265,7 +266,7 @@
               // suggestion parameter is still valid if this check is removed
               if (self.singleValue && self.tagCount === 1) {
                 // In single select mode, with a single tag selected already
-                // we should focus the first item in the suggstion list (which
+                // we should focus the first item in the suggestion list (which
                 // will be the filter input).
                 // NB: Using setTimeout because trying to do this immediately causes
                 // the focus to fail, presumably because the corresponding mouseup triggers
@@ -282,7 +283,7 @@
             this.taggerSuggestionsButton.bind('mouseup keyup', function (event) {
               if ((event.type === "mouseup" && event.which === 1) // left click
                   || (event.type === "keyup" && (event.which === 13 || event.which === 32 || event.which === 40))) { // enter || space || down arrow
-                // If the suggestion list is visible aleady, then toggle it off
+                // If the suggestion list is visible already, then toggle it off
                 if (self.taggerSuggestions.is(":visible")) {
                   self.taggerSuggestions.hide();
                 }
@@ -355,7 +356,7 @@
               // suggestion parameter is still valid if this check is removed
               if (self.singleValue && self.tagCount === 1) {
                 // In single select mode, with a single tag selected already
-                // we should focus the first item in the suggstion list (which
+                // we should focus the first item in the suggestion list (which
                 // will be the filter input)
                 self._showSuggestions(self.singleValue && self.tagCount === 1);
               }
@@ -577,7 +578,7 @@
     /**
      * Diverts the key press event passed to this function to whichever input is currently
      * visible. Should be registered as an event handler for keypress events on elements
-     * that may be focussed but are not the input being used; i.e. the drop-down arrow,
+     * that may be focused but are not the input being used; i.e. the drop-down arrow,
      * suggestion items, tags, etc.
      *
      * @param {event} event the keypress event to handle
