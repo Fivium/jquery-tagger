@@ -534,12 +534,13 @@
       var searchString = value;
       var self = this;
 
-      // TODO - NP - AJMS - This timeout logic is crude and open to all sorts of race conditions
-      if (this.pendingAJAXEvent) {
-        clearTimeout(this.pendingAJAXEvent);
+      // If we already have a filter pending, cancel it before making our new one
+      if (this.pendingFilterEvent) {
+        clearTimeout(this.pendingFilterEvent);
       }
 
-      this.pendingAJAXEvent = setTimeout(
+      // Set a new pending Filter event to fire in this.options.typingTimeThreshold milliseconds
+      this.pendingFilterEvent = setTimeout(
         function() {
           $.ajax({
             url: self.options.ajaxURL,
@@ -550,13 +551,12 @@
             },
             dataType: 'json',
             success: function (data) {
-              //Copy selected tags to new list
-              // TODO - NP - AJMS - Commented out, why would you want this?
-              //$.each(self.tagsByID, function(key, tag){
-              //  if (self._isAlreadyDisplayingTag(key)) {
-              //    data[key] = tag;
-              //  }
-              //});
+              // Make sure any tags already displayed are overlaid on their counterparts in the new list
+              $.each(self.tagsByID, function(key, tag){
+                if (self._isAlreadyDisplayingTag(key)) {
+                  data[key] = tag;
+                }
+              });
               self.tagsByID = data;
               self._loadSuggestions(data, false);
               self.loadedFiltered = true;
@@ -566,7 +566,7 @@
               self.options.ajaxErrorFunction(self, data);
             }
           });
-          self.pendingAJAXEvent = undefined;
+          delete self.pendingFilterEvent;
         }
       , this.options.typingTimeThreshold
       );
@@ -772,9 +772,9 @@
         // Load in all suggestable tags
         for (var i = 0; i < suggestableTagArray.length; i++) {
           var tag = suggestableTags[suggestableTagArray[i][0]];
-          // Don't add suggestion if it's not displaying hierarchy and the tag isn't selectable, the tag is historical
+          // Don't add suggestion if the tag isn't selectable and it's not displaying hierarchy, the tag is historical
           //  or if the tag has no key and id tuple
-          if ((!this.options.displayHierarchy && !tag.suggestable) || tag.historical || !(tag.key && tag.id)) {
+          if ((!tag.suggestable && !this.options.displayHierarchy) || tag.historical || !(tag.key && tag.id)) {
             continue;
           }
           // Create and add the suggestion to the suggestion list
