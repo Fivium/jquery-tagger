@@ -1,26 +1,26 @@
 /*
-* jQuery UI Tagger
-*
-* @version v0.6.1 (02/2015)
-*
-* Copyright 2015, Fivium Ltd.
-* Released under the BSD 3-Clause license.
-* https://github.com/fivium/jquery-tagger/blob/master/LICENSE
-*
-* Homepage:
-*   https://github.com/fivium/jquery-tagger/
-*
-* Authors:
-*   Nick Palmer
-*   Ben Basson
-*
-* Maintainer:
-*   Nick Palmer - nick.palmer@fivium.co.uk
-*
-* Dependencies:
-*   jQuery v1.9+
-*   jQuery UI v1.10+
-*/
+ * jQuery UI Tagger
+ *
+ * @version v0.6.1 (02/2015)
+ *
+ * Copyright 2015, Fivium Ltd.
+ * Released under the BSD 3-Clause license.
+ * https://github.com/fivium/jquery-tagger/blob/master/LICENSE
+ *
+ * Homepage:
+ *   https://github.com/fivium/jquery-tagger/
+ *
+ * Authors:
+ *   Nick Palmer
+ *   Ben Basson
+ *
+ * Maintainer:
+ *   Nick Palmer - nick.palmer@fivium.co.uk
+ *
+ * Dependencies:
+ *   jQuery v1.9+
+ *   jQuery UI v1.10+
+ */
 
 // Can be run through JSDoc (https://github.com/jsdoc3/jsdoc) and JSHint (http://www.jshint.com/)
 
@@ -73,6 +73,7 @@
      * @property {array}    ajaxURL             - URL to autocomplete webservice for updating available tags
      * @property {array}    preselectedTags     - Array of tag ID's that are selected in the element (helps performance)
      * @property {integer}  characterThreshold  - How many characters must be typed before searching
+     * @property {integer}  typingTimeThreshold - How many milliseconds to wait after the last keypress before filtering
      * @property {boolean}  caseSensitive       - Case sensitive searching - defaults to false
      * @property {string}   placeholder         - Placeholder text for input area
      * @property {string}   baseURL             - Base URL used for images
@@ -86,6 +87,7 @@
      * @property {string}   noSuggestText       - Text to show when no suggestions can be found
      * @property {string}   emptyListText       - Text to show when no suggestions in the list
      * @property {string}   searchTooltipText   - Text to show as tooltip for the ajax search icon
+     * @property {string}   ajaxErrorFunction   - Function definition to use in the event of an AJAX request error, function(tagger, data)
      * @property {string}   loadingClass        - Class on an sibling to the select used to fill while the js loads the tagger
      * @property {integer}  inputExpandExtra    - How many extra pixels to add on to the end of an input when expanding
      * @property {string}   fieldWidth          - Override width e.g. 20em
@@ -97,30 +99,33 @@
      */
     options: {
       availableTags       : null
-    , ajaxURL             : null
-    , preselectedTags     : null
-    , characterThreshold  : 1
-    , caseSensitive       : false
-    , placeholder         : null
-    , baseURL             : '/img/'
-    , imgDownArrow        : 'dropdown.png'
-    , imgRemove           : 'remove.png'
-    , imgSearch           : 'search.png'
-    , sortedOutput        : false
-    , displayHierarchy    : false
-    , indentMultiplier    : 1
-    , tabindexOffset      : null
-    , noSuggestText       : 'No suggestions found'
-    , emptyListText       : 'No more suggestions'
-    , searchTooltipText   : 'Type a letter to get suggestions'
-    , loadingClass        : '.tagger-loading'
-    , inputExpandExtra    : 14
-    , fieldWidth          : '30em'
-    , fieldHeight         : null
-    , suggestWidth        : null
-    , suggestMaxWidth     : null
-    , suggestMaxHeight    : null
-    , mandatorySelection  : false
+      , ajaxURL             : null
+      , preselectedTags     : null
+      , characterThreshold  : 1
+      , typingTimeThreshold : 200
+      , caseSensitive       : false
+      , placeholder         : null
+      , baseURL             : '/img/'
+      , imgDownArrow        : 'dropdown.png'
+      , imgRemove           : 'remove.png'
+      , imgSearch           : 'search.png'
+      , sortedOutput        : false
+      , displayHierarchy    : false
+      , indentMultiplier    : 1
+      , tabindexOffset      : null
+      , noSuggestText       : 'No suggestions found'
+      , emptyListText       : 'All items selected already'
+      , limitedText         : 'There are too many results to show, type more characters to filter these results further'
+      , searchTooltipText   : 'Enter text to get suggestions'
+      , ajaxErrorFunction   : function(self, data){self._showMessageSuggestion('AJAX Search failed', 'error');}
+      , loadingClass        : '.tagger-loading'
+      , inputExpandExtra    : 14
+      , fieldWidth          : '30em'
+      , fieldHeight         : null
+      , suggestWidth        : null
+      , suggestMaxWidth     : null
+      , suggestMaxHeight    : null
+      , mandatorySelection  : false
     },
 
     /**
@@ -246,7 +251,7 @@
 
           // Event listener to hide suggestions list if clicking outside this tagger widget
           // Using mousedown because IE11 reports the event.target for a mouseup as the HTML
-          // root element rather than the original click target, mousedown seems to work 
+          // root element rather than the original click target, mousedown seems to work
           // cross browser
           $(document).mousedown(function (event) {
             var selfTaggerWidget = self.taggerWidget.get(0);
@@ -278,11 +283,17 @@
             }
           });
 
+          // Bind event to window to resize the suggestion list when the window's resized
+          var self = this;
+          $(window).resize(function() {
+            self._setSuggestionListDimensions(self);
+          });
+
           // Bind suggest list toggle to left clicking suggestion button
           if (!this.options.ajaxURL) {
             this.taggerSuggestionsButton.bind('mouseup keyup', function (event) {
               if ((event.type === "mouseup" && event.which === 1) // left click
-                  || (event.type === "keyup" && (event.which === 13 || event.which === 32 || event.which === 40))) { // enter || space || down arrow
+                || (event.type === "keyup" && (event.which === 13 || event.which === 32 || event.which === 40))) { // enter || space || down arrow
                 // If the suggestion list is visible already, then toggle it off
                 if (self.taggerSuggestions.is(":visible")) {
                   self.taggerSuggestions.hide();
@@ -383,10 +394,16 @@
                   switch (event.which) {
                     case 8: // Backspace
                       if ($(this).val().length === 0 && self.loadedFiltered) {
-                        // Hide it
-                        self.taggerSuggestions.hide();
-                        // Focus the drop arrow
-                        self.taggerSuggestionsButton.focus();
+                        if (this.singleValue && this.taggerFilterInput) {
+                          // Ignore in single select mode with filter in suggestions to stop nav-back
+                        }
+                        else {
+                          // Hide it
+                          self.taggerSuggestions.hide();
+                          // Focus the drop arrow
+                          self.taggerSuggestionsButton.focus();
+                        }
+                        event.preventDefault();
                       }
                       break;
                     case 13: // Enter key
@@ -487,16 +504,16 @@
           // Add tag to filteredResults object if it contains the search string in the key, hidden or suggestion fields
           if (this.options.caseSensitive) {
             if (tag.key.indexOf(searchString) >= 0
-               || (tag.hidden && tag.hidden.indexOf(searchString) >= 0)
-               || $('<div/>').html(tag.suggestion).text().replace(/<.*?[^>]>/g,'').indexOf(searchString) >= 0) {
+              || (tag.hidden && tag.hidden.indexOf(searchString) >= 0)
+              || $('<div/>').html(tag.suggestion).text().replace(/<.*?[^>]>/g,'').indexOf(searchString) >= 0) {
               filteredResults[tagID] = $.extend(true, {}, tag);
               filteredResults[tagID].suggestable = true;
             }
           }
           else {
             if (tag.key.toLowerCase().indexOf(searchStringLowerCase) >= 0
-               || (tag.hidden && tag.hidden.toLowerCase().indexOf(searchStringLowerCase) >= 0)
-               || $('<div/>').html(tag.suggestion).text().replace(/<.*?[^>]>/g,'').toLowerCase().indexOf(searchStringLowerCase) >= 0) {
+              || (tag.hidden && tag.hidden.toLowerCase().indexOf(searchStringLowerCase) >= 0)
+              || $('<div/>').html(tag.suggestion).text().replace(/<.*?[^>]>/g,'').toLowerCase().indexOf(searchStringLowerCase) >= 0) {
               filteredResults[tagID] = $.extend(true, {}, tag);
               filteredResults[tagID].suggestable = true;
             }
@@ -511,32 +528,67 @@
     /**
      * Load suggestions into suggestion list from ajaxURL
      * @param {string} value the string value to filter by
+     * @protected
      */
-    ajaxLoadSuggestions: function (value) {
+    _ajaxLoadSuggestions: function (value) {
       var searchString = value;
       var self = this;
 
-      $.ajax({
-        url: this.options.ajaxURL,
-        type: "GET",
-        data: {
-          elementId: this.element.attr('id')
-          ,search: searchString
-        },
-        dataType: 'json',
-        success: function (data) {
-          //Copy selected tags to new list
-          $.each(self.tagsByID, function(key, tag){
-            if (self._isAlreadyDisplayingTag(key)) {
-              data[key] = tag;
+      // TODO - NP - AJMS - This timeout logic is crude and open to all sorts of race conditions
+      if (this.pendingAJAXEvent) {
+        clearTimeout(this.pendingAJAXEvent);
+      }
+
+      this.pendingAJAXEvent = setTimeout(
+        function() {
+          $.ajax({
+            url: self.options.ajaxURL,
+            type: "GET",
+            data: {
+              elementId: self.element.attr('id')
+            , search: searchString
+            },
+            dataType: 'json',
+            success: function (data) {
+              //Copy selected tags to new list
+              // TODO - NP - AJMS - Commented out, why would you want this?
+              //$.each(self.tagsByID, function(key, tag){
+              //  if (self._isAlreadyDisplayingTag(key)) {
+              //    data[key] = tag;
+              //  }
+              //});
+              self.tagsByID = data;
+              self._loadSuggestions(data, false);
+              self.loadedFiltered = true;
+              self._showSuggestions(false);
+            },
+            error: function(data) {
+              self.options.ajaxErrorFunction(self, data);
             }
           });
-          self.tagsByID=data;
-          self._loadSuggestions(data, false);
-          self.loadedFiltered = true;
-          self._showSuggestions(false);
+          self.pendingAJAXEvent = undefined;
         }
-      });
+      , this.options.typingTimeThreshold
+      );
+    },
+
+    /**
+     * Show a message to the user in the suggestions list section instead of results
+     * @param {string} msg Message to show
+     * @protected
+     */
+    _showMessageSuggestion: function(msg, className) {
+      // Set width
+      this._setSuggestionListDimensions(this);
+
+      // Show the container
+      this.taggerSuggestions.show();
+
+      // Clear out suggestion list
+      this.taggerSuggestionsList.children().remove();
+
+      // Add message
+      $('<li class="message '+className+'">' + msg + '</li>').appendTo(this.taggerSuggestionsList);
     },
 
     /**
@@ -720,7 +772,9 @@
         // Load in all suggestable tags
         for (var i = 0; i < suggestableTagArray.length; i++) {
           var tag = suggestableTags[suggestableTagArray[i][0]];
-          if ((!this.options.displayHierarchy && !tag.suggestable) || tag.historical) {
+          // Don't add suggestion if it's not displaying hierarchy and the tag isn't selectable, the tag is historical
+          //  or if the tag has no key and id tuple
+          if ((!this.options.displayHierarchy && !tag.suggestable) || tag.historical || !(tag.key && tag.id)) {
             continue;
           }
           // Create and add the suggestion to the suggestion list
@@ -758,9 +812,13 @@
         $('<li class="missing">' + this.options.noSuggestText + '</li>').appendTo(this.taggerSuggestionsList);
       }
 
-      // Add message if nothing ended up in the list
+      // Add message if nothing ended up in the list (e.g. all selectable items selected)
       if (this.taggerSuggestionsList.children().length === 0) {
         $('<li class="missing">' + this.options.emptyListText + '</li>').appendTo(this.taggerSuggestionsList);
+      }
+
+      if (suggestableTags.limited) {
+        $('<li class="limited">' + this.options.limitedText + '</li>').appendTo(this.taggerSuggestionsList);
       }
     },
 
@@ -768,37 +826,37 @@
      * Set the dimensions of the suggestion list container
      * @protected
      */
-    _setSuggestionListDimensions: function() {
+    _setSuggestionListDimensions: function(taggerInstance) {
       // Set width
-      if (this.options.suggestMaxWidth === null && this.options.suggestWidth === null) {
-        this.taggerSuggestions.width(this.taggerWidget.innerWidth());
+      if (taggerInstance.options.suggestMaxWidth === null && taggerInstance.options.suggestWidth === null) {
+        taggerInstance.taggerSuggestions.width(taggerInstance.taggerWidget.innerWidth());
       }
-      else if (this.options.suggestWidth !== null) {
-        this.taggerSuggestions.width(this.options.suggestWidth);
+      else if (taggerInstance.options.suggestWidth !== null) {
+        taggerInstance.taggerSuggestions.width(taggerInstance.options.suggestWidth);
       }
-      else if (this.options.suggestMaxWidth !== null) {
-        this.taggerSuggestions.css('min-width', this.taggerWidget.innerWidth());
-        this.taggerSuggestions.css('max-width', this.options.suggestMaxWidth);
+      else if (taggerInstance.options.suggestMaxWidth !== null) {
+        taggerInstance.taggerSuggestions.css('min-width', taggerInstance.taggerWidget.innerWidth());
+        taggerInstance.taggerSuggestions.css('max-width', taggerInstance.options.suggestMaxWidth);
 
         // Deal with quirks
         if (!jQuery.support.boxModel) {
-          if (this.taggerSuggestions.width() < this.taggerWidget.innerWidth()) {
-            this.taggerSuggestions.width(this.taggerWidget.innerWidth());
+          if (taggerInstance.taggerSuggestions.width() < taggerInstance.taggerWidget.innerWidth()) {
+            taggerInstance.taggerSuggestions.width(taggerInstance.taggerWidget.innerWidth());
           }
-          else if (this.taggerSuggestions.width() > this.options.suggestMaxWidth) {
-            this.taggerSuggestions.width(this.options.suggestMaxWidth);
+          else if (taggerInstance.taggerSuggestions.width() > taggerInstance.options.suggestMaxWidth) {
+            taggerInstance.taggerSuggestions.width(taggerInstance.options.suggestMaxWidth);
           }
         }
       }
 
       // Set height
-      if (this.options.suggestMaxHeight !== null) {
-        this.taggerSuggestions.css('max-height', this.options.suggestMaxHeight);
+      if (taggerInstance.options.suggestMaxHeight !== null) {
+        taggerInstance.taggerSuggestions.css('max-height', taggerInstance.options.suggestMaxHeight);
 
         // Deal with quirks
         if (!jQuery.support.boxModel) {
-          if (this.taggerSuggestions.height() > this.options.suggestMaxHeight) {
-            this.taggerSuggestions.height(this.options.suggestMaxHeight);
+          if (taggerInstance.taggerSuggestions.height() > taggerInstance.options.suggestMaxHeight) {
+            taggerInstance.taggerSuggestions.height(taggerInstance.options.suggestMaxHeight);
           }
         }
       }
@@ -812,7 +870,7 @@
      * @protected
      */
     _filterSuggestions: function (value, hideSuggestions) {
-      if (value.length > (this.options.characterThreshold - 1)) {
+      if (value.length >= this.options.characterThreshold) {
         // If text is longer than the threshold start filtering and showing the filtered results
         if (!this.options.ajaxURL) {
           this.filterTags(value);
@@ -820,7 +878,7 @@
         }
         // If ajaxURL is set, load the suggestions from URL instead of filtering the tag list
         else {
-          this.ajaxLoadSuggestions(value);
+          this._ajaxLoadSuggestions(value);
         }
       }
       // If under the threshold and was previously filtered, reset the list
@@ -844,7 +902,7 @@
      */
     _showSuggestions: function (focusFirstItem) {
       // Set width
-      this._setSuggestionListDimensions();
+      this._setSuggestionListDimensions(this);
 
       // Show the container
       this.taggerSuggestions.show();
@@ -1140,17 +1198,24 @@
       tagElem.remove();
       this.tagCount--;
       // Deselect from hidden select
-      $('option[value="'+tagID+'"]', this.element).removeAttr("selected");
+      $('option[value="' + tagID + '"]', this.element).removeAttr("selected");
+
       // In single select mode, make sure no options are selected
       if (this.singleValue) {
         $(this.element).val([]);
       }
-      // Add back into the selectable list
-      this.tagsByID[tagID].suggestable = true;
-      // Mark this tag as no longer being displayed
-      this.tagsByID[tagID].displaying = false;
+
+      // Add tag back into the suggestable list and mark is as no longer displayed if it's in the list of current tags
+      if (this.tagsByID[tagID]) {
+        // Add back into the selectable list
+        this.tagsByID[tagID].suggestable = true;
+        // Mark this tag as no longer being displayed
+        this.tagsByID[tagID].displaying = false;
+      }
+
       // Reset input
       this._selectionReset(shouldHideMenu, shouldClearInputs);
+
       // Show the input if it's in single-select mode
       if (this.singleValue) {
         this.taggerInput.show();
