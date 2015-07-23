@@ -714,20 +714,21 @@
             }
           }
           else if (event.type === "keyup" && event.which === 35) { // End key
-            var prevTarget = $(event.target).nextAll('li[tabindex]').last();
-            if (prevTarget.is('li')) {
-              prevTarget.focus();
+            var nextTarget = $(event.target).nextAll('li[tabindex]').last();
+            if (nextTarget.is('li')) {
+              nextTarget.focus();
               event.preventDefault();
             }
           }
-          else if (event.type === "keyup" && event.which === 8) { // Backspace
+          else if (event.type === "keydown" && event.which === 8) { // Backspace
             self._removeLastCharAndFilter(event);
             event.preventDefault();
           }
         }
         // If the user is typing, then divert that typing to the input field
-        else if (event.type === "keypress" && event.which !== 0 && event.charCode !== 0 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        else if (event.type === "keydown" && event.which !== 0 && event.charCode !== 0 && !event.ctrlKey && !event.metaKey && !event.altKey) {
           self._appendCharAndFilter(event);
+          event.preventDefault();
         }
         else {
           // Deal with setting focus properly and displaying the focus for IE6
