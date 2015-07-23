@@ -1,5 +1,4 @@
-[jQuery](http://jquery.com/) - Tagger Widget
-==================================================
+# [jQuery](http://jquery.com/) - Tagger Widget #
 
 jQuery plugin to turn a HTML select into an auto-suggesting, tagging widget.
 
@@ -15,8 +14,10 @@ suggestion list, running the original onChange actions, displaying tags for
 items previously selected but no longer in the list, keyboard accessibility and 
 many other features.
 
-Use
---------------------------------------
+- [Examples](http://fivium.github.io/jquery-tagger/examples.htm)
+- [JSDoc](http://fivium.github.io/jquery-tagger/doc/jQuery.widget.ui.tagger.html)
+
+## Use ##
 
 Clone this repository, check out the examples folder. All you need to do is
 include the two files in the src folder on your page and apply the widget to a
@@ -25,8 +26,7 @@ select and pass it appropriate options via the constructor.
 It should work in everything from IE6 onwards. If you find a feature that fails 
 to work in any environment, raise an issue.
 
-Requirements
---------------------------------------
+## Requirements ##
 
 * jquery : >=1.9
 * jqueryui : >=1.10
