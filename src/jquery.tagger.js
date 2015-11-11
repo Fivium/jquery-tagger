@@ -344,6 +344,10 @@
                       }
                       event.preventDefault();
                     }
+                    else if (self.taggerInput.val().length <= self.options.characterThreshold) {
+                      // If they're backspacing the last character that puts them over the filter threshold hide the suggestions
+                      self.taggerSuggestions.hide();
+                    }
                     break;
                   case 27: // Esc
                     self.taggerSuggestions.hide();
