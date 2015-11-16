@@ -69,12 +69,12 @@
 
     /**
      * Default options, can be overridden by passing in an object to the constructor with these properties
-     * @property {array}    availableTags       - Array of JSON tag objects
-     * @property {array}    ajaxURL             - URL to autocomplete webservice for updating available tags
-     * @property {array}    preselectedTags     - Array of tag ID's that are selected in the element (helps performance)
-     * @property {integer}  characterThreshold  - How many characters must be typed before searching
-     * @property {integer}  characterLimit      - How many characters can be entered into the input box
-     * @property {integer}  typingTimeThreshold - How many milliseconds to wait after the last keypress before filtering
+     * @property {Array}    availableTags       - Array of JSON tag objects
+     * @property {Array}    ajaxURL             - URL to autocomplete webservice for updating available tags
+     * @property {Array}    preselectedTags     - Array of tag ID's that are selected in the element (helps performance)
+     * @property {number}   characterThreshold  - How many characters must be typed before searching
+     * @property {number}   characterLimit      - How many characters can be entered into the input box
+     * @property {number}   typingTimeThreshold - How many milliseconds to wait after the last keypress before filtering
      * @property {boolean}  caseSensitive       - Case sensitive searching - defaults to false
      * @property {string}   placeholder         - Placeholder text for input area
      * @property {string}   baseURL             - Base URL used for images
@@ -83,14 +83,14 @@
      * @property {string}   imgSearch           - URL for search image (after baseURL)
      * @property {boolean}  sortedOutput        - Sort the suggestion lists by tag.sort
      * @property {boolean}  displayHierarchy    - Indent suggestions to show hierarchy
-     * @property {integer}  indentMultiplier    - When indenting suggestions, how much to multiple tag.level by
-     * @property {integer}  tabindexOffset      - Then creating items it can tab to, what the tabindex should initially be
+     * @property {number}   indentMultiplier    - When indenting suggestions, how much to multiple tag.level by
+     * @property {number}   tabindexOffset      - Then creating items it can tab to, what the tabindex should initially be
      * @property {string}   noSuggestText       - Text to show when no suggestions can be found
      * @property {string}   emptyListText       - Text to show when no suggestions in the list
      * @property {string}   searchTooltipText   - Text to show as tooltip for the ajax search icon
      * @property {string}   ajaxErrorFunction   - Function definition to use in the event of an AJAX request error, function(tagger, data)
      * @property {string}   loadingClass        - Class on an sibling to the select used to fill while the js loads the tagger
-     * @property {integer}  inputExpandExtra    - How many extra pixels to add on to the end of an input when expanding
+     * @property {number}   inputExpandExtra    - How many extra pixels to add on to the end of an input when expanding
      * @property {string}   fieldWidth          - Override width e.g. 20em
      * @property {string}   fieldHeight         - Override height e.g. 20em
      * @property {string}   suggestWidth        - Set a hard width for the suggestion list (overrides maxwidth) e.g. 50em
@@ -100,34 +100,53 @@
      */
     options: {
       availableTags       : null
-      , ajaxURL             : null
-      , preselectedTags     : null
-      , characterThreshold  : 1
-      , characterLimit      : null
-      , typingTimeThreshold : 200
-      , caseSensitive       : false
-      , placeholder         : null
-      , baseURL             : '/img/'
-      , imgDownArrow        : 'dropdown.png'
-      , imgRemove           : 'remove.png'
-      , imgSearch           : 'search.png'
-      , sortedOutput        : false
-      , displayHierarchy    : false
-      , indentMultiplier    : 1
-      , tabindexOffset      : null
-      , noSuggestText       : 'No suggestions found'
-      , emptyListText       : 'All items selected already'
-      , limitedText         : 'There are too many results to show, type more characters to filter these results further'
-      , searchTooltipText   : 'Enter text to get suggestions'
-      , ajaxErrorFunction   : function(self, data){self._showMessageSuggestion('AJAX Search failed', 'error');}
-      , loadingClass        : '.tagger-loading'
-      , inputExpandExtra    : 14
-      , fieldWidth          : '30em'
-      , fieldHeight         : null
-      , suggestWidth        : null
-      , suggestMaxWidth     : null
-      , suggestMaxHeight    : null
-      , mandatorySelection  : false
+    , ajaxURL             : null
+    , preselectedTags     : null
+    , characterThreshold  : 1
+    , characterLimit      : null
+    , typingTimeThreshold : 200
+    , caseSensitive       : false
+    , placeholder         : null
+    , baseURL             : '/img/'
+    , imgDownArrow        : 'dropdown.png'
+    , imgRemove           : 'remove.png'
+    , imgSearch           : 'search.png'
+    , sortedOutput        : false
+    , displayHierarchy    : false
+    , indentMultiplier    : 1
+    , tabindexOffset      : null
+    , noSuggestText       : 'No suggestions found'
+    , emptyListText       : 'All items selected already'
+    , limitedText         : 'There are too many results to show, type more characters to filter these results further'
+    , searchTooltipText   : 'Enter text to get suggestions'
+    , ajaxErrorFunction   : function(self, data){self._showMessageSuggestion('AJAX Search failed', 'error');}
+    , loadingClass        : '.tagger-loading'
+    , inputExpandExtra    : 14
+    , fieldWidth          : '30em'
+    , fieldHeight         : null
+    , suggestWidth        : null
+    , suggestMaxWidth     : null
+    , suggestMaxHeight    : null
+    , mandatorySelection  : false
+    },
+
+    keyCodes: {
+      BACKSPACE: 8
+    , TAB: 9
+    , ENTER: 13
+    , ESC: 27
+    , SPACE: 32
+    , END: 35
+    , HOME: 36
+    , LEFT: 37
+    , UP: 38
+    , RIGHT: 39
+    , DOWN: 40
+    },
+    mouseCodes: {
+      LEFT: 1
+    , MIDDLE: 2
+    , RIGHT: 3
     },
 
     /**
@@ -138,12 +157,11 @@
      * with pre-selected tags.
      */
     _create: function () {
-      var self = this;
       this.canFireActions = false;
 
       if (this.element.is('select')) {
         // Check readonly mode
-        this.readonly = this.element.attr('readonly');
+        this.readonly = this.element.prop('readonly');
 
         // Set tabindexOffset
         if (this.options.tabindexOffset === null) {
@@ -159,7 +177,7 @@
         }
 
         // Check cardinality mode
-        this.singleValue = !this.element.attr('multiple');
+        this.singleValue = !this.element.prop('multiple');
 
         // Initialise the tag counter
         this.tagCount = 0;
@@ -171,7 +189,7 @@
         this.element.siblings(this.options.loadingClass).remove();
 
         // Construct tagger widget
-        this.taggerWidget = $('<div class="tagger"></div>').insertAfter(this.element);
+        this.taggerWidget = $('<div>').addClass('tagger').insertAfter(this.element);
         if (this.readonly) {
           this.taggerWidget.addClass('tagger-readonly');
         }
@@ -190,14 +208,26 @@
 
         if (!this.readonly) {
           // Add the suggestion drop arrow and and text input if not readonly
-          this.taggerInput = $('<input type="text" class="intxt" autocomplete="off"/>').appendTo(this.taggerWidget);
-          this.taggerButtonsPanel = $('<div class="tagger-buttons"></div>');
+          this.taggerInput = $('<input>').attr('type', 'text').attr('autocomplete', 'off').addClass('intxt').appendTo(this.taggerWidget);
+          this.taggerButtonsPanel = $('<div>').addClass('tagger-buttons');
           this.taggerButtonsPanel.appendTo(this.taggerWidget);
+
           if (!this.options.ajaxURL) {
-            this.taggerSuggestionsButton = $('<div class="droparrow hittarget"><img src="' + this.options.baseURL + this.options.imgDownArrow + '" /></div>').appendTo(this.taggerButtonsPanel);
-          } else {
-            this.taggerSuggestionsButton = $('<div class="search"><img src="' + this.options.baseURL + this.options.imgSearch + '" title="' + this.options.searchTooltipText + '" /></div>').appendTo(this.taggerButtonsPanel);
+            this.taggerSuggestionsButton = $('<div>')
+              .addClass('droparrow')
+              .addClass('hittarget')
+              .bind('mouseup keyup', $.proxy(this._handleSuggestionsButtonInteraction, this))
+              .appendTo(this.taggerButtonsPanel);
+            $('<img>').attr('src', this.options.baseURL + this.options.imgDownArrow).appendTo(this.taggerSuggestionsButton);
           }
+          else {
+            this.taggerSuggestionsButton = $('<div>')
+              .addClass('search')
+              .bind('mouseup keyup', $.proxy(this._handleSuggestionsButtonInteraction, this))
+              .appendTo(this.taggerButtonsPanel);
+            $('<img>').attr('src', this.options.baseURL + this.options.imgSearch).attr('title', this.options.searchTooltipText).appendTo(this.taggerSuggestionsButton);
+          }
+
           this.taggerSuggestionsButton.attr("tabindex", this.tabIndex);
 
           // Add placeholder text to text input field
@@ -213,34 +243,26 @@
           this.taggerInput.attr("tabindex", this.tabIndex);
 
           // Esc should hide the tagger suggestions globally
-          this.taggerWidget.bind('keydown', function (event) {
+          this.taggerWidget.bind('keydown', $.proxy(function (event) {
             if (event.target && event.which === 27) { // Esc
-              self.taggerSuggestions.hide();
+              this.taggerSuggestions.hide();
             }
-          });
+          }, this));
 
           // Capture the keypress event for any child elements - redirect any chars to the current input field
-          this.taggerWidget.bind('keypress', function (event) {
-            if (event.which !== 0 && event.charCode !== 0  && !event.ctrlKey && !event.metaKey && !event.altKey) {
-              // If the keypress came from the main input or the filter, ignore this event or we'll potentially
-              // just get in the way of the character being inserted and it'll be put at the end, instead of wherever
-              // typed
-              if (event.target === self.taggerInput.get(0) || (self.taggerFilterInput && event.target === self.taggerFilterInput.get(0))) {
-                return;
-              }
-              self._showSuggestions(true);
-              self._appendCharAndFilter(event);
-              event.preventDefault();
-            }
-          });
+          this.taggerWidget.bind('keypress', $.proxy(this._handleTaggerKeypressRedirect, this));
         }
 
         // Clearer div makes sure the widget div keeps its height
-        $('<div class="clearer"></div>').appendTo(this.taggerWidget);
+        $('<div>')
+          .addClass('clearer')
+          .appendTo(this.taggerWidget);
 
         if (!this.readonly) {
           // If not readonly, stub out an empty suggestion list
-          this.taggerSuggestions = $('<div class="suggestions"></div>').appendTo(this.taggerWidget);
+          this.taggerSuggestions = $('<div>')
+            .addClass('suggestions')
+            .appendTo(this.taggerWidget);
 
           // Put a filter at the top of the suggestion list in single-select mode
           if (this.singleValue) {
@@ -253,186 +275,28 @@
             this.taggerFilterInput.hide();
           }
 
-          this.taggerSuggestionsList = $('<ul></ul>').appendTo(this.taggerSuggestions);
+          this.taggerSuggestionsList = $('<ul>').appendTo(this.taggerSuggestions);
 
           // Event listener to hide suggestions list if clicking outside this tagger widget
           // Using mousedown because IE11 reports the event.target for a mouseup as the HTML
           // root element rather than the original click target, mousedown seems to work
           // cross browser
-          $(document).mousedown(function (event) {
-            var selfTaggerWidget = self.taggerWidget.get(0);
-            if ($(event.target).parents(".tagger").get(0) !== selfTaggerWidget && event.target !== selfTaggerWidget) {
-              self.taggerSuggestions.hide();
-            }
-            // if clicking through to the parent div
-            else if (event.target === selfTaggerWidget) {
-              // focus the first focusable item
-              if (!self.singleValue || self.tagCount === 0) {
-                self.taggerWidget.find("input[tabindex]:visible").first().focus();
-                event.preventDefault();
-              }
-              // For now, only show the list automatically on click if we have a single value selected
-              // When performance of the suggestion list building is improved, we can enable this functionality
-              // for multi selectors and empty taggers - note redundant boolean logic preserved so that the following
-              // suggestion parameter is still valid if this check is removed
-              if (self.singleValue && self.tagCount === 1) {
-                // In single select mode, with a single tag selected already
-                // we should focus the first item in the suggestion list (which
-                // will be the filter input).
-                // NB: Using setTimeout because trying to do this immediately causes
-                // the focus to fail, presumably because the corresponding mouseup triggers
-                // focus elsewhere.
-                setTimeout(function(){
-                  self._showSuggestions(self.singleValue && self.tagCount === 1);
-                }, 0);
-              }
-            }
-          });
+          $(document).bind('mousedown', $.proxy(this._handleDocumentMouseDown, this));
 
           // Bind event to window to resize the suggestion list when the window's resized
-          var self = this;
-          $(window).resize(function() {
-            self._setSuggestionListDimensions(self);
-          });
+          $(window).resize($.proxy(function() {
+            this._setSuggestionListDimensions(this);
+          }, this));
 
-          // Bind suggest list toggle to left clicking suggestion button
-          if (!this.options.ajaxURL) {
-            this.taggerSuggestionsButton.bind('mouseup keyup', function (event) {
-              if ((event.type === "mouseup" && event.which === 1) // left click
-                || (event.type === "keyup" && (event.which === 13 || event.which === 32 || event.which === 40))) { // enter || space || down arrow
-                // If the suggestion list is visible already, then toggle it off
-                if (self.taggerSuggestions.is(":visible")) {
-                  self.taggerSuggestions.hide();
-                }
-                // otherwise show it
-                else {
-                  self._showSuggestions(true);
-                }
-                event.preventDefault();
-              }
-            });
-          }
           // Expand the input field to fit its contents
           this._inputExpand(this.taggerInput);
 
           // Bind event to text input to expand input to fit contents and deal with key input
-          this.taggerInput.bind({
-            keydown: function (event) {
-              // Expand the input field to fit its contents
-              self._inputExpand($(this));
-
-              if (event.target) {
-                switch (event.which) {
-                  case 13: // Enter key
-                    // If they hit enter with just one item in the suggestion list, add it, otherwise focus the top item
-                    if (self.taggerSuggestionsList.children('[tabindex]').length === 1) {
-                      self._addTagFromID(self.taggerSuggestionsList.children('[tabindex]').first().data('tagid'));
-                      self._selectionReset(true, true);
-                    }
-                    else {
-                      self.taggerSuggestionsList.children('[tabindex]').first().focus();
-                    }
-                    event.preventDefault();
-                    break;
-                  case 8: // Backspace
-                    if (self.taggerInput.val().length < 1) {
-                      // If there is nothing in the input, change focus to the last tag
-                      var removeTag = $('.tag', self.taggerWidget).last();
-                      // Move focus to last tag if there is one
-                      if (removeTag.length > 0) {
-                        removeTag.focus();
-                      }
-                      event.preventDefault();
-                    }
-                    else if (self.taggerInput.val().length <= self.options.characterThreshold) {
-                      // If they're backspacing the last character that puts them over the filter threshold hide the suggestions
-                      self.taggerSuggestions.hide();
-                    }
-                    break;
-                  case 27: // Esc
-                    self.taggerSuggestions.hide();
-                    event.preventDefault();
-                    break;
-                  default:
-                    break;
-                }
-              }
-            },
-            keyup: function (event) {
-              self._inputExpand(self.taggerInput);
-              if (event.which !== 13 && event.which !== 40 && event.which !== 27) { // key up not enter or down arrow or esc key
-                self._filterSuggestions($(this).val(), false);
-              }
-              else if (event.which === 40) { // Down Arrow
-                if ( !self.options.ajaxURL || self.taggerSuggestions.is(":visible")) {
-                  self._showSuggestions(true);
-                }
-              }
-            },
-            mouseup: function (event) {
-
-              // For now, only show the list automatically on click if we have a single value selected
-              // When performance of the suggestion list building is improved, we can enable this functionality
-              // for multi selectors and empty taggers - note redundant boolean logic preserved so that the following
-              // suggestion parameter is still valid if this check is removed
-              if (self.singleValue && self.tagCount === 1) {
-                // In single select mode, with a single tag selected already
-                // we should focus the first item in the suggestion list (which
-                // will be the filter input)
-                self._showSuggestions(self.singleValue && self.tagCount === 1);
-              }
-            }
-          });
+          this.taggerInput.bind('keydown keyup mouseup', $.proxy(this._handleFilterInputInteraction, this));
 
           // If we have a list filter then bind events to it
           if (this.taggerFilterInput) {
-            this.taggerFilterInput.bind({
-              keyup: function (event) {
-                if (event.target) {
-                  if (event.which !== 13 && event.which !== 40) { // key up not enter or down arrow
-                    self._filterSuggestions($(this).val(), true);
-                  }
-                  else if (event.which === 40) {
-                    // Focus top item in suggestion list
-                    self.taggerSuggestionsList.children('[tabindex]').first().focus();
-                    event.preventDefault();
-                  }
-                }
-              },
-              keydown: function (event) {
-                if (event.target) {
-                  switch (event.which) {
-                    case 8: // Backspace
-                      if ($(this).val().length === 0 && self.loadedFiltered) {
-                        if (this.singleValue && this.taggerFilterInput) {
-                          // Ignore in single select mode with filter in suggestions to stop nav-back
-                        }
-                        else {
-                          // Hide it
-                          self.taggerSuggestions.hide();
-                          // Focus the drop arrow
-                          self.taggerSuggestionsButton.focus();
-                        }
-                        event.preventDefault();
-                      }
-                      break;
-                    case 13: // Enter key
-                      // If they hit enter with just one item in the suggestion list, add it, otherwise focus the top item
-                      if (self.taggerSuggestionsList.children('[tabindex]').length === 1) {
-                        self._addTagFromID(self.taggerSuggestionsList.children('[tabindex]').first().data('tagid'));
-                        self._selectionReset(true, true);
-                      }
-                      else {
-                        self.taggerSuggestionsList.children('[tabindex]').first().focus();
-                      }
-                      event.preventDefault();
-                      break;
-                    default:
-                      break;
-                  }
-                }
-              }
-            });
+            this.taggerFilterInput.bind('keydown keyup mouseup', $.proxy(this._handleFilterInputInteraction, this));
           }
 
           // If the select was in focus already, make the tagger input focused
@@ -440,10 +304,14 @@
             this.taggerInput.focus();
           }
           // Capture focus on the underlying element and redirect that focus to the tagger
-          this.element.focus(function (e) {
+          this.element.focus($.proxy(function (e) {
+            this.taggerInput.focus();
             e.preventDefault();
-            self.taggerInput.focus();
-          });
+          }, this));
+          // For some reason the jQuery focus overload doesn't fully work so we need both methods?
+          this.element.get(0).focus = $.proxy(function () {
+            this.taggerInput.focus();
+          }, this);
         }
 
         // Let the available tags be accessed through a nicer name
@@ -453,9 +321,16 @@
         // Convert options to JS objects if no JSON is supplied
         else {
           this.tagsByID = {};
-          this.element.children("option").each(function (index) {
-            self.tagsByID[$(this).val()] = {id: $(this).val(), key: $(this).text(), hidden: '', level: 0, suggestable: true, historical: false, sort: index};
-          });
+          this.element.children("option").each($.proxy(function (index, element) {
+            this.tagsByID[$(element).val()] = {
+              id: $(element).val(),
+              key: $(element).text(),
+              hidden: '',
+              level: 0,
+              suggestable: true,
+              historical: false,
+              sort: index};
+          }, this));
         }
 
         var preselectedTags = this.options.preselectedTags;
@@ -465,35 +340,236 @@
 
         // Deal with already selected options
         if (preselectedTags === null) {
-          this.element.children("option:selected").each(function () {
+          this.element.children("option:selected").each($.proxy(function (index, element) {
             // Set any selected options that aren't in the availableTags as historical entries so they can be displayed and removed but not added
-            if (!self.tagsByID[$(this).val()]) {
-              self.tagsByID[$(this).val()] = {id: $(this).val(), key: $(this).text(), suggestion: $(this).text(), hidden: '', level: 0, suggestable: false, historical: true};
+            if (!this.tagsByID[$(element).val()]) {
+              this.tagsByID[$(element).val()] = {
+                id: $(element).val(),
+                key: $(element).text(),
+                suggestion: $(element).text(),
+                hidden: '',
+                level: 0,
+                suggestable: false,
+                historical: true};
             }
             // Add tags for any selected options
-            self._addTagFromID($(this).val());
-          });
+            this._addTagFromID($(element).val());
+          }, this));
         }
         else {
           var preselectedTag = null;
           for (var i = 0; i < preselectedTags.length; i++) {
             preselectedTag = preselectedTags[i];
             // Set any selected options that aren't in the availableTags as historical entries so they can be displayed and removed but not added
-            if (!self.tagsByID[preselectedTag]) {
-              self.tagsByID[preselectedTag] = {id: preselectedTag, key: $($('option[value="'+preselectedTag+'"]', this.element)[0]).text(), suggestion: '', hidden: '', level: 0, suggestable: false, historical: true};
+            if (!this.tagsByID[preselectedTag]) {
+              this.tagsByID[preselectedTag] = {
+                id: preselectedTag,
+                key: $($('option[value="'+preselectedTag+'"]', this.element)[0]).text(),
+                suggestion: '',
+                hidden: '',
+                level: 0,
+                suggestable: false,
+                historical: true};
             }
             // Add tags for any selected options
-            self._addTagFromID(preselectedTag);
+            this._addTagFromID(preselectedTag);
           }
         }
         this.canFireActions = true;
       }
       else {
-        // Stub out console.log if not supported in browser
-        if (typeof console === "object") {
-          if (typeof console.log === "function") {
-            console.log('Tagger widget only works on select elements');
+        throw 'Tagger widget only works on select elements';
+      }
+    },
+
+    /**
+     * Handle keydown, keyup and mosueup events on filtering input boxes
+     * @param event KeyDown, KeyUp and MosueUp Event
+     * @private
+     */
+    _handleFilterInputInteraction: function(event) {
+      var targetInput = $(event.target);
+      var isMainInput = targetInput.get(0) === this.taggerInput.get(0);
+      switch (event.type) {
+        case "keydown":
+          // Expand the input field to fit its contents
+          if (isMainInput) {
+            this._inputExpand(this.taggerInput);
           }
+
+          if (event.target) {
+            switch (event.which) {
+              case this.keyCodes.ENTER: // Enter key
+                // If they hit enter with just one item in the suggestion list, add it, otherwise focus the top item
+                if (this.taggerSuggestionsList.children('[suggestion=tag]').length === 1) {
+                  this._addTagFromID(this.taggerSuggestionsList.children('[suggestion=tag]').first().data('tagid'));
+                  this._selectionReset(true, true);
+                }
+                else {
+                  this.taggerSuggestionsList.children('[tabindex]').first().focus();
+                }
+                event.preventDefault();
+                break;
+              case this.keyCodes.BACKSPACE: // Backspace
+                if (isMainInput) {
+                  if (targetInput.val().length < 1) {
+                    // If there is nothing in the input, change focus to the last tag
+                    var removeTag = $('.tag', this.taggerWidget).last();
+                    // Move focus to last tag if there is one
+                    if (removeTag.length > 0) {
+                      removeTag.focus();
+                    }
+                    event.preventDefault();
+                  }
+                  else if (targetInput.val().length <= this.options.characterThreshold) {
+                    // If they're backspacing the last character that puts them over the filter threshold hide the suggestions
+                    this.taggerSuggestions.hide();
+                  }
+                }
+                else {
+                  if (targetInput.val().length === 0 && this.loadedFiltered) {
+                    if (this.singleValue && this.taggerFilterInput) {
+                      // Ignore in single select mode with filter in suggestions to stop nav-back
+                    }
+                    else {
+                      // Hide it
+                      this.taggerSuggestions.hide();
+                      // Focus the drop arrow
+                      this.taggerSuggestionsButton.focus();
+                    }
+                    event.preventDefault();
+                  }
+                }
+                break;
+              case this.keyCodes.ESC: // Esc
+                this.taggerSuggestions.hide();
+                event.preventDefault();
+                break;
+              default:
+                break;
+            }
+          }
+          break;
+        case "keyup":
+          // Expand the input field to fit its contents
+          if (isMainInput) {
+            this._inputExpand(this.taggerInput);
+          }
+
+          if (event.which !== this.keyCodes.ENTER && event.which !== this.keyCodes.DOWN && event.which !== this.keyCodes.ESC) { // key up not enter or down arrow or esc key
+            this._filterSuggestions(targetInput.val(), false);
+          }
+          else if (event.which === this.keyCodes.DOWN) { // Down Arrow
+            if (isMainInput) {
+              if (!this.options.ajaxURL || this.taggerSuggestions.is(":visible")) {
+                this._showSuggestions(true);
+              }
+            }
+            else {
+              // Focus top item in suggestion list
+              this.taggerSuggestionsList.children('[tabindex]').first().focus();
+              event.preventDefault();
+            }
+          }
+          break;
+        case "mouseup":
+          // For now, only show the list automatically on click if we have a single value selected
+          // When performance of the suggestion list building is improved, we can enable this functionality
+          // for multi selectors and empty taggers - note redundant boolean logic preserved so that the following
+          // suggestion parameter is still valid if this check is removed
+          if (this.singleValue && this.tagCount === 1) {
+            // In single select mode, with a single tag selected already
+            // we should focus the first item in the suggestion list (which
+            // will be the filter input)
+            this._showSuggestions(this.singleValue && this.tagCount === 1);
+          }
+          break;
+        default:
+          throw 'Cannot handle interaction of this type on the filter input: ' + event.type + ' - ' + event.target;
+      }
+    },
+
+    /**
+     * Handle mouse and keyup events on the suggestions button (down arrow)
+     *
+     * @param event MouseUp or KeyUp event
+     * @private
+     */
+    _handleSuggestionsButtonInteraction: function (event) {
+      if ((event.type === "mouseup" && event.which === this.mouseCodes.LEFT) // left click
+        || (event.type === "keyup" && (event.which === this.keyCodes.ENTER || event.which === this.keyCodes.SPACE || event.which === this.keyCodes.DOWN))) { // enter || space || down arrow
+        if (this.options.ajaxURL) {
+          // Just redirect focus in ajax mode
+          this.taggerWidget.find("input[tabindex]:visible").first().focus();
+        }
+        else {
+          // If the suggestion list is visible already, then toggle it off
+          if (this.taggerSuggestions.is(":visible")) {
+            this.taggerSuggestions.hide();
+          }
+          // otherwise show it
+          else {
+            this._showSuggestions(true);
+          }
+        }
+        event.preventDefault();
+      }
+    },
+
+    /**
+     * When keypress events fire on the tagger widget redirect them to the filter input
+     *
+     * @param event KeyPress event
+     * @private
+     */
+    _handleTaggerKeypressRedirect: function (event) {
+      if (event.which !== 0 && event.charCode !== 0  && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        // If the keypress came from the main input or the filter, ignore this event or we'll potentially
+        // just get in the way of the character being inserted and it'll be put at the end, instead of wherever
+        // typed
+        if (event.target === this.taggerInput.get(0) || (this.taggerFilterInput && event.target === this.taggerFilterInput.get(0))) {
+          return;
+        }
+        this._appendCharAndFilter(event);
+        event.preventDefault();
+      }
+    },
+
+    /**
+     * Hide suggestions list if clicking outside this tagger widget
+     * (Using mousedown because IE11 reports the event.target for a mouseup as the HTML
+     *  root element rather than the original click target, mousedown seems to work
+     *  cross browser)
+     * @param event MouseDown event
+     * @private
+     */
+    _handleDocumentMouseDown: function (event) {
+      var selfTaggerWidget = this.taggerWidget.get(0);
+      if ($(event.target).parents(".tagger").get(0) !== selfTaggerWidget && event.target !== selfTaggerWidget) {
+        // If clicking something which is not in this tagger widget
+        this.taggerSuggestions.hide();
+      }
+      else if (event.target === selfTaggerWidget) {
+        // If clicking through to the parent div, focus the first focusable item
+        if (!this.singleValue || this.tagCount === 0) {
+          this.taggerWidget.find("input[tabindex]:visible").first().focus();
+          event.preventDefault();
+        }
+
+        // For now, only show the list automatically on click if we have a single value selected
+        // When performance of the suggestion list building is improved, we can enable this functionality
+        // for multi selectors and empty taggers - note redundant boolean logic preserved so that the following
+        // suggestion parameter is still valid if this check is removed
+        if (this.singleValue && this.tagCount === 1) {
+          // In single select mode, with a single tag selected already
+          // we should focus the first item in the suggestion list (which
+          // will be the filter input).
+          // NB: Using setTimeout because trying to do this immediately causes
+          // the focus to fail, presumably because the corresponding mouseup triggers
+          // focus elsewhere.
+          setTimeout($.proxy(function(){
+            this._showSuggestions(this.singleValue && this.tagCount === 1);
+          }, this), 0);
         }
       }
     },
@@ -590,6 +666,7 @@
     /**
      * Show a message to the user in the suggestions list section instead of results
      * @param {string} msg Message to show
+     * @param {string} className Extra classes to add to the message item
      * @protected
      */
     _showMessageSuggestion: function(msg, className) {
@@ -603,7 +680,7 @@
       this.taggerSuggestionsList.children().remove();
 
       // Add message
-      $('<li class="message '+className+'">' + msg + '</li>').appendTo(this.taggerSuggestionsList);
+      $('<li>').addClass('extra').addClass('message').addClass(className).text(msg).appendTo(this.taggerSuggestionsList);
     },
 
     /**
@@ -621,7 +698,7 @@
     },
 
     /**
-     * Updates the input or filter input and filtes results. Also places focus in the input
+     * Updates the input or filter input and filters results. Also places focus in the input
      * after updating the value.
      *
      * @param {jQuery} targetInput the jQuery wrapped input element to manipulate and focus
@@ -654,7 +731,7 @@
     _appendCharAndFilter: function (event) {
       // Belt and braces
       if (event.type !== 'keypress') {
-        throw "Wrong event type passed to _appendCharAndFilter(), expected keypress)";
+        throw "Unhandled event type passed to _appendCharAndFilter(), expected keypress): " + event.type;
       }
 
       // Decode char to concat onto existing filter string
@@ -687,154 +764,188 @@
      * @protected
      */
     _loadSuggestions: function (suggestableTags, allowIndent) {
-      var self = this;
-
-      // Function to bind to suggestion list elements
-      function suggestionBind(event) {
-        var currentSelection = $(this);
-        if (event.type === "mouseup" || event.type === "keyup" || event.type === "keydown") {
-          if ((event.type === "mouseup" && event.which === 1) || (event.type === "keydown" && event.which === 13)) { // Click or enter
-            // Handle suggestion adding
-            self._addTagFromID(currentSelection.data('tagid'));
-            self._selectionReset(true, true);
-            event.preventDefault();
-          }
-          else if (event.type === "keydown" && (event.which === 38 || (event.which === 9 && event.shiftKey))) { // Up arrow / shift+tab (Move selection up and up into the input)
-            // Override default browser tab control and allow arrow keys too
-            var prevTarget = $(event.target).prevAll('li[tabindex]').first();
-            if (prevTarget.is('li')) {
-              prevTarget.focus();
-            }
-            else if (self.taggerFilterInput && self.taggerFilterInput.is(":visible")) {
-              self.taggerFilterInput.focus();
-            }
-            else {
-              self.taggerInput.focus();
-            }
-            event.preventDefault();
-          }
-          else if (event.type === "keydown" && (event.which === 40 || (event.which === 9 && !event.shiftKey))) { // Down arrow / tab (Move selection down, stop at the end)
-            // Override default browser tab control and allow arrow keys too
-            var nextTarget = $(event.target).nextAll('li[tabindex]').first();
-            if (nextTarget.is('li')) {
-              nextTarget.focus();
-              event.preventDefault();
-            }
-          }
-          else if (event.type === "keyup" && event.which === 36) { // Home key
-            var prevTarget = $(event.target).prevAll('li[tabindex]').last();
-            if (prevTarget.is('li')) {
-              prevTarget.focus();
-              event.preventDefault();
-            }
-          }
-          else if (event.type === "keyup" && event.which === 35) { // End key
-            var nextTarget = $(event.target).nextAll('li[tabindex]').last();
-            if (nextTarget.is('li')) {
-              nextTarget.focus();
-              event.preventDefault();
-            }
-          }
-          else if (event.type === "keydown" && event.which === 8) { // Backspace
-            self._removeLastCharAndFilter(event);
-            event.preventDefault();
-          }
-        }
-        // If the user is typing, then divert that typing to the input field
-        else if (event.type === "keydown" && event.which !== 0 && event.charCode !== 0 && !event.ctrlKey && !event.metaKey && !event.altKey) {
-          self._appendCharAndFilter(event);
-          event.preventDefault();
-        }
-        else {
-          // Deal with setting focus properly and displaying the focus for IE6
-          if (event.type === "focus") {
-            $(this).addClass('focus');
-          }
-          else if (event.type === "blur") {
-            $(this).removeClass('focus');
-          }
-          else if (event.type === "mouseenter") {
-            $(this).addClass('focus');
-            $(this).focus();
-          }
-          else if (event.type === "mouseleave") {
-            $(this).removeClass('focus');
-            $(this).blur();
-          }
-        }
-      }
-
       // Clear out suggestion list
       this.taggerSuggestionsList.children().remove();
 
       // Load suggestions if there are some, or a message if not
       var suggestableTagArray = $.map(suggestableTags, function(n, i) { return [[i, n.sort]];});
-      if (suggestableTagArray.length > 0) {
-        if (this.options.sortedOutput) {
-          // Sort based on the sort member of the tag objects passed in, serialised to [1] above
-          suggestableTagArray.sort(
-            function(a, b) {
-              if (a[1] === undefined) {
-                return b[1];
-              }
-              else if (b[1] === undefined) {
-                return a[1];
-              }
-              return a[1] - b[1];
+
+      if (this.options.sortedOutput) {
+        // Sort based on the sort member of the tag objects passed in, serialised to [1] above
+        suggestableTagArray.sort(
+          function(a, b) {
+            if (a[1] === undefined) {
+              return b[1];
             }
-          );
-        }
-
-        // Load in all suggestable tags
-        for (var i = 0; i < suggestableTagArray.length; i++) {
-          var tag = suggestableTags[suggestableTagArray[i][0]];
-          // Don't add suggestion if the tag isn't selectable and it's not displaying hierarchy, the tag is historical
-          //  or if the tag has no key and id tuple
-          if ((!tag.suggestable && !this.options.displayHierarchy) || tag.historical || !(tag.key && tag.id)) {
-            continue;
-          }
-          // Create and add the suggestion to the suggestion list
-          var suggestion = $('<li></li>').attr("tabindex", this.tabIndex).appendTo(this.taggerSuggestionsList);
-          if (tag.suggestion && tag.suggestion !== null && tag.suggestion !== '') {
-            suggestion.html($('<div/>').html(tag.suggestion).text());
-          }
-          else {
-            suggestion.text(tag.key);
-          }
-
-          // Bind actions to the suggestion
-          suggestion.bind('mouseup keyup keydown mouseleave mouseenter blur focus', suggestionBind);
-
-          // Attach data to it so when it's selected we can reference what it's for
-          suggestion.data("tagid", tag.id);
-
-          // Deal with hierarchy view
-          if (this.options.displayHierarchy && allowIndent) {
-            if (tag.level > 0) {
-              // Indent suggestions
-              suggestion.css('padding-left', (tag.level * this.options.indentMultiplier) + 'em');
+            else if (b[1] === undefined) {
+              return a[1];
             }
-            if (!tag.suggestable) {
-              // If it's not suggestable (already selected) then just grey it out, remove it from tabindex and unbind events
-              suggestion.addClass('disabled');
-              suggestion.unbind();
-              suggestion.removeAttr('tabindex');
-            }
+            return a[1] - b[1];
           }
-        }
+        );
       }
-      else {
+
+      // Load in all suggestable tags
+      for (var i = 0; i < suggestableTagArray.length; i++) {
+        var tag = suggestableTags[suggestableTagArray[i][0]];
+        // Don't add suggestion if the tag isn't selectable and it's not displaying hierarchy, the tag is historical
+        //  or if the tag has no key and id tuple
+        if ((!tag.suggestable && !this.options.displayHierarchy) || tag.historical || !(tag.key && tag.id)) {
+          continue;
+        }
+        // Create and add the suggestion to the suggestion list
+        this._createSuggestionsItem(tag, allowIndent)
+      }
+
+      if (suggestableTagArray.length == 0) {
         // Add message if filtering meant no items to suggest
-        $('<li class="missing">' + this.options.noSuggestText + '</li>').appendTo(this.taggerSuggestionsList);
+        $('<li>')
+          .addClass('extra')
+          .addClass('missing')
+          .text(this.options.noSuggestText)
+          .appendTo(this.taggerSuggestionsList);
       }
 
       // Add message if nothing ended up in the list (e.g. all selectable items selected)
       if (this.taggerSuggestionsList.children().length === 0) {
-        $('<li class="missing">' + this.options.emptyListText + '</li>').appendTo(this.taggerSuggestionsList);
+        $('<li>')
+          .addClass('extra')
+          .addClass('missing')
+          .text(this.options.emptyListText)
+          .appendTo(this.taggerSuggestionsList);
       }
 
       if (suggestableTags.limited) {
-        $('<li class="limited">' + this.options.limitedText + '</li>').appendTo(this.taggerSuggestionsList);
+        $('<li>')
+          .addClass('extra')
+          .addClass('limited')
+          .text(this.options.limitedText)
+          .appendTo(this.taggerSuggestionsList);
+      }
+    },
+
+    /**
+     * Create the suggestion
+     * @param {object} tag - Tag object
+     * @param {boolean} allowIndent - Allow indenting of suggestion lists if true
+     * @private
+     */
+    _createSuggestionsItem: function(tag, allowIndent) {
+      // Create and add the suggestion to the suggestion list
+      var suggestion = $('<li>')
+        .attr("suggestion", "tag")
+        .attr("tabindex", this.tabIndex)
+        .appendTo(this.taggerSuggestionsList);
+
+      if (tag.suggestion && tag.suggestion !== null && tag.suggestion !== '') {
+        suggestion.html($('<div/>').html(tag.suggestion).text());
+      }
+      else {
+        suggestion.text(tag.key);
+      }
+
+      // Bind actions to the suggestion
+      suggestion.bind('mouseup keyup keydown', $.proxy(this._handleSuggestionItemInteraction, this));
+      suggestion.bind('mouseleave mouseenter blur focus', $.proxy(this._handleSuggestionItemFocus, this));
+
+      // Attach data to it so when it's selected we can reference what it's for
+      suggestion.data("tagid", tag.id);
+
+      // Deal with hierarchy view
+      if (this.options.displayHierarchy && allowIndent) {
+        if (tag.level > 0) {
+          // Indent suggestions
+          suggestion.css('padding-left', (tag.level * this.options.indentMultiplier) + 'em');
+        }
+        if (!tag.suggestable) {
+          // If it's not suggestable (already selected) then just grey it out, remove it from tabindex and unbind events
+          suggestion.addClass('extra');
+          suggestion.addClass('disabled');
+          suggestion.unbind();
+          suggestion.removeAttr('tabindex');
+        }
+      }
+    },
+
+    /**
+     * Function to bind to suggestion list elements
+     * @param event
+     */
+    _handleSuggestionItemInteraction: function suggestionBind(event) {
+      if (event.type !== "mouseup" && event.type !== "keyup" && event.type !== "keydown") {
+        throw "Unhandled event type passed to _handleSuggestionItemInteraction(), expected mouseup, keyup or keydown): " + event.type;
+      }
+
+      var prevTargets = $(event.target).prevAll('li[tabindex]');
+      var nextTargets = $(event.target).nextAll('li[tabindex]');
+
+      if (  (event.type === "mouseup" && event.which === this.mouseCodes.LEFT)
+        ||  (event.type === "keydown" && event.which === this.keyCodes.ENTER)) { // Click or enter
+        // Handle suggestion adding
+        var suggestionItem = $(event.target).closest('li');
+        if (suggestionItem.data('tagid')) {
+          this._addTagFromID(suggestionItem.data('tagid'));
+          this._selectionReset(true, true);
+        }
+        event.preventDefault();
+      }
+      else if (event.type === "keydown" && (event.which === this.keyCodes.UP || (event.which === this.keyCodes.TAB && event.shiftKey))) { // Up arrow / shift+tab (Move selection up and up into the input)
+        // Override default browser tab control and allow arrow keys too
+        if (prevTargets.first().is('li')) {
+          prevTargets.first().focus();
+        }
+        else if (this.taggerFilterInput && this.taggerFilterInput.is(":visible")) {
+          this.taggerFilterInput.focus();
+        }
+        else {
+          this.taggerInput.focus();
+        }
+        event.preventDefault();
+      }
+      else if (event.type === "keydown" && (event.which === this.keyCodes.DOWN || (event.which === this.keyCodes.TAB && !event.shiftKey))) { // Down arrow / tab (Move selection down, stop at the end)
+        // Override default browser tab control and allow arrow keys too
+        if (nextTargets.first().is('li')) {
+          nextTargets.first().focus();
+          event.preventDefault();
+        }
+      }
+      else if (event.type === "keyup" && event.which === this.keyCodes.HOME) { // Home key
+        if (prevTargets.last().is('li')) {
+          prevTargets.last().focus();
+          event.preventDefault();
+        }
+      }
+      else if (event.type === "keyup" && event.which === this.keyCodes.END) { // End key
+        if (nextTargets.last().is('li')) {
+          nextTargets.last().focus();
+          event.preventDefault();
+        }
+      }
+      else if (event.type === "keydown" && event.which === this.keyCodes.BACKSPACE) { // Backspace
+        this._removeLastCharAndFilter(event);
+        event.preventDefault();
+      }
+    },
+
+    /**
+     * Deal with setting focus properly and displaying the focus for IE6
+     * @param event
+     * @private
+     */
+    _handleSuggestionItemFocus: function(event) {
+      if (event.type === "focus") {
+        $(event.target).addClass('focus');
+      }
+      else if (event.type === "blur") {
+        $(event.target).removeClass('focus');
+      }
+      else if (event.type === "mouseenter") {
+        $(event.target).addClass('focus');
+        $(event.target).focus();
+      }
+      else if (event.type === "mouseleave") {
+        $(event.target).removeClass('focus');
+        $(event.target).blur();
       }
     },
 
@@ -1055,14 +1166,22 @@
         // Select the option in the underlying select element
         if ($('option[value="'+tagID+'"]', this.element).length > 0) {
           $('option[value="'+tagID+'"]', this.element).prop("selected", true);
-        } else {
-          $('<option value="'+tagID+'" selected="selected">'+$('<div/>').html(tagData.key).text()+'</option>').appendTo(this.element);
+        }
+        else {
+          $('<option>')
+            .prop("selected", true)
+            .val(tagID)
+            .text($('<div>').html(tagData.key).text())
+            .appendTo(this.element);
         }
         // Add the HTML to show the tag
-        tag = $('<div class="tag"></div>').insertBefore(this.taggerInput);
-        tag.attr("tabindex", this.tabIndex);
-        tag.text($('<div/>').html(tagData.key).text());
-        tag.data("tagid", tagID);
+        tag = $('<div>')
+          .addClass('tag')
+          .attr("tabindex", this.tabIndex)
+          .text($('<div/>').html(tagData.key).text())
+          .data("tagid", tagID)
+          .insertBefore(this.taggerInput);
+
         var tagRemover = $('<span class="removetag hittarget"><img src="' + this.options.baseURL + this.options.imgRemove + '" /></span>');
 
         // Reusable tag removal closure
@@ -1098,52 +1217,54 @@
         };
 
         // Bind event to the tag remover (x) to deal with mouse click and enter key
-        tagRemover.bind({
-          'mouseup': function (event) {
-            if (event.which === 1) { // Left Mouse Click
-              tagRemoveProcessing();
-            }
-            event.preventDefault();
-          },
-          'keyup': function (event) {
-            if (event.which === 13) { // Enter key
-              tagRemoveProcessing();
-            }
+        tagRemover.bind('mouseup keyup', $.proxy(function(event) {
+          switch (event.type) {
+            case "mouseup":
+              if (event.which === this.mouseCodes.LEFT) { // Left Mouse Click
+                tagRemoveProcessing();
+              }
+              event.preventDefault();
+              break;
+            case "keyup":
+              if (event.which === this.keyCodes.ENTER) { // Enter key
+                tagRemoveProcessing();
+              }
+              break;
           }
-        });
+        }, this));
 
         // Bind event to the whole tag to deal with backspaces, arrow keys
-        tag.bind('keydown', function (event) {
-          if (event.which === 8) { // Backspace
-            self._removeTagByElem($(event.target), false, true);
+        tag.bind('keydown', $.proxy(function (event) {
+          if (event.which === this.keyCodes.BACKSPACE) { // Backspace
+            this._removeTagByElem($(event.target), false, true);
             if (tagRemover) {
               tagRemover.remove();
             }
             event.preventDefault();
-            self.taggerInput.focus();
+            this.taggerInput.focus();
           }
-          if (event.which === 37 ) { // Left arrow
+          if (event.which === this.keyCodes.LEFT) { // Left arrow
             // Shift focus to previous tab if there is one
             var prevTag = $(event.target).prev('.tag').get(0);
             if (prevTag) {
               prevTag.focus();
             }
           }
-          if (event.which === 39 ) { // Right arrow
+          if (event.which === this.keyCodes.RIGHT) { // Right arrow
             // Shift focus to next tab if there is one, otherwise the input field
             var nextTag = $(event.target).next('.tag').get(0);
             if (nextTag) {
               nextTag.focus();
             }
             else {
-              self.taggerInput.focus();
+              this.taggerInput.focus();
             }
           }
-        });
+        }, this));
 
         if (this.singleValue) {
           // In single select mode, with a single tag selected already
-          // we should focus the first item in the suggstion list (which
+          // we should focus the first item in the suggestion list (which
           // will be the filter input)
           tag.bind('click', function (event) {
             self._showSuggestions(self.singleValue && self.tagCount === 1);
