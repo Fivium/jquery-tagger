@@ -38,14 +38,18 @@
   padding: 7px 4px 9px 4px;
 }
 
+.tagger .droparrow img {
+  display: block;
+}
+
+.tagger .droparrow:focus {
+  background: #cee4f2;
+}
+
 .tagger .search {
   display: block;
   float: left;
   padding: 1px 4px 1px 4px;
-}
-
-.tagger .droparrow img {
-  display: block;
 }
 
 .tagger .tag {
@@ -95,6 +99,15 @@
   cursor: text;
   margin: 0 0 1px 4px;
   padding: 0px;
+
+	-webkit-transition: opacity 250ms linear 0s;
+	-moz-transition: opacity 250ms linear 0s;
+	-o-transition: opacity 250ms linear 0s;
+	transition: opacity 250ms linear 0s;
+}
+
+.filterCleared {
+  opacity: 0;
 }
 
 .tagger .filtertxt {
@@ -107,8 +120,8 @@
 
 .tagger .hiddenInputSpan {
   position: absolute;
-  top: -9999;
-  left: -9999;
+  top: -9999px;
+  left: -9999px;
   width: auto;
   white-space: nowrap;
 }
@@ -139,6 +152,9 @@
   padding: 3px;
   width: 100%;
 }
+.tagger .suggestions ul li * {
+  cursor: pointer;
+}
 .tagger .suggestions ul li:nth-child(odd) {
   background-color: #f0f5ff;
 }
@@ -152,14 +168,10 @@
 .tagger .suggestions ul li.missing,
 .tagger .suggestions ul li.message,
 .tagger .suggestions ul li.limited {
-  color: #555;
-  font-style: italic;
   cursor: default;
   text-align: center;
 }
 .tagger .suggestions ul li.disabled {
-  color: #555;
-  font-style: italic;
   cursor: default;
 }
 .tagger .suggestions ul li.message.error {

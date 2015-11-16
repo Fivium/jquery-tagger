@@ -97,6 +97,7 @@
      * @property {string}   suggestMaxWidth     - Max width of the suggestion list (so it can be wider than the field) e.g. 50em
      * @property {string}   suggestMaxHeight    - Max height of the suggestion list e.g. 20em
      * @property {boolean}  mandatorySelection  - Make it mandatory that a value is chosen - defaults to false, no effect in multiselect mode
+     * @property {boolean}  clearFilterOnBlur   - Clear the filter text if any was left when the field loses focus (stops users thinking typed in text will be sent)
      */
     options: {
       availableTags       : null
@@ -128,6 +129,7 @@
     , suggestMaxWidth     : null
     , suggestMaxHeight    : null
     , mandatorySelection  : false
+    , clearFilterOnBlur   : false
     },
 
     keyCodes: {
@@ -548,6 +550,15 @@
       if ($(event.target).parents(".tagger").get(0) !== selfTaggerWidget && event.target !== selfTaggerWidget) {
         // If clicking something which is not in this tagger widget
         this.taggerSuggestions.hide();
+
+        // If we're losing focus from the tagger optionally clear any left over filter text
+        if (this.options.clearFilterOnBlur && this.taggerInput.val().length > 0) {
+          this.taggerInput.addClass('filterCleared');
+          setTimeout($.proxy(function() {
+            this.taggerInput.removeClass('filterCleared');
+            this.taggerInput.val('');
+          }, this), 250);
+        }
       }
       else if (event.target === selfTaggerWidget) {
         // If clicking through to the parent div, focus the first focusable item
