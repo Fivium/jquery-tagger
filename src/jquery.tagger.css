@@ -8,6 +8,9 @@
   min-height: 19px;
   display: inline-block;
 }
+.tagger.focus {
+  outline: auto 5px #69CAE8;
+}
 .tagger-readonly {
   background-color: #ebebeb;
   cursor: default;

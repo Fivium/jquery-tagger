@@ -283,7 +283,7 @@
           // Using mousedown because IE11 reports the event.target for a mouseup as the HTML
           // root element rather than the original click target, mousedown seems to work
           // cross browser
-          $(document).bind('mousedown', $.proxy(this._handleDocumentMouseDown, this));
+          $(document).bind('mousedown keyup', $.proxy(this._handleDocumentInteraction, this));
 
           // Bind event to window to resize the suggestion list when the window's resized
           $(window).resize($.proxy(function() {
@@ -303,15 +303,18 @@
 
           // If the select was in focus already, make the tagger input focused
           if (this.element.is(':focus')) {
+            this._focusWidget();
             this.taggerInput.focus();
           }
           // Capture focus on the underlying element and redirect that focus to the tagger
           this.element.focus($.proxy(function (e) {
+            this._focusWidget();
             this.taggerInput.focus();
             e.preventDefault();
           }, this));
           // For some reason the jQuery focus overload doesn't fully work so we need both methods?
           this.element.get(0).focus = $.proxy(function () {
+            this._focusWidget();
             this.taggerInput.focus();
           }, this);
         }
@@ -501,6 +504,8 @@
       if ((event.type === "mouseup" && event.which === this.mouseCodes.LEFT) // left click
         || (event.type === "keyup" && (event.which === this.keyCodes.ENTER || event.which === this.keyCodes.SPACE || event.which === this.keyCodes.DOWN))) { // enter || space || down arrow
         if (this.options.ajaxURL) {
+          this._focusWidget();
+
           // Just redirect focus in ajax mode
           this.taggerWidget.find("input[tabindex]:visible").first().focus();
         }
@@ -542,46 +547,81 @@
      * (Using mousedown because IE11 reports the event.target for a mouseup as the HTML
      *  root element rather than the original click target, mousedown seems to work
      *  cross browser)
-     * @param event MouseDown event
+     * Also handling keyup events so that it can lose focus when tabbing away from the widget.
+     * @param event MouseDown or KeyUp event
      * @private
      */
-    _handleDocumentMouseDown: function (event) {
+    _handleDocumentInteraction: function (event) {
       var selfTaggerWidget = this.taggerWidget.get(0);
-      if ($(event.target).parents(".tagger").get(0) !== selfTaggerWidget && event.target !== selfTaggerWidget) {
-        // If clicking something which is not in this tagger widget
-        this.taggerSuggestions.hide();
+      if (event.type === "mousedown") {
+        if ($(event.target).parents(".tagger").get(0) !== selfTaggerWidget && event.target !== selfTaggerWidget) {
+          // If clicking something which is not in this tagger widget we've effectively lost focus
+          this._blurWidget();
+        }
+        else if (event.target === selfTaggerWidget) {
+          this._focusWidget();
 
-        // If we're losing focus from the tagger optionally clear any left over filter text
-        if (this.options.clearFilterOnBlur && this.taggerInput.val().length > 0) {
-          this.taggerInput.addClass('filterCleared');
-          setTimeout($.proxy(function() {
-            this.taggerInput.removeClass('filterCleared');
-            this.taggerInput.val('');
-          }, this), 250);
+          // If clicking through to the parent div, focus the first focusable item
+          if (!this.singleValue || this.tagCount === 0) {
+            this.taggerWidget.find("input[tabindex]:visible").first().focus();
+            event.preventDefault();
+          }
+
+          // For now, only show the list automatically on click if we have a single value selected
+          // When performance of the suggestion list building is improved, we can enable this functionality
+          // for multi selectors and empty taggers - note redundant boolean logic preserved so that the following
+          // suggestion parameter is still valid if this check is removed
+          if (this.singleValue && this.tagCount === 1) {
+            // In single select mode, with a single tag selected already
+            // we should focus the first item in the suggestion list (which
+            // will be the filter input).
+            // NB: Using setTimeout because trying to do this immediately causes
+            // the focus to fail, presumably because the corresponding mouseup triggers
+            // focus elsewhere.
+            setTimeout($.proxy(function () {
+              this._showSuggestions(this.singleValue && this.tagCount === 1);
+            }, this), 0);
+          }
         }
       }
-      else if (event.target === selfTaggerWidget) {
-        // If clicking through to the parent div, focus the first focusable item
-        if (!this.singleValue || this.tagCount === 0) {
-          this.taggerWidget.find("input[tabindex]:visible").first().focus();
-          event.preventDefault();
+      else if (event.type === "keyup") {
+        if (event.which === this.keyCodes.TAB) {
+          if ($(event.target).parents(".tagger").get(0) !== selfTaggerWidget) {
+            this._blurWidget();
+          }
+          else if ($(event.target).parents(".tagger").get(0) === selfTaggerWidget) {
+            this._focusWidget();
+          }
         }
+      }
+    },
 
-        // For now, only show the list automatically on click if we have a single value selected
-        // When performance of the suggestion list building is improved, we can enable this functionality
-        // for multi selectors and empty taggers - note redundant boolean logic preserved so that the following
-        // suggestion parameter is still valid if this check is removed
-        if (this.singleValue && this.tagCount === 1) {
-          // In single select mode, with a single tag selected already
-          // we should focus the first item in the suggestion list (which
-          // will be the filter input).
-          // NB: Using setTimeout because trying to do this immediately causes
-          // the focus to fail, presumably because the corresponding mouseup triggers
-          // focus elsewhere.
-          setTimeout($.proxy(function(){
-            this._showSuggestions(this.singleValue && this.tagCount === 1);
-          }, this), 0);
-        }
+    /**
+     * Apply focus to the widget
+     *
+     * @private
+     */
+    _focusWidget: function() {
+      this.taggerWidget.addClass('focus');
+    },
+
+    /**
+     * Blur action for the widget
+     *
+     * @private
+     */
+    _blurWidget: function() {
+      this.taggerWidget.removeClass('focus');
+
+      this.taggerSuggestions.hide();
+
+      // If we're losing focus from the tagger optionally clear any left over filter text
+      if (this.options.clearFilterOnBlur && this.taggerInput.val().length > 0) {
+        this.taggerInput.addClass('filterCleared');
+        setTimeout($.proxy(function () {
+          this.taggerInput.removeClass('filterCleared');
+          this.taggerInput.val('');
+        }, this), 250);
       }
     },
 
@@ -1039,6 +1079,8 @@
      * @protected
      */
     _showSuggestions: function (focusFirstItem) {
+      this._focusWidget();
+
       // Set width
       this._setSuggestionListDimensions(this);
 
