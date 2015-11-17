@@ -1405,7 +1405,7 @@
      * @protected
      */
     _addFreeText: function(freeTextValue) {
-      freeTextValue = freeTextValue.trim();
+      freeTextValue = $("<div>").text(freeTextValue.trim()).html();
 
       // Stub in tag JIT
       var newTagID = (this.options.freeTextPrefix ? this.options.freeTextPrefix : '') + freeTextValue;
