@@ -479,6 +479,62 @@
 </pre>
       </div>
     </div>
+
+    <div class="row">
+      <div class="four columns">
+        <h3>Free Text Multi-Select</h3>
+      </div>
+      <div class="eight columns">
+        <select name="sel10" id="sel10" size="11" multiple="">
+          <option value="item0" selected="selected">Jonah Eldredge</option>
+          <option value="item1" selected="selected">Ray Duran</option>
+          <option value="item2">Gavin Kovach</option>
+          <option value="item3">Lawrence Nesmith</option>
+          <option value="item4">Sebastian Seneca</option>
+          <option value="item5">Marshall Klemme</option>
+          <option value="item6">Grace Vashon</option>
+          <option value="item7">Magaret Farwell</option>
+          <option value="item8" selected="selected">Lenora Desrosier</option>
+          <option value="item9">Tammi Severt</option>
+          <option value="item10">Sandra Talbert</option>
+          <option value="item11" selected="selected">NOT_EXISTING</option>
+        </select>
+        <div class="tagger tagger-loading"></div>
+        <script>
+          $(function(){
+            $('#sel10').tagger({
+              availableTags: peopleData
+            , preselectedTags: ["item0", "item1", "item8", "item11"]
+            , baseURL: '../img/'
+            , displayHierarchy: false
+            , indentMultiplier: 2
+            , fieldWidth: null
+            , freeTextInput: true
+            , freeTextMessage: ' (add tag)'
+            , freeTextPrefix: 'ft/'
+            });
+          });
+        </script>
+<pre>
+  &lt;<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+    $(<span style='color:#7f0055; font-weight:bold; '>function</span>(){
+      $(<span style='color:#2a00ff; '>'#sel1'</span>).tagger({
+        availableTags: peopleData
+      , preselectedTags: [<span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>item0</span><span style='color:#2a00ff; '>"</span>, <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>item1</span><span style='color:#2a00ff; '>"</span>, <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>item8</span><span style='color:#2a00ff; '>"</span>, <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>item11</span><span style='color:#2a00ff; '>"</span>]
+      , baseURL: <span style='color:#2a00ff; '>'../img/'</span>
+      , displayHierarchy: <span style='color:#7f0055; font-weight:bold; '>false</span>
+      , indentMultiplier: 2
+      , fieldWidth: <span style='color:#7f0055; font-weight:bold; '>null</span>
+      , freeTextInput: <span style='color:#7f0055; font-weight:bold; '>true</span>
+      , freeTextMessage: <span style='color:#2a00ff; '>' (add tag)'</span>
+      , freeTextPrefix: <span style='color:#2a00ff; '>'ft/'</span>
+      });
+    });
+  &lt;/<span style='color:#7f0055; font-weight:bold; '>script</span><span style='color:#7f0055; '>></span>
+</pre>
+      </div>
+    </div>
+
   </div>
 </body>
 </html>

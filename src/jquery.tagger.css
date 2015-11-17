@@ -67,6 +67,14 @@
   white-space: nowrap;
 }
 
+.tagger .tag.freetext {
+  border-style: dashed;
+}
+
+.tagger .tag-single.freetext {
+  border-style: none;
+}
+
 .tagger .tag-single {
   background-color: transparent;
   border: none;
@@ -182,4 +190,13 @@
   font-style: italic;
   text-align: center;
   cursor: default;
+}
+
+.tagger .suggestions ul li.addfreetext {
+  text-align: center;
+  background-color: #F1F9E5;
+}
+
+.tagger .suggestions ul li.addfreetext.focus {
+  background-color: #c9f9c6;
 }

@@ -98,6 +98,10 @@
      * @property {string}   suggestMaxHeight    - Max height of the suggestion list e.g. 20em
      * @property {boolean}  mandatorySelection  - Make it mandatory that a value is chosen - defaults to false, no effect in multiselect mode
      * @property {boolean}  clearFilterOnBlur   - Clear the filter text if any was left when the field loses focus (stops users thinking typed in text will be sent)
+     * @property {boolean}  freeTextInput       - Enable users to create options not defined in availableTags by hitting enter after typing text
+     * @property {string}   freeTextPrefix      - Optional string to prefix all free text option values with (helpful to differentiate server-side)
+     * @property {string}   freeTextMessage     - String to show in the suggestions list after the free text to hint that it can be added e.g. (New Postcode)
+     * @property {string}   freeTextSuggest     - Allow free text values in the select to show up in the suggestions list
      */
     options: {
       availableTags       : null
@@ -130,6 +134,10 @@
     , suggestMaxHeight    : null
     , mandatorySelection  : false
     , clearFilterOnBlur   : false
+    , freeTextInput       : false
+    , freeTextPrefix      : null
+    , freeTextMessage     : ''
+    , freeTextSuggest     : false
     },
 
     keyCodes: {
@@ -334,7 +342,8 @@
               level: 0,
               suggestable: true,
               historical: false,
-              sort: index};
+              sort: index,
+              freetext: (this.options.freeTextInput && $(element).val().startsWith(this.options.freeTextPrefix))};
           }, this));
         }
 
@@ -355,7 +364,8 @@
                 hidden: '',
                 level: 0,
                 suggestable: false,
-                historical: true};
+                historical: true,
+                freetext: (this.options.freeTextInput && $(element).val().startsWith(this.options.freeTextPrefix))};
             }
             // Add tags for any selected options
             this._addTagFromID($(element).val());
@@ -374,7 +384,8 @@
                 hidden: '',
                 level: 0,
                 suggestable: false,
-                historical: true};
+                historical: true,
+                freetext: (this.options.freeTextInput && preselectedTag.startsWith(this.options.freeTextPrefix))};
             }
             // Add tags for any selected options
             this._addTagFromID(preselectedTag);
@@ -408,6 +419,10 @@
                 // If they hit enter with just one item in the suggestion list, add it, otherwise focus the top item
                 if (this.taggerSuggestionsList.children('[suggestion=tag]').length === 1) {
                   this._addTagFromID(this.taggerSuggestionsList.children('[suggestion=tag]').first().data('tagid'));
+                  this._selectionReset(true, true);
+                }
+                else if (this.taggerSuggestionsList.children('[suggestion=tag]').length == 0 && this.options.freeTextInput) {
+                  this._addFreeText(targetInput.val());
                   this._selectionReset(true, true);
                 }
                 else {
@@ -841,14 +856,27 @@
         var tag = suggestableTags[suggestableTagArray[i][0]];
         // Don't add suggestion if the tag isn't selectable and it's not displaying hierarchy, the tag is historical
         //  or if the tag has no key and id tuple
-        if ((!tag.suggestable && !this.options.displayHierarchy) || tag.historical || !(tag.key && tag.id)) {
+        if ((!tag.suggestable && !this.options.displayHierarchy) || tag.historical || !(tag.key && tag.id) || (!this.options.freeTextSuggest && tag.freetext)) {
           continue;
         }
         // Create and add the suggestion to the suggestion list
         this._createSuggestionsItem(tag, allowIndent)
       }
 
-      if (suggestableTagArray.length == 0) {
+      // When free text mode is on let users click this item to add whatever they typed to the selected tags
+      if (this.options.freeTextInput && this._getVisibleInput().val().length > 0) {
+        $('<li>')
+          .addClass('extra')
+          .addClass('addfreetext')
+          .attr("tabindex", this.tabIndex)
+          .text(this._getVisibleInput().val() + this.options.freeTextMessage)
+          .data("freetext", this._getVisibleInput().val())
+          .bind('mouseup keyup keydown', $.proxy(this._handleSuggestionItemInteraction, this))
+          .bind('mouseleave mouseenter blur focus', $.proxy(this._handleSuggestionItemFocus, this))
+          .appendTo(this.taggerSuggestionsList);
+      }
+
+      if (suggestableTagArray.length === 0) {
         // Add message if filtering meant no items to suggest
         $('<li>')
           .addClass('extra')
@@ -934,9 +962,16 @@
         ||  (event.type === "keydown" && event.which === this.keyCodes.ENTER)) { // Click or enter
         // Handle suggestion adding
         var suggestionItem = $(event.target).closest('li');
-        if (suggestionItem.data('tagid')) {
+        if (suggestionItem.data('tagid') && !suggestionItem.data('freetext')) {
           this._addTagFromID(suggestionItem.data('tagid'));
           this._selectionReset(true, true);
+        }
+        else if (suggestionItem.data('freetext') && !suggestionItem.data('tagid')) {
+          this._addFreeText(suggestionItem.data('freetext'));
+          this._selectionReset(true, true);
+        }
+        else {
+          throw "Suggestion has both freetext and a tag id?"
         }
         event.preventDefault();
       }
@@ -1235,6 +1270,10 @@
           .data("tagid", tagID)
           .insertBefore(this.taggerInput);
 
+        if (tagData.freetext) {
+          tag.addClass('freetext');
+        }
+
         var tagRemover = $('<span class="removetag hittarget"><img src="' + this.options.baseURL + this.options.imgRemove + '" /></span>');
 
         // Reusable tag removal closure
@@ -1358,6 +1397,29 @@
       if (this.canFireActions) {
         this._fireOnChangeAction();
       }
+    },
+
+    /**
+     * Add a tag for given free text not specified in the available tags list
+     * @param {string} freeTextValue - New text value to add an option for
+     * @protected
+     */
+    _addFreeText: function(freeTextValue) {
+      freeTextValue = freeTextValue.trim();
+
+      // Stub in tag JIT
+      var newTagID = (this.options.freeTextPrefix ? this.options.freeTextPrefix : '') + freeTextValue;
+      this.tagsByID[newTagID] = {
+        id: newTagID,
+        key: freeTextValue,
+        hidden: '',
+        level: 0,
+        suggestable: true,
+        historical: false,
+        sort: -1,
+        freetext: true};
+      this._addTagFromID(newTagID);
+      delete this.tagsByID[newTagID]
     },
 
     /**
