@@ -1,7 +1,7 @@
 /*
  * jQuery UI Tagger
  *
- * @version v0.7.1 (11/2015)
+ * @version v0.7.0 (11/2015)
  *
  * Copyright 2015, Fivium Ltd.
  * Released under the BSD 3-Clause license.
@@ -60,7 +60,7 @@
    * @memberOf jQuery.widget.ui
    * @param {object} options - Must pass in the available tags and optionally
    *                           other information also
-   * @version 0.7.1
+   * @version 0.7.0
    * @license http://github.com/fivium/jquery-tagger/blob/master/LICENSE
    * @copyright Fivium ltd.
    * @author Nick Palmer
