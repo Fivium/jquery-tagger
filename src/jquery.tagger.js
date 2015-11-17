@@ -291,7 +291,7 @@
           // Using mousedown because IE11 reports the event.target for a mouseup as the HTML
           // root element rather than the original click target, mousedown seems to work
           // cross browser
-          $(document).bind('mousedown keyup', $.proxy(this._handleDocumentInteraction, this));
+          $(document.body).bind('mousedown keyup', $.proxy(this._handleDocumentInteraction, this));
 
           // Bind event to window to resize the suggestion list when the window's resized
           $(window).resize($.proxy(function() {
