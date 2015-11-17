@@ -176,7 +176,7 @@
         // Set tabindexOffset
         if (this.options.tabindexOffset === null) {
           if (this.element.attr('tabindex')) {
-            this.tabIndex = this.element.attr('tabindex')
+            this.tabIndex = this.element.attr('tabindex');
           }
           else {
             this.tabIndex = '0';
@@ -421,7 +421,7 @@
                   this._addTagFromID(this.taggerSuggestionsList.children('[suggestion=tag]').first().data('tagid'));
                   this._selectionReset(true, true);
                 }
-                else if (this.taggerSuggestionsList.children('[suggestion=tag]').length == 0 && this.options.freeTextInput) {
+                else if (this.taggerSuggestionsList.children('[suggestion=tag]').length === 0 && this.options.freeTextInput) {
                   this._addFreeText(targetInput.val());
                   this._selectionReset(true, true);
                 }
@@ -860,7 +860,7 @@
           continue;
         }
         // Create and add the suggestion to the suggestion list
-        this._createSuggestionsItem(tag, allowIndent)
+        this._createSuggestionsItem(tag, allowIndent);
       }
 
       // When free text mode is on let users click this item to add whatever they typed to the selected tags
@@ -971,7 +971,7 @@
           this._selectionReset(true, true);
         }
         else {
-          throw "Suggestion has both freetext and a tag id?"
+          throw "Suggestion has both freetext and a tag id?";
         }
         event.preventDefault();
       }
@@ -1139,7 +1139,7 @@
         if (focusFirstItem) {
           self.taggerSuggestions.find('[tabindex]:visible').first().focus();
         }
-      }
+      };
 
       // Load suggestions on first hit
       if (this.taggerSuggestionsList.children().length === 0) {
@@ -1409,6 +1409,7 @@
 
       // Stub in tag JIT
       var newTagID = (this.options.freeTextPrefix ? this.options.freeTextPrefix : '') + freeTextValue;
+
       this.tagsByID[newTagID] = {
         id: newTagID,
         key: freeTextValue,
@@ -1418,8 +1419,10 @@
         historical: false,
         sort: -1,
         freetext: true};
+
       this._addTagFromID(newTagID);
-      delete this.tagsByID[newTagID]
+
+      delete this.tagsByID[newTagID];
     },
 
     /**
@@ -1438,7 +1441,7 @@
     /**
      * Remove a tag, given a tags ID, to the widget and mark it as non-selected
      * in the underlying select elements option list
-     * @param {HTMLFragment} tagElem - Div element of the tag clicked in the widget
+     * @param {Object} tagElem - Div element of the tag clicked in the widget
      * @param {boolean} shouldHideMenu - should the menu be hidden?
      * @param {boolean} shouldClearInputs should the input fields be cleared?
      * @protected
