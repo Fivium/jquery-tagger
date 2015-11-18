@@ -1234,7 +1234,7 @@
       // Set the flag to show it's not loaded filtered results
       this.loadedFiltered = false;
       // Focus input
-      this._getVisibleInput.focus();
+      this._getVisibleInput().focus();
       // Hide suggestion list
       if (shouldHideMenu) {
         this.taggerSuggestions.hide();
