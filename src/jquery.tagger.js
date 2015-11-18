@@ -1049,6 +1049,7 @@
       else if (event.type === "mouseleave") {
         $(event.target).removeClass('focus');
         $(event.target).blur();
+        this._getVisibleInput().focus();
       }
     },
 
