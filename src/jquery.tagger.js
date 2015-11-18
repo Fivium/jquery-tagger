@@ -1254,8 +1254,8 @@
 
       if (!this.readonly) {
         // Select the option in the underlying select element
-        if ($('option[value="'+tagID+'"]', this.element).length > 0) {
-          $('option[value="'+tagID+'"]', this.element).prop("selected", true);
+        if ($('option[value="' + tagID.replace(/"/g, '\\"') + '"]', this.element).length > 0) {
+          $('option[value="' + tagID.replace(/"/g, '\\"') + '"]', this.element).prop("selected", true);
         }
         else {
           $('<option>')
