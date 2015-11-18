@@ -107,7 +107,7 @@
       availableTags       : null
     , ajaxURL             : null
     , preselectedTags     : null
-    , characterThreshold  : 1
+    , characterThreshold  : -1
     , characterLimit      : null
     , typingTimeThreshold : 200
     , caseSensitive       : false
@@ -443,21 +443,22 @@
                   }
                   else if (targetInput.val().length <= this.options.characterThreshold) {
                     // If they're backspacing the last character that puts them over the filter threshold hide the suggestions
-                    this.taggerSuggestions.hide();
+                      this._selectionReset(true, false);
                   }
                 }
                 else {
-                  if (targetInput.val().length === 0 && this.loadedFiltered) {
+                  if (targetInput.val().length <= this.options.characterThreshold && this.loadedFiltered) {
                     if (this.singleValue && this.taggerFilterInput) {
-                      // Ignore in single select mode with filter in suggestions to stop nav-back
+                      // In single select mode we don't want to hide the filter input, just the suggestions
+                      this._selectionReset(false, false);
                     }
                     else {
-                      // Hide it
-                      this.taggerSuggestions.hide();
+                      // Reset selection
+                      this._selectionReset(true, false);
                       // Focus the drop arrow
                       this.taggerSuggestionsButton.focus();
                     }
-                    event.preventDefault();
+                    //event.preventDefault();
                   }
                 }
                 break;
@@ -477,7 +478,10 @@
           }
 
           if (event.which !== this.keyCodes.ENTER && event.which !== this.keyCodes.DOWN && event.which !== this.keyCodes.ESC) { // key up not enter or down arrow or esc key
-            this._filterSuggestions(targetInput.val(), false);
+            if (targetInput.val().length >= this.options.characterThreshold) {
+              // Filter suggestions when they're over the threshold
+              this._filterSuggestions(targetInput.val(), false);
+            }
           }
           else if (event.which === this.keyCodes.DOWN) { // Down Arrow
             if (isMainInput) {
@@ -635,9 +639,20 @@
         this.taggerInput.addClass('filterCleared');
         setTimeout($.proxy(function () {
           this.taggerInput.removeClass('filterCleared');
+
+          // Clear input
           this.taggerInput.val('');
+          if (this.taggerFilterInput) {
+            this.taggerFilterInput.val('');
+          }
+
           // Call this so that the input is the right size for the placeholder text
           this._inputExpand(this.taggerInput);
+
+          // Clear filtered suggestions
+          this._loadSuggestions(this.tagsByID, true);
+          // Set the flag to show it's not loaded filtered results
+          this.loadedFiltered = false;
         }, this), 250);
       }
     },
@@ -1147,7 +1162,11 @@
       if (this.taggerSuggestionsList.children().length === 0) {
         // If there are more than 300 items, show a loading item first as it could take a while
         if ($.map(this.tagsByID, function(n, i) { return i;}).length > 300) {
-          $('<li class="missing">Loading...</li>').appendTo(this.taggerSuggestionsList);
+          $('<li>')
+            .addClass('extra')
+            .addClass('missing')
+            .text('Loading...')
+            .appendTo(this.taggerSuggestionsList);
           setTimeout(loadSuggestionsInternal, 300); // Fixed timeout of 300ms for now
         }
         // If less than 300 items just load all suggestions into the suggestions list
@@ -1214,7 +1233,7 @@
       // Set the flag to show it's not loaded filtered results
       this.loadedFiltered = false;
       // Focus input
-      this.taggerInput.focus();
+      this._getVisibleInput.focus();
       // Hide suggestion list
       if (shouldHideMenu) {
         this.taggerSuggestions.hide();
