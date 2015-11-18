@@ -636,6 +636,8 @@
         setTimeout($.proxy(function () {
           this.taggerInput.removeClass('filterCleared');
           this.taggerInput.val('');
+          // Call this so that the input is the right size for the placeholder text
+          this._inputExpand(this.taggerInput);
         }, this), 250);
       }
     },
