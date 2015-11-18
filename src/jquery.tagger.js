@@ -100,7 +100,7 @@
      * @property {boolean}  clearFilterOnBlur   - Clear the filter text if any was left when the field loses focus (stops users thinking typed in text will be sent)
      * @property {boolean}  freeTextInput       - Enable users to create options not defined in availableTags by hitting enter after typing text
      * @property {string}   freeTextPrefix      - Optional string to prefix all free text option values with (helpful to differentiate server-side)
-     * @property {string}   freeTextMessage     - String to show in the suggestions list after the free text to hint that it can be added e.g. (New Postcode)
+     * @property {string}   freeTextMessage     - HTML string to show in the suggestions list containing the free text to hint that it can be added e.g. Add &lt;em&gt;%VALUE%&lt;/em&gt; to list
      * @property {string}   freeTextSuggest     - Allow free text values in the select to show up in the suggestions list
      */
     options: {
@@ -136,7 +136,7 @@
     , clearFilterOnBlur   : false
     , freeTextInput       : false
     , freeTextPrefix      : null
-    , freeTextMessage     : ''
+    , freeTextMessage     : null
     , freeTextSuggest     : false
     },
 
@@ -882,11 +882,19 @@
 
       // When free text mode is on let users click this item to add whatever they typed to the selected tags
       if (this.options.freeTextInput && this._getVisibleInput().val().length > 0) {
+        var message;
+        if (this.options.freeTextMessage) {
+          message = this.options.freeTextMessage.replace(/%VALUE%/g, $("<div>").text($.trim(this._getVisibleInput().val())).html());
+        }
+        else {
+          message = this._getVisibleInput().val();
+        }
+
         $('<li>')
           .addClass('extra')
           .addClass('addfreetext')
           .attr("tabindex", this.tabIndex)
-          .text(this._getVisibleInput().val() + this.options.freeTextMessage)
+          .html(message)
           .data("freetext", this._getVisibleInput().val())
           .bind('mouseup keyup keydown', $.proxy(this._handleSuggestionItemInteraction, this))
           .bind('mouseleave mouseenter blur focus', $.proxy(this._handleSuggestionItemFocus, this))
@@ -1427,7 +1435,7 @@
      * @protected
      */
     _addFreeText: function(freeTextValue) {
-      freeTextValue = $("<div>").text(freeTextValue.trim()).html();
+      freeTextValue = $("<div>").text($.trim(freeTextValue)).html();
 
       // Stub in tag JIT
       var newTagID = (this.options.freeTextPrefix ? this.options.freeTextPrefix : '') + freeTextValue;
