@@ -100,14 +100,14 @@
      * @property {boolean}  clearFilterOnBlur   - Clear the filter text if any was left when the field loses focus (stops users thinking typed in text will be sent)
      * @property {boolean}  freeTextInput       - Enable users to create options not defined in availableTags by hitting enter after typing text
      * @property {string}   freeTextPrefix      - Optional string to prefix all free text option values with (helpful to differentiate server-side)
-     * @property {string}   freeTextMessage     - String to show in the suggestions list after the free text to hint that it can be added e.g. (New Postcode)
+     * @property {string}   freeTextMessage     - HTML string to show in the suggestions list containing the free text to hint that it can be added e.g. Add &lt;em&gt;%VALUE%&lt;/em&gt; to list
      * @property {string}   freeTextSuggest     - Allow free text values in the select to show up in the suggestions list
      */
     options: {
       availableTags       : null
     , ajaxURL             : null
     , preselectedTags     : null
-    , characterThreshold  : 1
+    , characterThreshold  : -1
     , characterLimit      : null
     , typingTimeThreshold : 200
     , caseSensitive       : false
@@ -136,7 +136,7 @@
     , clearFilterOnBlur   : false
     , freeTextInput       : false
     , freeTextPrefix      : null
-    , freeTextMessage     : ''
+    , freeTextMessage     : null
     , freeTextSuggest     : false
     },
 
@@ -325,6 +325,11 @@
             this._focusWidget();
             this.taggerInput.focus();
           }, this);
+          // Add a focus handler to any labels that are for the underlying select
+          $('label[for=' + this.element.prop('id') + ']').bind('mouseup', $.proxy(function () {
+            this._focusWidget();
+            this.taggerInput.focus();
+          }, this));
         }
 
         // Let the available tags be accessed through a nicer name
@@ -443,21 +448,22 @@
                   }
                   else if (targetInput.val().length <= this.options.characterThreshold) {
                     // If they're backspacing the last character that puts them over the filter threshold hide the suggestions
-                    this.taggerSuggestions.hide();
+                      this._selectionReset(true, false);
                   }
                 }
                 else {
-                  if (targetInput.val().length === 0 && this.loadedFiltered) {
+                  if (targetInput.val().length <= this.options.characterThreshold && this.loadedFiltered) {
                     if (this.singleValue && this.taggerFilterInput) {
-                      // Ignore in single select mode with filter in suggestions to stop nav-back
+                      // In single select mode we don't want to hide the filter input, just the suggestions
+                      this._selectionReset(false, false);
                     }
                     else {
-                      // Hide it
-                      this.taggerSuggestions.hide();
+                      // Reset selection
+                      this._selectionReset(true, false);
                       // Focus the drop arrow
                       this.taggerSuggestionsButton.focus();
                     }
-                    event.preventDefault();
+                    //event.preventDefault();
                   }
                 }
                 break;
@@ -477,7 +483,10 @@
           }
 
           if (event.which !== this.keyCodes.ENTER && event.which !== this.keyCodes.DOWN && event.which !== this.keyCodes.ESC) { // key up not enter or down arrow or esc key
-            this._filterSuggestions(targetInput.val(), false);
+            if (targetInput.val().length >= this.options.characterThreshold) {
+              // Filter suggestions when they're over the threshold
+              this._filterSuggestions(targetInput.val(), false);
+            }
           }
           else if (event.which === this.keyCodes.DOWN) { // Down Arrow
             if (isMainInput) {
@@ -635,7 +644,20 @@
         this.taggerInput.addClass('filterCleared');
         setTimeout($.proxy(function () {
           this.taggerInput.removeClass('filterCleared');
+
+          // Clear input
           this.taggerInput.val('');
+          if (this.taggerFilterInput) {
+            this.taggerFilterInput.val('');
+          }
+
+          // Call this so that the input is the right size for the placeholder text
+          this._inputExpand(this.taggerInput);
+
+          // Clear filtered suggestions
+          this._loadSuggestions(this.tagsByID, true);
+          // Set the flag to show it's not loaded filtered results
+          this.loadedFiltered = false;
         }, this), 250);
       }
     },
@@ -865,11 +887,19 @@
 
       // When free text mode is on let users click this item to add whatever they typed to the selected tags
       if (this.options.freeTextInput && this._getVisibleInput().val().length > 0) {
+        var message;
+        if (this.options.freeTextMessage) {
+          message = this.options.freeTextMessage.replace(/%VALUE%/g, $("<div>").text($.trim(this._getVisibleInput().val())).html());
+        }
+        else {
+          message = this._getVisibleInput().val();
+        }
+
         $('<li>')
           .addClass('extra')
           .addClass('addfreetext')
           .attr("tabindex", this.tabIndex)
-          .text(this._getVisibleInput().val() + this.options.freeTextMessage)
+          .html(message)
           .data("freetext", this._getVisibleInput().val())
           .bind('mouseup keyup keydown', $.proxy(this._handleSuggestionItemInteraction, this))
           .bind('mouseleave mouseenter blur focus', $.proxy(this._handleSuggestionItemFocus, this))
@@ -1032,6 +1062,7 @@
       else if (event.type === "mouseleave") {
         $(event.target).removeClass('focus');
         $(event.target).blur();
+        this._getVisibleInput().focus();
       }
     },
 
@@ -1145,7 +1176,11 @@
       if (this.taggerSuggestionsList.children().length === 0) {
         // If there are more than 300 items, show a loading item first as it could take a while
         if ($.map(this.tagsByID, function(n, i) { return i;}).length > 300) {
-          $('<li class="missing">Loading...</li>').appendTo(this.taggerSuggestionsList);
+          $('<li>')
+            .addClass('extra')
+            .addClass('missing')
+            .text('Loading...')
+            .appendTo(this.taggerSuggestionsList);
           setTimeout(loadSuggestionsInternal, 300); // Fixed timeout of 300ms for now
         }
         // If less than 300 items just load all suggestions into the suggestions list
@@ -1212,7 +1247,7 @@
       // Set the flag to show it's not loaded filtered results
       this.loadedFiltered = false;
       // Focus input
-      this.taggerInput.focus();
+      this._getVisibleInput().focus();
       // Hide suggestion list
       if (shouldHideMenu) {
         this.taggerSuggestions.hide();
@@ -1252,8 +1287,8 @@
 
       if (!this.readonly) {
         // Select the option in the underlying select element
-        if ($('option[value="'+tagID+'"]', this.element).length > 0) {
-          $('option[value="'+tagID+'"]', this.element).prop("selected", true);
+        if ($('option[value="' + tagID.replace(/"/g, '\\"') + '"]', this.element).length > 0) {
+          $('option[value="' + tagID.replace(/"/g, '\\"') + '"]', this.element).prop("selected", true);
         }
         else {
           $('<option>')
@@ -1405,7 +1440,7 @@
      * @protected
      */
     _addFreeText: function(freeTextValue) {
-      freeTextValue = $("<div>").text(freeTextValue.trim()).html();
+      freeTextValue = $("<div>").text($.trim(freeTextValue)).html();
 
       // Stub in tag JIT
       var newTagID = (this.options.freeTextPrefix ? this.options.freeTextPrefix : '') + freeTextValue;
