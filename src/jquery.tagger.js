@@ -325,6 +325,11 @@
             this._focusWidget();
             this.taggerInput.focus();
           }, this);
+          // Add a focus handler to any labels that are for the underlying select
+          $('label[for=' + this.element.prop('id') + ']').bind('mouseup', $.proxy(function () {
+            this._focusWidget();
+            this.taggerInput.focus();
+          }, this));
         }
 
         // Let the available tags be accessed through a nicer name
