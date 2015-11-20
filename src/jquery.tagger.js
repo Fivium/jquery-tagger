@@ -107,7 +107,7 @@
       availableTags       : null
     , ajaxURL             : null
     , preselectedTags     : null
-    , characterThreshold  : -1
+    , characterThreshold  : 1
     , characterLimit      : null
     , typingTimeThreshold : 200
     , caseSensitive       : false
