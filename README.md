@@ -14,8 +14,8 @@ suggestion list, running the original onChange actions, displaying tags for
 items previously selected but no longer in the list, keyboard accessibility and 
 many other features.
 
-- [Examples](http://fivium.github.io/jquery-tagger/examples.htm)
-- [JSDoc](http://fivium.github.io/jquery-tagger/doc/jQuery.widget.ui.tagger.html)
+- [Examples](https://fivium.github.io/jquery-tagger/examples.htm)
+- [JSDoc](https://fivium.github.io/jquery-tagger/doc/jQuery.widget.ui.tagger.html)
 
 ## Use ##
 
