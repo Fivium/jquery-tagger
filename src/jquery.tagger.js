@@ -1,7 +1,7 @@
 /*
  * jQuery UI Tagger
  *
- * @version v0.7.1 (11/2015)
+ * @version v0.8.0 (05/2016)
  *
  * Copyright 2015, Fivium Ltd.
  * Released under the BSD 3-Clause license.

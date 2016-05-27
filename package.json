@@ -1,6 +1,6 @@
 {
   "name": "jquery-tagger",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "jQuery plugin to turn a HTML select into an auto-suggesting, tagging widget",
   "main": "src/jquery.tagger.js",
   "repository": {
