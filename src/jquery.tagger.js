@@ -973,19 +973,20 @@
           .appendTo(this.taggerSuggestionsList);
       }
 
+      // Add message if filtering meant no items to suggest and the noSuggestText option is not empty and the user has actually typed something
       if (suggestableTagArray.length === 0) {
-        // Add message if filtering meant no items to suggest
-        $('<li>')
+        if (this.options.noSuggestText.length > 0 && this._getVisibleInput().val().length > 0) {
+          $('<li>')
             .attr('role', 'option')
             .attr('aria-selected', 'false')
-          .addClass('extra')
-          .addClass('missing')
-          .text(this.options.noSuggestText)
-          .appendTo(this.taggerSuggestionsList);
+            .addClass('extra')
+            .addClass('missing')
+            .text(this.options.noSuggestText)
+            .appendTo(this.taggerSuggestionsList);
+        }
       }
-
-      // Add message if nothing ended up in the list (e.g. all selectable items selected)
-      if (this.taggerSuggestionsList.children().length === 0) {
+      else if (this.taggerSuggestionsList.children().length === 0) {
+        // Add message if nothing ended up in the list (e.g. all selectable items selected)
         $('<li>')
           .attr('role', 'option')
           .attr('aria-selected', 'false')
