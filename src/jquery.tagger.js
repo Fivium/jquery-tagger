@@ -168,6 +168,7 @@
      * with pre-selected tags.
      */
     _create: function () {
+      var self = this;
       this.canFireActions = false;
 
       if (this.element.is('select')) {
@@ -198,6 +199,16 @@
 
         // Hide select
         this.element.hide();
+        
+        // When the original element changes, update the tagger selected element for a single value select
+        if (this.singleValue) {
+            this.element.on('change', function (event) {
+                var elem = (typeof this.selectedIndex === "undefined" ? window.event.srcElement : this);
+                var value = elem.value || elem.options[elem.selectedIndex].value;
+
+                self._addTagFromID(value);
+            });
+        }
 
         // Remove any loading divs
         this.element.siblings(this.options.loadingClass).remove();
