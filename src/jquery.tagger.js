@@ -1,7 +1,7 @@
 /*
  * jQuery UI Tagger
  *
- * @version v0.8.0 (05/2016)
+ * @version v0.8.1 (03/2017)
  *
  * Copyright 2015, Fivium Ltd.
  * Released under the BSD 3-Clause license.
@@ -1318,7 +1318,7 @@
      */
     _inputExpand: function (input) {
       // Create a hidden span to store the value of the input and read actual dimensions from
-      var taggerInputSpan = $('<span class="hiddenInputSpan"></span>').appendTo(this.taggerWidget);
+      var taggerInputSpan = $('<span class="hiddenInputSpan"></span>').appendTo('body');
       // Make sure the hidden span has the same font properties
       taggerInputSpan.css({
         fontSize: this.taggerInput.css('fontSize'),
