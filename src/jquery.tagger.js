@@ -1,7 +1,7 @@
 /*
  * jQuery UI Tagger
  *
- * @version v0.8.1 (03/2017)
+ * @version v0.8.2 (05/2019)
  *
  * Copyright 2015, Fivium Ltd.
  * Released under the BSD 3-Clause license.
@@ -13,9 +13,10 @@
  * Authors:
  *   Nick Palmer
  *   Ben Basson
+ *   Matt Eason
  *
  * Maintainer:
- *   Nick Palmer - nick.palmer@fivium.co.uk
+ *   Matt Eason - matt.eason@fivium.co.uk
  *
  * Dependencies:
  *   jQuery v1.9+
@@ -152,6 +153,7 @@
     , UP: 38
     , RIGHT: 39
     , DOWN: 40
+    , DELETE: 46
     },
     mouseCodes: {
       LEFT: 1
@@ -216,6 +218,7 @@
         var originalElementID = this.element.prop('id');
         this.taggerID = 'tagger' + originalElementID;
         this.suggestionsListID = 'suggestions' + originalElementID;
+        this.selectedTagsID = 'selectedTags' + originalElementID;
 
         // Construct tagger widget
         this.taggerWidget = $('<div>')
@@ -224,7 +227,9 @@
           .attr('role', 'combobox')
           .attr('aria-expanded', 'false')
           .attr('aria-autocomplete', 'list')
+          .attr('aria-haspopup', 'listbox')
           .attr('aria-owns', this.suggestionsListID)
+          .attr('aria-describedby', this.selectedTagsID)
           .insertAfter(this.element);
 
         if (this.element.attr('aria-label')) {
@@ -254,6 +259,11 @@
           this.taggerWidget.css('height', this.options.fieldHeight);
         }
 
+        this.taggerSelectedTags = $('<div>')
+          .attr('class', 'tagger-selected-tags')
+          .attr('id', this.selectedTagsID)
+          .appendTo(this.taggerWidget);
+
         if (!this.readonly) {
           // Add the suggestion drop arrow and and text input if not readonly
           this.taggerInput = $('<input>')
@@ -262,6 +272,7 @@
             .addClass('intxt')
             .attr('role', 'textbox')
             .attr('aria-label', 'Autocomplete input box')
+            .attr('aria-controls', this.suggestionsListID)
             .appendTo(this.taggerWidget);
           this.taggerButtonsPanel = $('<div>').addClass('tagger-buttons');
           this.taggerButtonsPanel.appendTo(this.taggerWidget);
@@ -270,6 +281,8 @@
             this.taggerSuggestionsButton = $('<div>')
               .addClass('droparrow')
               .addClass('hittarget')
+              .attr('aria-label', 'Toggle option display')
+              .attr('role', 'button')
               .bind('mouseup keyup', $.proxy(this._handleSuggestionsButtonInteraction, this))
               .appendTo(this.taggerButtonsPanel);
             $('<img>')
@@ -321,6 +334,14 @@
         // Clearer div makes sure the widget div keeps its height
         $('<div>')
           .addClass('clearer')
+          .appendTo(this.taggerWidget);
+
+        // Audible status div lets us announce status changes to screen readers
+        this.audibleStatus = $('<div>')  
+          .addClass('tagger-audible-status')
+          .attr('role', 'status')
+          .attr('aria-live', 'polite')
+          .attr('aria-atomic', 'true')
           .appendTo(this.taggerWidget);
 
         if (!this.readonly) {
@@ -707,7 +728,7 @@
           this._inputExpand(this.taggerInput);
 
           // Clear filtered suggestions
-          this._loadSuggestions(this.tagsByID, true);
+          this._loadSuggestions(this.tagsByID, true, false);
           // Set the flag to show it's not loaded filtered results
           this.loadedFiltered = false;
         }, this), 250);
@@ -752,7 +773,7 @@
         }
       }
       // Load filtered results into the suggestion list
-      this._loadSuggestions(filteredResults, false);
+      this._loadSuggestions(filteredResults, false, true);
       this.loadedFiltered = true;
     },
 
@@ -796,7 +817,7 @@
                 }
               });
               self.tagsByID = data;
-              self._loadSuggestions(data, false);
+              self._loadSuggestions(data, false, true);
               self.loadedFiltered = true;
               self._showSuggestions(false);
             },
@@ -933,9 +954,10 @@
      * Load tags into the suggestion list
      * @param {object} suggestableTags - Object containing members of tagID to tag object
      * @param {boolean} allowIndent - Allow indenting of suggestion lists if true
+     * @param {boolean} setAudibleStatus - Set the audible status of the suggestions list if true
      * @protected
      */
-    _loadSuggestions: function (suggestableTags, allowIndent) {
+    _loadSuggestions: function (suggestableTags, allowIndent, setAudibleStatus) {
       // Clear out suggestion list
       this.taggerSuggestionsList.children().remove();
 
@@ -992,6 +1014,8 @@
           .appendTo(this.taggerSuggestionsList);
       }
 
+      var audibleStatusSet = false;
+
       // Add message if filtering meant no items to suggest and the noSuggestText option is not empty and the user has actually typed something
       if (suggestableTagArray.length === 0) {
         if (this.options.noSuggestText.length > 0 && this._getVisibleInput().val().length > 0) {
@@ -1002,6 +1026,11 @@
             .addClass('missing')
             .text(this.options.noSuggestText)
             .appendTo(this.taggerSuggestionsList);
+
+          if (setAudibleStatus) {
+            this._setAudibleStatus(this.options.noSuggestText);
+            audibleStatusSet = true;
+          }
         }
       }
       else if (this.taggerSuggestionsList.children().length === 0) {
@@ -1013,6 +1042,11 @@
           .addClass('missing')
           .text(this.options.emptyListText)
           .appendTo(this.taggerSuggestionsList);
+
+          if (setAudibleStatus) {
+            this._setAudibleStatus(this.options.emptyListText);
+            audibleStatusSet = true;
+          }
       }
 
       if (suggestableTags.limited) {
@@ -1023,6 +1057,16 @@
           .addClass('limited')
           .text(this.options.limitedText)
           .appendTo(this.taggerSuggestionsList);
+
+          if (setAudibleStatus) {
+            this._setAudibleStatus(this.options.limitedText);
+            audibleStatusSet = true;
+          }
+      }
+
+      if (!audibleStatusSet && setAudibleStatus) {
+        // Announce the number of options available
+        this._setAudibleStatus(suggestableTagArray.length + ((suggestableTagArray.length === 1) ? ' option is' : ' options are') + ' available');
       }
     },
 
@@ -1096,10 +1140,12 @@
         var suggestionItem = $(event.target).closest('li');
         if (suggestionItem.data('tagid') && !suggestionItem.data('freetext')) {
           this._addTagFromID(suggestionItem.data('tagid'));
+          this._setAudibleStatus("Selected " + this.tagsByID[suggestionItem.data('tagid')].key);
           this._selectionReset(true, true);
         }
         else if (suggestionItem.data('freetext') && !suggestionItem.data('tagid')) {
           this._addFreeText(suggestionItem.data('freetext'));
+          this._setAudibleStatus("Added " + this.tagsByID[suggestionItem.data('tagid')].key);
           this._selectionReset(true, true);
         }
         else {
@@ -1234,7 +1280,7 @@
           this._hideSuggestions();
         }
         // Reload in all suggestions
-        this._loadSuggestions(this.tagsByID, true);
+        this._loadSuggestions(this.tagsByID, true, true);
         // Clear the flag
         this.loadedFiltered = false;
       }
@@ -1256,7 +1302,7 @@
       this.taggerSuggestions.show();
 
       // Mark the aria expanded attr to true
-      this.taggerInput.attr('aria-expanded', 'true');
+      this.taggerWidget.attr('aria-expanded', 'true');
 
       // Show the filter if necessary
       if (this.singleValue && this.taggerFilterInput && this.tagCount === 1) {
@@ -1268,7 +1314,7 @@
 
       var self = this;
       var loadSuggestionsInternal = function () {
-        self._loadSuggestions(self.tagsByID, true);
+        self._loadSuggestions(self.tagsByID, true, true);
         // Set the flag to show it's not loaded filtered results
         self.loadedFiltered = false;
         // Focus the first item in the list, which may be the filter, or may be an option
@@ -1308,7 +1354,7 @@
       this.taggerSuggestions.hide();
 
       // Mark the aria expanded attr to false
-      this.taggerInput.attr('aria-expanded', 'false');
+      this.taggerWidget.attr('aria-expanded', 'false');
     },
 
     /**
@@ -1358,7 +1404,7 @@
       // Expand properly
       this._inputExpand(this.taggerInput);
       // Clear filtered suggestions
-      this._loadSuggestions(this.tagsByID, true);
+      this._loadSuggestions(this.tagsByID, true, !shouldHideMenu);
       // Set the flag to show it's not loaded filtered results
       this.loadedFiltered = false;
       // Focus input
@@ -1416,15 +1462,16 @@
         tag = $('<div>')
           .addClass('tag')
           .attr("tabindex", this.tabIndex)
+          .attr("aria-label", tagData.key)
           .text($('<div/>').html(tagData.key).text())
           .data("tagid", tagID)
-          .insertBefore(this.taggerInput);
+          .appendTo(this.taggerSelectedTags);
 
         if (tagData.freetext) {
           tag.addClass('freetext');
         }
 
-        var tagRemover = $('<span class="removetag hittarget" role="presentation"><img src="' + this.options.baseURL + this.options.imgRemove + '" alt="Deselect tag" /></span>');
+        var tagRemover = $('<span class="removetag hittarget" role="button" aria-label="Deselect tag"><img src="' + this.options.baseURL + this.options.imgRemove + '" alt="Deselect tag" /></span>');
 
         // Reusable tag removal closure
         var tagRemoveProcessing = function () {
@@ -1475,9 +1522,9 @@
           }
         }, this));
 
-        // Bind event to the whole tag to deal with backspaces, arrow keys
+        // Bind event to the whole tag to deal with backspaces, delete key and arrow keys
         tag.bind('keydown', $.proxy(function (event) {
-          if (event.which === this.keyCodes.BACKSPACE) { // Backspace
+          if (event.which === this.keyCodes.BACKSPACE || event.which === this.keyCodes.DELETE) { // Backspace or delete
             this._removeTagByElem($(event.target), false, true);
             if (tagRemover) {
               tagRemover.remove();
@@ -1528,7 +1575,7 @@
         }
       }
       else {
-        tag = $('<div class="tag tag-readonly"></div>').prependTo(this.taggerWidget);
+        tag = $('<div class="tag tag-readonly"></div>').appendTo(this.taggerSelectedTags);
         tag.text($('<div/>').html(tagData.key).text());
         if (this.singleValue) {
           tag.addClass('tag-single');
@@ -1627,10 +1674,22 @@
         this.taggerInput.show();
       }
 
+      // Announce the removal
+      this._setAudibleStatus("Removed " + this.tagsByID[tagID].key);
+
       // Fire onchange action
       if (this.canFireActions) {
         this._fireOnChangeAction();
       }
+    },
+
+    /**
+     * Set the text in the audible status div, which will be read out by screen readers
+     * @param {String} status - the text to read out
+     * @protected
+     */
+    _setAudibleStatus: function (status) {
+      this.audibleStatus.text(status);
     },
 
     /**
