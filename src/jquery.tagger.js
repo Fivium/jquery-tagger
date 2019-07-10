@@ -281,8 +281,6 @@
             this.taggerSuggestionsButton = $('<div>')
               .addClass('droparrow')
               .addClass('hittarget')
-              .attr('aria-label', 'Toggle option display')
-              .attr('role', 'button')
               .bind('mouseup keyup', $.proxy(this._handleSuggestionsButtonInteraction, this))
               .appendTo(this.taggerButtonsPanel);
             $('<img>')
@@ -303,8 +301,6 @@
               .appendTo(this.taggerSuggestionsButton);
           }
 
-          this.taggerSuggestionsButton.attr("tabindex", this.tabIndex);
-
           // Add placeholder text to text input field
           if (this.options.placeholder !== null) {
             this.taggerInput.attr("placeholder", this.options.placeholder);
@@ -324,6 +320,13 @@
 
               // Select the widget itself again
               this._getWidgetFocusable().focus();
+            }
+
+            if (event.target && event.altKey && (event.which === this.keyCodes.DOWN || event.which === this.keyCodes.UP)) {
+              this._toggleShowSuggestions();
+
+              // Select the widget itself again
+              this._getWidgetFocusable().focus();              
             }
           }, this));
 
@@ -574,7 +577,7 @@
             }
           }
           else if (event.which === this.keyCodes.DOWN) { // Down Arrow
-            if (isMainInput) {
+            if (isMainInput && !event.altKey) {
               if (!this.options.ajaxURL || this.taggerSuggestions.is(":visible")) {
                 this._showSuggestions(true);
               }
@@ -613,17 +616,26 @@
           this.taggerWidget.find("input[tabindex]:visible").first().focus();
         }
         else {
-          // If the suggestion list is visible already, then toggle it off
-          if (this.taggerSuggestions.is(":visible")) {
-            this._hideSuggestions();
-          }
-          // otherwise show it
-          else {
-            this._showSuggestions(true);
-          }
+          this._toggleShowSuggestions();
         }
         event.preventDefault();
       }
+    },
+
+    /**
+     * Toggle whether suggestions are shown or not
+     *
+     * @private
+     */
+    _toggleShowSuggestions: function() {
+      // If the suggestion list is visible already, then toggle it off
+      if (this.taggerSuggestions.is(":visible")) {
+        this._hideSuggestions();
+      }
+      // otherwise show it
+      else {
+        this._showSuggestions(true);
+      }      
     },
 
     /**
