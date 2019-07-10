@@ -264,13 +264,21 @@
           .appendTo(this.taggerWidget);
 
         if (!this.readonly) {
+
+          var ariaLabel = "Autocomplete filter";
+          if(this.taggerWidget.attr('aria-label')) {
+            ariaLabel += ' for ' + this.taggerWidget.attr('aria-label');
+          } else if(this.taggerWidget.attr('aria-labelledby')) {
+            ariaLabel += ' for ' + $('#'+this.taggerWidget.attr('aria-labelledby')).text();
+          }
+
           // Add the suggestion drop arrow and and text input if not readonly
           this.taggerInput = $('<input>')
             .attr('type', 'text')
             .attr('autocomplete', 'off')
             .addClass('intxt')
             .attr('role', 'textbox')
-            .attr('aria-label', 'Autocomplete input box')
+            .attr('aria-label', ariaLabel)
             .attr('aria-controls', this.suggestionsListID)
             .appendTo(this.taggerWidget);
           this.taggerButtonsPanel = $('<div>').addClass('tagger-buttons');
