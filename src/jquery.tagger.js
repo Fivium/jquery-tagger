@@ -234,8 +234,7 @@
 
         if (this.element.attr('aria-label')) {
           this.taggerWidget.attr('aria-label', this.element.attr('aria-label'));
-        }
-        if ($('label[for=' + this.element.prop('id') + ']')) {
+        } else if ($('label[for=' + this.element.prop('id') + ']')) {
           this.taggerWidget.attr('aria-labelledby', $('label[for=' + this.element.prop('id') + ']').first().prop('id'));
         }
 
