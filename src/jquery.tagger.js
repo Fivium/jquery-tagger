@@ -320,8 +320,8 @@
           // Set the tab index on the input field
           this.taggerInput.attr("tabindex", this.tabIndex);
 
-          // Esc should hide the tagger suggestions globally
           this.taggerWidget.bind('keydown', $.proxy(function (event) {
+            // Esc should hide the tagger suggestions globally
             if (event.target && event.which === this.keyCodes.ESC) { // Esc
               this._hideSuggestions();
 
@@ -329,11 +329,17 @@
               this._getWidgetFocusable().focus();
             }
 
+            // Alt+down and alt+up should toggle the suggestions list
             if (event.target && event.altKey && (event.which === this.keyCodes.DOWN || event.which === this.keyCodes.UP)) {
               this._toggleShowSuggestions();
 
               // Select the widget itself again
               this._getWidgetFocusable().focus();              
+            }
+
+            // Down arrow shows suggestions list if not visible
+            if (event.target && !this.options.ajaxURL && !this.taggerSuggestions.is(":visible") && event.which === this.keyCodes.DOWN) {
+              this._showSuggestions(true);           
             }
           }, this));
 
