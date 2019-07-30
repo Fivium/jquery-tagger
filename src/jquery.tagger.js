@@ -1164,13 +1164,15 @@
         // Handle suggestion adding
         var suggestionItem = $(event.target).closest('li');
         if (suggestionItem.data('tagid') && !suggestionItem.data('freetext')) {
-          this._addTagFromID(suggestionItem.data('tagid'));
-          this._setAudibleStatus("Selected " + this.tagsByID[suggestionItem.data('tagid')].key);
+          var tagId = suggestionItem.data('tagid')
+          this._addTagFromID(tagId);
+          this._setAudibleStatus("Selected " + this.tagsByID[tagId].key);
           this._selectionReset(true, true);
         }
         else if (suggestionItem.data('freetext') && !suggestionItem.data('tagid')) {
-          this._addFreeText(suggestionItem.data('freetext'));
-          this._setAudibleStatus("Added " + this.tagsByID[suggestionItem.data('tagid')].key);
+          var freetext = suggestionItem.data('freetext');
+          this._addFreeText(freetext);
+          this._setAudibleStatus("Added " + freetext);
           this._selectionReset(true, true);
         }
         else {
