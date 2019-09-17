@@ -9,7 +9,7 @@
   display: inline-block;
 }
 .tagger.focus {
-  outline: auto 5px #69CAE8;
+  outline: 2px solid #69CAE8;
 }
 .tagger-readonly {
   background-color: #ebebeb;
@@ -202,4 +202,17 @@
 
 .tagger .suggestions ul li.addfreetext.focus {
   background-color: #c9f9c6;
+}
+
+.tagger .tagger-audible-status {
+  border: 0px;
+  clip: rect(0px, 0px, 0px, 0px);
+  height: 1px;
+  margin-bottom: -1px;
+  margin-right: -1px;
+  overflow: hidden;
+  padding: 0px;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;  
 }
